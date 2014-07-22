@@ -3,14 +3,14 @@
 Mouse Control Functions
 =======================
 
-moveTo(x=None, y=None, duration=0, tween=pyautogui.tweens.linearTween)
+moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween)
 
 
-moveRel(x=None, y=None, duration=0, tween=pyaytoguid.tweens.linearTween)
+moveRel(x=None, y=None, duration=0.0, tween=pyaytoguid.tweens.linearTween)
 
-dragTo(x=None, y=None, duration=0, tween=pyautogui.tweens.linearTween, button='left')
+dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, button='left')
 
-dragRel(x=None, y=None, duration=0, tween=pyautogui.tweens.linearTween, button='left')
+dragRel(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, button='left')
 
 click(button='left', x=None, y=None, clicks=1, interval=0.0)
 

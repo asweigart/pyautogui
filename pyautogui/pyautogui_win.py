@@ -1,11 +1,15 @@
+# Windows implementation of PyAutoGUI functions.
+# BSD license
+# Al Sweigart al@inventwithpython.com
 
 import ctypes
 import ctypes.wintypes
-import time
-from pyautogui.tweens import *
-from pyautogui.util import *
+import pyautogui
+import pyautogui.util
 
-__all__ = ('_keyUp', '_keyDown', 'position', 'size', 'moveTo', 'scroll', '_mouseDown', '_mouseUp', '_click')
+import sys
+if sys.platform !=  'win32':
+    raise Exception('The pyautogui_win module should only be loaded on a Windows system.')
 
 """
 A lot of this code is probably repeated from win32 extensions module, but I didn't want to have that dependency.
@@ -37,8 +41,6 @@ KEYEVENTF_KEYUP = 0x0002
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
 INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
-
-MINIMUM_DURATION = 0.1
 
 
 # This ctypes structure is for a Win32 POINT structure,
@@ -93,13 +95,19 @@ class INPUT(ctypes.Structure):
 
 
 
-# Keyboard key mapping for pyautogui:
-# Documented at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+""" Keyboard key mapping for pyautogui:
+Documented at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+
+The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
+keyUp(), or press() into the code used for the OS-specific keyboard function.
+
+They should always be lowercase, and the same keys should be used across all OSes."""
 winKB ={
     'backspace': 0x08, # VK_BACK
     'tab': 0x09, # VK_TAB
     'clear': 0x0c, # VK_CLEAR
     'enter': 0x0d, # VK_RETURN
+    'return': 0x0d, # VK_RETURN
     'shift': 0x10, # VK_SHIFT
     'ctrl': 0x11, # VK_CONTROL
     'alt': 0x12, # VK_MENU
@@ -113,6 +121,7 @@ winKB ={
     'hanja': 0x19, # VK_HANJA
     'kanji': 0x19, # VK_KANJI
     'esc': 0x1b, # VK_ESCAPE
+    'escape': 0x1b, # VK_ESCAPE
     'convert': 0x1c, # VK_CONVERT
     'nonconvert': 0x1d, # VK_NONCONVERT
     'accept': 0x1e, # VK_ACCEPT
@@ -239,7 +248,7 @@ for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`1234567890-=[]\
 
 
 def _keyDown(character):
-    needsShift = isShiftCharacter(character)
+    needsShift = pyautogui.util.isShiftCharacter(character)
     if character in winKB.keys():
         vkCode = winKB[character]
     elif len(character) == 1:
@@ -258,7 +267,7 @@ def _keyDown(character):
         ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
 def _keyUp(character):
-    needsShift = isShiftCharacter(character)
+    needsShift = pyautogui.util.isShiftCharacter(character)
     if character in winKB.keys():
         vkCode = winKB[character]
     elif len(character) == 1:
@@ -286,45 +295,8 @@ def size():
     return (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
 
 
-def moveTo(x=None, y=None, speed=0, tween=linearTween):
-    if x is None and y is None:
-        return
-
-    width, height = size()
-    startx, starty = position()
-
-    if x is None:
-        x = startx
-    else:
-        if x < 0:
-            x = 0
-        elif x >= width:
-            x = width - 1
-    if y is None:
-        y = starty
-    else:
-        if y < 0:
-            y = 0
-        elif y >= height:
-            y = height - 1
-
-    if speed <= MINIMUM_DURATION:
-        # just move the cursor there instantly
-
-        ctypes.windll.user32.SetCursorPos(x, y)
-        return
-
-    # do the tweening
-    linePoints = getLine(startx, starty, x, y)
-
-    # TODO - tweening
-
-    # the time is actually slightly larger than speed, since the calls must be made.
-    timeSegment = speed / len(linePoints)
-    for n in range(len(linePoints)):
-        time.sleep(timeSegment)
-        tweenedN = int(tween(n / len(linePoints)) * len(linePoints))
-        ctypes.windll.user32.SetCursorPos(linePoints[tweenedN][0], linePoints[tweenedN][1])
+def _moveTo(x, y):
+    ctypes.windll.user32.SetCursorPos(x, y)
 
 
 def _mouseDown(button, x, y):
@@ -383,8 +355,10 @@ def _sendMouseEvent(ev, x, y, dwData=0):
         raise ctypes.WinError()
 
 
+
 def scroll(clicks, x=None, y=None):
     startx, starty = position()
+    width, height = size()
 
     if x is None:
         x = startx
@@ -404,4 +378,5 @@ def scroll(clicks, x=None, y=None):
     _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
 
 
-
+vscroll = scroll
+hscroll = scroll

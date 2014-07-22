@@ -6,6 +6,8 @@
 Welcome to PyAutoGUI's documentation!
 =====================================
 
+THIS MODULE IS UNDER DEVELOPMENT NOT YET IN A USABLE STATE.
+
 Contents:
 
 .. toctree::
