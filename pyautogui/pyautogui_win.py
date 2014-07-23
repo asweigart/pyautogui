@@ -268,7 +268,7 @@ def _keyDown(key):
       None
     """
 
-    needsShift = pyautogui.util.isShiftkey(key)
+    needsShift = pyautogui.util.isShiftCharacter(key)
     if key in keyboardMapping.keys():
         vkCode = keyboardMapping[key]
     elif len(key) == 1:
@@ -297,7 +297,7 @@ def _keyUp(key):
     Returns:
       None
     """
-    needsShift = pyautogui.util.isShiftkey(key)
+    needsShift = pyautogui.util.isShiftCharacter(key)
     if key in keyboardMapping.keys():
         vkCode = keyboardMapping[key]
     elif len(key) == 1:

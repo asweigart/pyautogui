@@ -6,6 +6,8 @@ import threading
 sys.path.append(os.path.abspath('..'))
 import pyautogui
 
+runningOnPython2 = sys.version_info[0] == 2
+
 class TestGeneral(unittest.TestCase):
     def test_accessibleNames(self):
         # This is a platform-specific test, you need to run this file on Win/OSX/Linux for full code coverage.
@@ -47,8 +49,12 @@ class TestGeneral(unittest.TestCase):
     def test_position(self):
         mousex, mousey = pyautogui.position()
 
-        self.assertTrue(type(mousex) == int)
-        self.assertTrue(type(mousey) == int)
+        if runningOnPython2:
+            self.assertTrue(type(mousex) == long)
+            self.assertTrue(type(mousey) == long)
+        else:
+            self.assertTrue(type(mousex) == int)
+            self.assertTrue(type(mousey) == int)
 
     def test_onScreen(self):
         width, height = pyautogui.size()
@@ -102,6 +108,7 @@ class TestMouse(unittest.TestCase):
         # moving the mouse over time (1/5 second)
         pyautogui.moveTo(1, 1, 0.2)
         mousepos = pyautogui.position()
+
         self.assertTrue(mousepos == (1, 1))
 
         # moving the mouse with only x specified
@@ -171,7 +178,7 @@ class TestKeyboard(unittest.TestCase):
         # 'Hello world!\n' test
         t = TypewriteThread('Hello world!\n')
         t.start()
-        if sys.version_info[0] == 2:
+        if runningOnPython2:
             response = raw_input()
         else:
             response = input()
@@ -180,7 +187,7 @@ class TestKeyboard(unittest.TestCase):
         # 'Hello world!\n' as a list argument
         t = TypewriteThread(list('Hello world!\n'))
         t.start()
-        if sys.version_info[0] == 2:
+        if runningOnPython2:
             response = raw_input()
         else:
             response = input()
@@ -194,17 +201,19 @@ class TestKeyboard(unittest.TestCase):
 
         t = TypewriteThread(allKeys + '\n')
         t.start()
-        if sys.version_info[0] == 2:
+        if runningOnPython2:
             response = raw_input()
         else:
             response = input()
         self.assertEqual(response, allKeys)
 
     def test_typewrite_slow(self):
+
+        # Test out the interval parameter to make sure it adds pauses.
         t = TypewriteThread('Hello world!\n', 0.1)
         startTime = time.time()
         t.start()
-        if sys.version_info[0] == 2:
+        if runningOnPython2:
             response = raw_input()
         else:
             response = input()
@@ -239,6 +248,14 @@ class TestKeyboard(unittest.TestCase):
             response = input()
         self.assertEqual(response, 'c')
 
+        # Home and end key test
+        t = TypewriteThread(['a', 'b', 'c', 'home', 'x','end', 'z', '\n'])
+        t.start()
+        if sys.version_info[0] == 2:
+            response = raw_input()
+        else:
+            response = input()
+        self.assertEqual(response, 'xabcz')
 
 
 if __name__ == '__main__':

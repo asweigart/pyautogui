@@ -554,6 +554,12 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
         else:
             platformModule._dragTo(linePoints[tweenedN][0], linePoints[tweenedN][1], button)
 
+    # Ensure that no matter what the tween function returns, the mouse ends up
+    # at the final destination.
+    if moveOrDrag == 'move':
+        platformModule._moveTo(x, y)
+    else:
+        platformModule._dragTo(x, y, button)
 
 # Keyboard Functions
 # ==================
