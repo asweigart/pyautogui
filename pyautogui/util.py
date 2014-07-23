@@ -11,7 +11,7 @@ KEYBOARD_KEYS = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
      'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
      'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
-     'final', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
+     'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
      'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
      'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
      'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
@@ -19,7 +19,7 @@ KEYBOARD_KEYS = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
      'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
      'shift', 'shiftleft', 'shiftright', 'sleep', 'stop', 'subtract', 'tab',
-     'up', 'volumedown', 'volumemute', 'volumeup', 'winleft', 'winright']
+     'up', 'volumedown', 'volumemute', 'volumeup', 'winleft', 'winright', 'yen']
 
 
 def isShiftCharacter(character):

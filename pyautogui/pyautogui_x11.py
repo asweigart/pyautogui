@@ -104,6 +104,9 @@ def _keyDown(character):
     Returns:
       None
     """
+    if key not in keyboardMapping or keyboardMapping[key] is None:
+        return
+
     if type(character) == int:
         fake_input(_display, X.KeyPress, character)
         _display.sync()
@@ -135,6 +138,9 @@ def _keyUp(character):
     Release a given character key. Also works with character keycodes as
     integers, but not keysyms.
     """
+    if key not in keyboardMapping or keyboardMapping[key] is None:
+        return
+
     if type(character) == int:
         keycode = character
     else:

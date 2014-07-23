@@ -267,8 +267,13 @@ def _keyDown(key):
     Returns:
       None
     """
+    if key not in keyboardMapping or keyboardMapping[key] is None:
+        return
 
     needsShift = pyautogui.util.isShiftCharacter(key)
+
+    """
+    # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
     if key in keyboardMapping.keys():
         vkCode = keyboardMapping[key]
     elif len(key) == 1:
@@ -279,6 +284,12 @@ def _keyDown(key):
         if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
             vkCode -= 0x100
             needsShift = True
+    """
+
+    vkCode = keyboardMapping[key]
+    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
+        vkCode -= 0x100
+        needsShift = True
 
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
@@ -297,7 +308,12 @@ def _keyUp(key):
     Returns:
       None
     """
+    if key not in keyboardMapping or keyboardMapping[key] is None:
+        return
+
     needsShift = pyautogui.util.isShiftCharacter(key)
+    """
+    # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
     if key in keyboardMapping.keys():
         vkCode = keyboardMapping[key]
     elif len(key) == 1:
@@ -308,6 +324,11 @@ def _keyUp(key):
         if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
             vkCode -= 0x100
             needsShift = True
+    """
+    vkCode = keyboardMapping[key]
+    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
+        vkCode -= 0x100
+        needsShift = True
 
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT

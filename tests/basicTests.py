@@ -41,20 +41,20 @@ class TestGeneral(unittest.TestCase):
     def test_size(self):
         width, height = pyautogui.size()
 
-        self.assertTrue(type(width) == int)
-        self.assertTrue(type(height) == int)
-        self.assertTrue(width > 0)
-        self.assertTrue(height > 0)
+        self.assertTrue(type(width) == int, 'Type of width is %s' % (type(width)))
+        self.assertTrue(type(height) == int, 'Type of height is %s' % (type(height)))
+        self.assertTrue(width > 0, 'Width is set to %s' % (width))
+        self.assertTrue(height > 0, 'Height is set to %s' % (height))
 
     def test_position(self):
         mousex, mousey = pyautogui.position()
 
         if runningOnPython2:
-            self.assertTrue(type(mousex) == long)
-            self.assertTrue(type(mousey) == long)
+            self.assertTrue(type(mousex) == long, 'Type of mousex is %s' % (type(mousex)))
+            self.assertTrue(type(mousey) == long, 'Type of mousey is %s' % (type(mousey)))
         else:
-            self.assertTrue(type(mousex) == int)
-            self.assertTrue(type(mousey) == int)
+            self.assertTrue(type(mousex) == int, 'Type of mousex is %s' % (type(mousex)))
+            self.assertTrue(type(mousey) == int, 'Type of mousey is %s' % (type(mousey)))
 
     def test_onScreen(self):
         width, height = pyautogui.size()
@@ -207,6 +207,11 @@ class TestKeyboard(unittest.TestCase):
             response = input()
         self.assertEqual(response, allKeys)
 
+    def checkForValidCharacters(self, msg):
+        for c in msg:
+            self.assertTrue(pyautogui.isValidKey(c), '"%c" is not a valid key on platform %s' % (c, sys.platform))
+
+
     def test_typewrite_slow(self):
 
         # Test out the interval parameter to make sure it adds pauses.
@@ -218,7 +223,7 @@ class TestKeyboard(unittest.TestCase):
         else:
             response = input()
         self.assertEqual(response, 'Hello world!')
-        self.assertTrue(time.time() > startTime + 1.2)
+        self.assertTrue(time.time() - startTime >  1.2, 'Only took %s seconds, expected > 1.2 seconds.' % (time.time() - startTime))
 
     def test_typewrite_editable(self):
         # Backspace test
