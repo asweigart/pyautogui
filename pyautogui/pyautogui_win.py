@@ -4,7 +4,6 @@
 
 import ctypes
 import ctypes.wintypes
-import pyautogui
 import pyautogui.util
 
 import sys
@@ -102,12 +101,15 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.util.KEYBOARD_KEYS])
 keyboardMapping.update({
     'backspace': 0x08, # VK_BACK
+    '\b': 0x08, # VK_BACK
     'tab': 0x09, # VK_TAB
+    '\t': 0x09,
     'clear': 0x0c, # VK_CLEAR
     'enter': 0x0d, # VK_RETURN
+    '\n': 0x0d, # VK_RETURN
     'return': 0x0d, # VK_RETURN
     'shift': 0x10, # VK_SHIFT
     'ctrl': 0x11, # VK_CONTROL
@@ -127,7 +129,7 @@ keyboardMapping.update({
     'nonconvert': 0x1d, # VK_NONCONVERT
     'accept': 0x1e, # VK_ACCEPT
     'modechange': 0x1f, # VK_MODECHANGE
-    #' ': 0x20, # VK_SPACE
+    ' ': 0x20, # VK_SPACE
     'pgup': 0x21, # VK_PRIOR
     'pgdn': 0x22, # VK_NEXT
     'pageup': 0x21, # VK_PRIOR
@@ -245,8 +247,8 @@ keyboardMapping.update({
 
 
 # Trading memory for time" populate keyboardMapping so we don't have to call VkKeyScanA each time.
-for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`1234567890-=[]\;',./""":
-    keyboardMapping[c] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(c))
+for c in range(32, 128):
+    keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
 
 def _keyDown(character):
@@ -348,7 +350,7 @@ def _sendMouseEvent(ev, x, y, dwData=0):
     #inputStruct.type = INPUT_MOUSE
     #ctypes.windll.user32.SendInput(1, ctypes.pointer(inputStruct), ctypes.sizeof(inputStruct))
 
-    width, height = size()
+    width, height = _size()
     convertedX = 65536 * x // width + 1
     convertedY = 65536 * y // height + 1
     ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
@@ -359,8 +361,8 @@ def _sendMouseEvent(ev, x, y, dwData=0):
 
 
 def scroll(clicks, x=None, y=None):
-    startx, starty = position()
-    width, height = size()
+    startx, starty = _position()
+    width, height = _size()
 
     if x is None:
         x = startx

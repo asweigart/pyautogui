@@ -1,5 +1,5 @@
 import time
-from pyautogui import *
+#from pyautogui import *
 from Quartz import *
 from AppKit import NSEvent
 
@@ -8,7 +8,7 @@ if sys.platform !=  'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
 
 
-__all__ = ('_keyUp', '_keyDown', 'position', 'size', '_moveTo', 'scroll', '_mouseDown', '_mouseUp', '_click')
+#__all__ = ('_keyUp', '_keyDown', 'position', 'size', '_moveTo', 'scroll', '_mouseDown', '_mouseUp', '_click')
 
 
 """ Taken from events.h
@@ -18,7 +18,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.util.KEYBOARD_KEYS])
 keyboardMapping.update({
     'a': 0x00,
     's': 0x01,

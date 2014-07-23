@@ -9,7 +9,7 @@ import sys
 if sys.platform in ('java', 'darwin', 'win32'):
     raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
 
-from pyautogui import *
+#from pyautogui import *
 
 """
 Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ), itself derived from her "Crikey" lib.
@@ -131,11 +131,14 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.util.KEYBOARD_KEYS])
 keyboardMapping.update({
     'backspace':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
+    '\b':                _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
     'tab':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
+    '\t':                _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
     'enter':             _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Enter')),
+    '\n':                _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Enter')),
     'return':            _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Return')),
     'shift':             _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Shift_L')),
     'ctrl':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Control_L')),

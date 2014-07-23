@@ -64,7 +64,7 @@ def onScreen(*args):
         x = int(args[0][0])
         y = int(args[0][1])
 
-    width, height = platformModule.size()
+    width, height = platformModule._size()
     return x >= 0 and y >= 0 and x < width and y < height
 
 
@@ -100,7 +100,7 @@ def mouseDown(button='left', x=None, y=None):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
 
     moveTo(x, y)
-    x, y = platformModule.position() # TODO - this isn't right. We need to check the params.
+    x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseDown('left', x, y)
     elif button == 2 or str(button).lower() == 'middle':
@@ -136,7 +136,7 @@ def mouseUp(button='left', x=None, y=None):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
 
     moveTo(x, y)
-    x, y = platformModule.position()
+    x, y = platformModule._position()
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseUp('left', x, y)
     elif button == 2 or str(button).lower() == 'middle':
@@ -177,7 +177,7 @@ def click(button='left', x=None, y=None, clicks=1, interval=0.0):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
 
     moveTo(x, y)
-    x, y = platformModule.position()
+    x, y = platformModule._position()
     for i in range(clicks):
         if button == 1 or str(button).lower() == 'left':
             platformModule._click('left', x, y)
@@ -410,7 +410,7 @@ def moveRel(x=0, y=0, duration=0.0, tween=pyautogui.tweens.linearTween):
     if x == 0 and y == 0:
         return # no-op case
 
-    mousex, mousey = platformModule.position()
+    mousex, mousey = platformModule._position()
     moveTo(mousex + x, mousey + y, duration, tween)
 
 
@@ -489,8 +489,8 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
     if x is None and y is None:
         return # special case for no mouse movement at all
 
-    width, height = platformModule.size()
-    startx, starty = platformModule.position()
+    width, height = platformModule._size()
+    startx, starty = platformModule._position()
 
     # None values means "use current position". Convert x and y to ints.
     x = startx if x is None else int(x)
@@ -529,7 +529,6 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 # Keyboard Functions
 # ==================
 
-KEYBOARD_KEYS = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace', 'browserback', 'browserfavorites', 'browserforward', 'browserhome', 'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear', 'convert', 'ctrl', 'ctrlleft', 'ctrlright', 'decimal', 'del', 'delete', 'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20', 'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'final', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja', 'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail', 'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack', 'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6', 'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn', 'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn', 'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator', 'shift', 'shiftleft', 'shiftright', 'sleep', 'stop', 'subtract', 'tab', 'up', 'volumedown', 'volumemute', 'volumeup', 'winleft', 'winright']
 
 def isValidKey(key):
     """Returns a Boolean value if the given key is a valid value to pass to
@@ -560,7 +559,7 @@ def keyDown(key):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      KEYBOARD_KEYS.
+      pyautogui.util.KEYBOARD_KEYS.
 
     Returns:
       None
@@ -574,7 +573,7 @@ def keyUp(key):
 
     Args:
       key (str): The key to be released up. The valid names are listed in
-      KEYBOARD_KEYS.
+      pyautogui.util.KEYBOARD_KEYS.
 
     Returns:
       None
@@ -590,7 +589,7 @@ def press(key):
     happen if a keyboard key was held down on a text field.
 
     Args:
-      key (str): The key to be pressed.
+      key (str): The key to be pressed
 
     Returns:
       None
@@ -613,15 +612,14 @@ def typewrite(message, interval=0.0):
 
     Args:
       message (str, list): If a string, then the characters to be pressed. If a
-      list, then the key names of the keys to press in order. The valid names
-      are listed in KEYBOARD_KEYS.
-    interval (float, optional): The number of seconds in between each press.
+        list, then the key names of the keys to press in order. The valid names
+        are listed in pyautogui.util.KEYBOARD_KEYS.
+      interval (float, optional): The number of seconds in between each press.
         0.0 by default, for no pause in between presses.
 
     Returns:
       None
     """
-    message = str(message)
     interval = float(interval)
 
 
