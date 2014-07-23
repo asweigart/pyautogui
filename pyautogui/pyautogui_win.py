@@ -102,7 +102,8 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-winKB ={
+keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping.update({
     'backspace': 0x08, # VK_BACK
     'tab': 0x09, # VK_TAB
     'clear': 0x0c, # VK_CLEAR
@@ -240,19 +241,20 @@ winKB ={
     #'': 0xfc, # VK_NONAME
     #'': 0xfd, # VK_PA1
     #'': 0xfe, # VK_OEM_CLEAR
-}
+})
 
-# Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
+
+# Trading memory for time" populate keyboardMapping so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`1234567890-=[]\;',./""":
-    winKB[c] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(c))
+    keyboardMapping[c] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(c))
 
 
 def _keyDown(character):
     needsShift = pyautogui.util.isShiftCharacter(character)
-    if character in winKB.keys():
-        vkCode = winKB[character]
+    if character in keyboardMapping.keys():
+        vkCode = keyboardMapping[character]
     elif len(character) == 1:
-        # note: I could use this case to update winKB to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
+        # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
         vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(character))
         if vkCode == -1:
             raise ValueError('There is no VK code for character "%s"' % (character))
@@ -268,10 +270,10 @@ def _keyDown(character):
 
 def _keyUp(character):
     needsShift = pyautogui.util.isShiftCharacter(character)
-    if character in winKB.keys():
-        vkCode = winKB[character]
+    if character in keyboardMapping.keys():
+        vkCode = keyboardMapping[character]
     elif len(character) == 1:
-        # note: I could use this case to update winKB to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
+        # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
         vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(character))
         if vkCode == -1:
             raise ValueError('There is no VK code for character "%s"' % (character))
@@ -285,13 +287,13 @@ def _keyUp(character):
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
-def position():
+def _position():
     cursor = POINT()
     ctypes.windll.user32.GetCursorPos(ctypes.byref(cursor))
     return (cursor.x, cursor.y)
 
 
-def size():
+def _size():
     return (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
 
 

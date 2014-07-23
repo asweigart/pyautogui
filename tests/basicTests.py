@@ -48,6 +48,36 @@ class TestBasic(unittest.TestCase):
         self.assertTrue(type(mousex) == int)
         self.assertTrue(type(mousey) == int)
 
+    def test_onScreen(self):
+        width, height = pyautogui.size()
+        halfWidth = int(width / 2)
+        halfHeight = int(height / 2)
+
+        self.assertTrue(pyautogui.onScreen(0, 0))
+        self.assertTrue(pyautogui.onScreen([0, 0]))
+
+        self.assertTrue(pyautogui.onScreen(halfWidth, 0))
+        self.assertTrue(pyautogui.onScreen([halfWidth, 0]))
+        self.assertTrue(pyautogui.onScreen(0, halfHeight))
+        self.assertTrue(pyautogui.onScreen([0, halfHeight]))
+        self.assertTrue(pyautogui.onScreen(halfWidth, halfHeight))
+        self.assertTrue(pyautogui.onScreen([halfWidth, halfHeight]))
+
+        self.assertFalse(pyautogui.onScreen(-1, 0))
+        self.assertFalse(pyautogui.onScreen([-1, 0]))
+        self.assertFalse(pyautogui.onScreen(-1, -1))
+        self.assertFalse(pyautogui.onScreen([-1, -1]))
+        self.assertFalse(pyautogui.onScreen(0, -1))
+        self.assertFalse(pyautogui.onScreen([0, -1]))
+
+        self.assertFalse(pyautogui.onScreen(width, 0))
+        self.assertFalse(pyautogui.onScreen([width, 0]))
+        self.assertFalse(pyautogui.onScreen(0, height))
+        self.assertFalse(pyautogui.onScreen([0, height]))
+        self.assertFalse(pyautogui.onScreen(width, height))
+        self.assertFalse(pyautogui.onScreen([width, height]))
+
+
     def test_moveTo(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
 

@@ -18,7 +18,8 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-osxKB = {
+keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping.update({
     'a': 0x00,
     's': 0x01,
     'd': 0x02,
@@ -70,7 +71,7 @@ osxKB = {
     '\r': 0x24,
     '\t': 0x30,
     'shift': 0x38
-}
+})
 
 # Taken from ev_keymap.h
 # http://www.opensource.apple.com/source/IOHIDFamily/IOHIDFamily-86.1/IOHIDSystem/IOKit/hidsystem/ev_keymap.h
@@ -119,16 +120,16 @@ def _normalKeyEvent(self, key, updown):
 
     try:
         if isShiftCharacter(key):
-            key_code = osxKB[key.lower()]
+            key_code = keyboardMapping[key.lower()]
 
             event = CGEventCreateKeyboardEvent(None,
-                        osxKB['shift'], updown == 'down')
+                        keyboardMapping['shift'], updown == 'down')
             CGEventPost(kCGHIDEventTap, event)
             # Tiny sleep to let OS X catch up on us pressing shift
             time.sleep(.01) # TODO - test to see if this is needed.
 
         else:
-            key_code = osxKB[key]
+            key_code = keyboardMapping[key]
 
         event = CGEventCreateKeyboardEvent(None, key_code, updown == 'down')
         CGEventPost(kCGHIDEventTap, event)
@@ -170,12 +171,12 @@ def _specialKeyEvent(self, key, updown):
 
 
 
-def position():
+def _position():
     loc = NSEvent.mouseLocation()
     return loc.x, CGDisplayPixelsHigh(0) - loc.y
 
 
-def size():
+def _size():
     return CGDisplayPixelsWide(0), CGDisplayPixelsHigh(0)
 
 

@@ -15,12 +15,12 @@ from pyautogui import *
 Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ), itself derived from her "Crikey" lib.
 """
 
-def position():
+def _position():
     coord = _display.screen().root.query_pointer()._data
     return coord["root_x"], coord["root_y"]
 
 
-def size():
+def _size():
     return _display.screen().width_in_pixels, _display.screen().height_in_pixels
 
 
@@ -98,12 +98,12 @@ def _keyDown(character):
 
     needsShift = isShiftCharacter(character)
     if needsShift:
-        fake_input(_display, X.KeyPress, x11KB['shift'])
+        fake_input(_display, X.KeyPress, keyboardMapping['shift'])
 
-    fake_input(_display, X.KeyPress, x11KB[character])
+    fake_input(_display, X.KeyPress, keyboardMapping[character])
 
     if needsShift:
-        fake_input(_display, X.KeyRelease, x11KB['shift'])
+        fake_input(_display, X.KeyRelease, keyboardMapping['shift'])
     _display.sync()
 
 
@@ -115,7 +115,7 @@ def _keyUp(character):
     if type(character) == int:
         keycode = character
     else:
-        keycode = x11KB[character]
+        keycode = keyboardMapping[character]
 
     fake_input(_display, X.KeyRelease, keycode)
     _display.sync()
@@ -125,13 +125,14 @@ def _keyUp(character):
 _display = Display(None) # TODO - Display() can have other values passed to it. Implement that later.
 
 
-""" Information for x11KB derived from PyKeyboard's special_key_assignment() function.
+""" Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
 
 The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-x11KB ={
+keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping.update({
     'backspace':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
     'tab':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
     'enter':             _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Enter')),
@@ -253,8 +254,8 @@ x11KB ={
     '|': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('bar')),
     '}': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('braceright')),
     '~': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('asciitilde')),
-}
+})
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
-    x11KB[c] = Xlib.XK.string_to_keysym(c)
+    keyboardMapping[c] = Xlib.XK.string_to_keysym(c)
