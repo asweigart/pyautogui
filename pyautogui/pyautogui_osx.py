@@ -1,14 +1,14 @@
 import time
-#from pyautogui import *
-from Quartz import *
-from AppKit import NSEvent
+
+import Quartz
+import AppKit
+
+import pyautogui.util
 
 import sys
 if sys.platform !=  'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
 
-
-#__all__ = ('_keyUp', '_keyDown', 'position', 'size', '_moveTo', 'scroll', '_mouseDown', '_mouseUp', '_click')
 
 
 """ Taken from events.h
@@ -69,7 +69,11 @@ keyboardMapping.update({
     '`': 0x32,
     ' ': 0x31,
     '\r': 0x24,
+    '\n': 0x24,
+    'enter': 0x24,
+    'return': 0x24,
     '\t': 0x30,
+    'tab': 0x30,
     'shift': 0x38
 })
 
@@ -102,37 +106,37 @@ special_key_translate_table = {
     'KEYTYPE_ILLUMINATION_TOGGLE': 23
 }
 
-def _keyDown(self, key):
+def _keyDown(key):
     if key in special_key_translate_table:
-        _specialKeyEvent(key, True)
+        _specialKeyEvent(key, 'down')
     else:
-        _normalKeyEvent(key, True)
+        _normalKeyEvent(key, 'down')
 
-def _keyUp(self, key):
+def _keyUp(key):
     if key in special_key_translate_table:
-        _specialKeyEvent(key, False)
+        _specialKeyEvent(key, 'up')
     else:
-        _normalKeyEvent(key, False)
+        _normalKeyEvent(key, 'up')
 
 
-def _normalKeyEvent(self, key, updown):
-    assert updown in ('up', 'down'), "updown argument must be 'up' or 'down'"
+def _normalKeyEvent(key, upDown):
+    assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
 
     try:
-        if isShiftCharacter(key):
+        if pyautogui.util.isShiftCharacter(key):
             key_code = keyboardMapping[key.lower()]
 
-            event = CGEventCreateKeyboardEvent(None,
-                        keyboardMapping['shift'], updown == 'down')
-            CGEventPost(kCGHIDEventTap, event)
+            event = Quartz.CGEventCreateKeyboardEvent(None,
+                        keyboardMapping['shift'], upDown == 'down')
+            Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
             # Tiny sleep to let OS X catch up on us pressing shift
             time.sleep(.01) # TODO - test to see if this is needed.
 
         else:
             key_code = keyboardMapping[key]
 
-        event = CGEventCreateKeyboardEvent(None, key_code, updown == 'down')
-        CGEventPost(kCGHIDEventTap, event)
+        event = Quartz.CGEventCreateKeyboardEvent(None, key_code, upDown == 'down')
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
 
     # TODO - wait, is the shift key's keyup not done?
     # TODO - get rid of this try-except.
@@ -140,28 +144,28 @@ def _normalKeyEvent(self, key, updown):
     except KeyError:
         raise RuntimeError("Key %s not implemented." % (key))
 
-def _specialKeyEvent(self, key, updown):
+def _specialKeyEvent(key, upDown):
     """ Helper method for special keys.
 
     Source: http://stackoverflow.com/questions/11045814/emulate-media-key-press-on-mac
     """
-    assert updown in ('up', 'down'), "updown argument must be 'up' or 'down'"
+    assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
 
     key_code = special_key_translate_table[key]
 
-    ev = NSEvent.otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2_(
-            NSSystemDefined, # type
+    ev = AppKit.NSEvent.otherEventWithType_location_modifierFlags_timestamp_windowNumber_context_subtype_data1_data2_(
+            Quartz.NSSystemDefined, # type
             (0,0), # location
-            0xa00 if updown == 'down' else 0xb00, # flags
+            0xa00 if upDown == 'down' else 0xb00, # flags
             0, # timestamp
             0, # window
             0, # ctx
             8, # subtype
-            (key_code << 16) | ((0xa if updown == 'down' else 0xb) << 8), # data1
+            (key_code << 16) | ((0xa if upDown == 'down' else 0xb) << 8), # data1
             -1 # data2
         )
 
-    CGEventPost(0, ev.CGEvent())
+    Quartz.CGEventPost(0, ev.CGEvent())
 
 
 
@@ -172,12 +176,12 @@ def _specialKeyEvent(self, key, updown):
 
 
 def _position():
-    loc = NSEvent.mouseLocation()
-    return loc.x, CGDisplayPixelsHigh(0) - loc.y
+    loc = AppKit.NSEvent.mouseLocation()
+    return int(loc.x), int(Quartz.CGDisplayPixelsHigh(0) - loc.y)
 
 
 def _size():
-    return CGDisplayPixelsWide(0), CGDisplayPixelsHigh(0)
+    return Quartz.CGDisplayPixelsWide(0), Quartz.CGDisplayPixelsHigh(0)
 
 
 
@@ -186,7 +190,7 @@ def _scroll(clicks, x=None, y=None):
 
 
 """
-According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/CGEventCreateScrollWheelEvent
+According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/Quartz.CGEventCreateScrollWheelEvent
 "Scrolling movement is generally represented by small signed integer values, typically in a range from -10 to +10. Large values may have unexpected results, depending on the application that processes the event."
 The scrolling functions will create multiple events that scroll 10 each, and then scroll the remainder.
 """
@@ -195,85 +199,85 @@ def _vscroll(clicks, x=None, y=None):
     moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
-        scrollWheelEvent = CGEventCreateScrollWheelEvent(
-            None, kCGScrollEventUnitLine, 1,
+        scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
+            None, Quartz.kCGScrollEventUnitLine, 1,
             10 if clicks >= 0 else -10)
-        CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
-    scrollWheelEvent = CGEventCreateScrollWheelEvent(
-        None, kCGScrollEventUnitLine, 1,
+    scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
+        None, Quartz.kCGScrollEventUnitLine, 1,
         (clicks % 10) if clicks >= 0 else (-1 * clicks % 10))
-    CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
 def _hscroll(clicks, x=None, y=None):
     moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
-        scrollWheelEvent = CGEventCreateScrollWheelEvent(
-            None, kCGScrollEventUnitLine, 2,
+        scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
+            None, Quartz.kCGScrollEventUnitLine, 2,
             None,
             10 if clicks >= 0 else -10)
-        CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
-    scrollWheelEvent = CGEventCreateScrollWheelEvent(
-        None, kCGScrollEventUnitLine, 2,
+    scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
+        None, Quartz.kCGScrollEventUnitLine, 2,
         None,
         (clicks % 10) if clicks >= 0 else (-1 * clicks % 10))
-    CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
 def _mouseDown(button, x, y):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDown, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(Quartz.kCGEventLeftMouseDown, x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDown, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(Quartz.kCGEventOtherMouseDown, x, y, Quartz.kCGMouseButtonCenter)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDown, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(Quartz.kCGEventRightMouseDown, x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _mouseUp(button, x, y):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseUp, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(Quartz.kCGEventLeftMouseUp, x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseUp, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(Quartz.kCGEventOtherMouseUp, x, y, Quartz.kCGMouseButtonCenter)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseUp, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(Quartz.kCGEventRightMouseUp, x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
-def _click():
+def _click(button, x, y):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDown, x, y, kCGMouseButtonLeft)
-        _sendMouseEvent(kCGEventLeftMouseUp, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(Quartz.kCGEventLeftMouseDown, x, y, Quartz.kCGMouseButtonLeft)
+        _sendMouseEvent(Quartz.kCGEventLeftMouseUp, x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDown, x, y, kCGMouseButtonCenter)
-        _sendMouseEvent(kCGEventOtherMouseUp, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(Quartz.kCGEventOtherMouseDown, x, y, Quartz.kCGMouseButtonCenter)
+        _sendMouseEvent(Quartz.kCGEventOtherMouseUp, x, y, Quartz.kCGMouseButtonCenter)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDown, x, y, kCGMouseButtonRight)
-        _sendMouseEvent(kCGEventRightMouseUp, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(Quartz.kCGEventRightMouseDown, x, y, Quartz.kCGMouseButtonRight)
+        _sendMouseEvent(Quartz.kCGEventRightMouseUp, x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _sendMouseEvent(ev, x, y, button):
-    mouseEvent = CGEventCreateMouseEvent(None, ev, (x, y), button)
-    CGEventPost(kCGHIDEventTap, mouseEvent)
+    mouseEvent = Quartz.CGEventCreateMouseEvent(None, ev, (x, y), button)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
 
 
 def _dragTo(x, y, button):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDragged , x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(Quartz.kCGEventLeftMouseDragged , x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDragged , x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(Quartz.kCGEventOtherMouseDragged , x, y, Quartz.kCGMouseButtonCenter)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDragged , x, y, kCGMouseButtonRight)
+        _sendMouseEvent(Quartz.kCGEventRightMouseDragged , x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _moveTo(x, y):
-    _sendMouseEvent(kCGEventMouseMoved, x, y, 0)
+    _sendMouseEvent(Quartz.kCGEventMouseMoved, x, y, 0)
