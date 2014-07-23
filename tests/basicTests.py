@@ -93,33 +93,33 @@ class TestMouse(unittest.TestCase):
         # moving the mouse
         pyautogui.moveTo(1, 1)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
         # no coordinate specified (should be a NO-OP)
         pyautogui.moveTo(None, None)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
         # moving the mouse to a new location
         pyautogui.moveTo(2, 2)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (2, 2))
+        self.assertTrue(mousepos == (2, 2), 'mousepos set to %s' % (mousepos,))
 
         # moving the mouse over time (1/5 second)
         pyautogui.moveTo(1, 1, 0.2)
         mousepos = pyautogui.position()
 
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
         # moving the mouse with only x specified
         pyautogui.moveTo(5, None)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 1))
+        self.assertTrue(mousepos == (5, 1), 'mousepos set to %s' % (mousepos,))
 
         # ...and only y specified
         pyautogui.moveTo(None, 5)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5))
+        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
     def test_moveRel(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
@@ -127,37 +127,37 @@ class TestMouse(unittest.TestCase):
         # start at 1,1
         pyautogui.moveTo(1, 1)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
         # move down and right
         pyautogui.moveRel(4, 4)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5))
+        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
         # move up and left
         pyautogui.moveRel(-4, -4)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
         # move right
         pyautogui.moveRel(4, None)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 1))
+        self.assertTrue(mousepos == (5, 1), 'mousepos set to %s' % (mousepos,))
 
         # move down
         pyautogui.moveRel(None, 4)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5))
+        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
         # move left
         pyautogui.moveRel(-4, None)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 5))
+        self.assertTrue(mousepos == (1, 5), 'mousepos set to %s' % (mousepos,))
 
         # move up
         pyautogui.moveRel(None, -4)
         mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1))
+        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
 
 class TypewriteThread(threading.Thread):
