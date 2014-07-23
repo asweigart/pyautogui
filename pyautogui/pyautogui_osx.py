@@ -241,13 +241,14 @@ def _normalKeyEvent(key, upDown):
                         keyboardMapping['shift'], upDown == 'down')
             Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
             # Tiny sleep to let OS X catch up on us pressing shift
-            time.sleep(.01) # TODO - test to see if this is needed.
+            time.sleep(0.01)
 
         else:
             key_code = keyboardMapping[key]
 
         event = Quartz.CGEventCreateKeyboardEvent(None, key_code, upDown == 'down')
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
+        time.sleep(0.01)
 
     # TODO - wait, is the shift key's keyup not done?
     # TODO - get rid of this try-except.
@@ -392,3 +393,4 @@ def _dragTo(x, y, button):
 
 def _moveTo(x, y):
     _sendMouseEvent(Quartz.kCGEventMouseMoved, x, y, 0)
+    time.sleep(0.01) # needed to allow OS time to catch up.
