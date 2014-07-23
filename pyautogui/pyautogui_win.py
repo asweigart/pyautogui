@@ -21,6 +21,7 @@ SendInput() is documented here: http://msdn.microsoft.com/en-us/library/windows/
 UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mouse_event()."""
 
 
+# Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
@@ -33,6 +34,7 @@ MOUSEEVENTF_MIDDLEUP = 0x0040
 MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
 MOUSEEVENTF_WHEEL = 0x0800
+MOUSEEVENTF_HWHEEL = 0x01000
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
 KEYEVENTF_KEYUP = 0x0002
@@ -44,6 +46,7 @@ INPUT_KEYBOARD = 1
 
 # This ctypes structure is for a Win32 POINT structure,
 # which is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/dd162805(v=vs.85).aspx
+# The POINT structure is used by GetCursorPos().
 class POINT(ctypes.Structure):
     _fields_ = [("x", ctypes.c_ulong),
                 ("y", ctypes.c_ulong)]
@@ -106,7 +109,7 @@ keyboardMapping.update({
     'backspace': 0x08, # VK_BACK
     '\b': 0x08, # VK_BACK
     'tab': 0x09, # VK_TAB
-    '\t': 0x09,
+    '\t': 0x09, # VK_TAB
     'clear': 0x0c, # VK_CLEAR
     'enter': 0x0d, # VK_RETURN
     '\n': 0x0d, # VK_RETURN
@@ -245,21 +248,34 @@ keyboardMapping.update({
     #'': 0xfe, # VK_OEM_CLEAR
 })
 
-
-# Trading memory for time" populate keyboardMapping so we don't have to call VkKeyScanA each time.
+# Populate the basic printable ascii characters.
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
 
-def _keyDown(character):
-    needsShift = pyautogui.util.isShiftCharacter(character)
-    if character in keyboardMapping.keys():
-        vkCode = keyboardMapping[character]
-    elif len(character) == 1:
+def _keyDown(key):
+    """Performs a keyboard key press without the release. This will put that
+    key in a held down state.
+
+    NOTE: For some reason, this does not seem to cause key repeats like would
+    happen if a keyboard key was held down on a text field.
+
+    Args:
+      key (str): The key to be pressed down. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS.
+
+    Returns:
+      None
+    """
+
+    needsShift = pyautogui.util.isShiftkey(key)
+    if key in keyboardMapping.keys():
+        vkCode = keyboardMapping[key]
+    elif len(key) == 1:
         # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
-        vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(character))
+        vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(key))
         if vkCode == -1:
-            raise ValueError('There is no VK code for character "%s"' % (character))
+            raise ValueError('There is no VK code for key "%s"' % (key))
         if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
             vkCode -= 0x100
             needsShift = True
@@ -270,15 +286,25 @@ def _keyDown(character):
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
-def _keyUp(character):
-    needsShift = pyautogui.util.isShiftCharacter(character)
-    if character in keyboardMapping.keys():
-        vkCode = keyboardMapping[character]
-    elif len(character) == 1:
+
+def _keyUp(key):
+    """Performs a keyboard key release (without the press down beforehand).
+
+    Args:
+      key (str): The key to be released up. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS.
+
+    Returns:
+      None
+    """
+    needsShift = pyautogui.util.isShiftkey(key)
+    if key in keyboardMapping.keys():
+        vkCode = keyboardMapping[key]
+    elif len(key) == 1:
         # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
-        vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(character))
+        vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(key))
         if vkCode == -1:
-            raise ValueError('There is no VK code for character "%s"' % (character))
+            raise ValueError('There is no VK code for key "%s"' % (key))
         if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
             vkCode -= 0x100
             needsShift = True
@@ -289,21 +315,56 @@ def _keyUp(character):
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
+
 def _position():
+    """Returns the current xy coordinates of the mouse cursor as a two-integer
+    tuple by calling the GetCursorPos() win32 function.
+
+    Returns:
+      (x, y) tuple of the current xy coordinates of the mouse cursor.
+    """
+
     cursor = POINT()
     ctypes.windll.user32.GetCursorPos(ctypes.byref(cursor))
     return (cursor.x, cursor.y)
 
 
 def _size():
+    """Returns the width and height of the screen as a two-integer tuple.
+
+    Returns:
+      (width, height) tuple of the screen size, in pixels.
+    """
     return (ctypes.windll.user32.GetSystemMetrics(0), ctypes.windll.user32.GetSystemMetrics(1))
 
 
 def _moveTo(x, y):
+    """Send the mouse move event to Windows by calling SetCursorPos() win32
+    function.
+
+    Args:
+      button (str): The mouse button, either 'left', 'middle', or 'right'
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
     ctypes.windll.user32.SetCursorPos(x, y)
 
 
 def _mouseDown(button, x, y):
+    """Send the mouse down event to Windows by calling the mouse_event() win32
+    function.
+
+    Args:
+      button (str): The mouse button, either 'left', 'middle', or 'right'
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
     if button == 'left':
         _sendMouseEvent(MOUSEEVENTF_LEFTDOWN, x, y)
     elif button == 'middle':
@@ -315,6 +376,17 @@ def _mouseDown(button, x, y):
 
 
 def _mouseUp(button, x, y):
+    """Send the mouse up event to Windows by calling the mouse_event() win32
+    function.
+
+    Args:
+      button (str): The mouse button, either 'left', 'middle', or 'right'
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
     if button == 'left':
         _sendMouseEvent(MOUSEEVENTF_LEFTUP, x, y)
     elif button == 'middle':
@@ -326,6 +398,17 @@ def _mouseUp(button, x, y):
 
 
 def _click(button, x, y):
+    """Send the mouse click event to Windows by calling the mouse_event() win32
+    function.
+
+    Args:
+      button (str): The mouse button, either 'left', 'middle', or 'right'
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
     if button == 'left':
         _sendMouseEvent(MOUSEEVENTF_LEFTCLICK, x, y)
     elif button == 'middle':
@@ -337,6 +420,20 @@ def _click(button, x, y):
 
 
 def _sendMouseEvent(ev, x, y, dwData=0):
+    """The helper function that actually makes the call to the mouse_event()
+    win32 function.
+
+    Args:
+      ev (int): The win32 code for the mouse event. Use one of the MOUSEEVENTF_*
+      constants for this argument.
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+      dwData (int): The argument for mouse_event()'s dwData parameter. So far
+        this is only used by mouse scrolling.
+
+    Returns:
+      None
+    """
     assert x != None and y != None, 'x and y cannot be set to None'
     # TODO: ARG! For some reason, SendInput isn't working for mouse events. I'm switching to using the older mouse_event win32 function.
     #mouseStruct = MOUSEINPUT()
@@ -359,8 +456,19 @@ def _sendMouseEvent(ev, x, y, dwData=0):
         raise ctypes.WinError()
 
 
+def _scroll(clicks, x=None, y=None):
+    """Send the mouse vertical scroll event to Windows by calling the
+    mouse_event() win32 function.
 
-def scroll(clicks, x=None, y=None):
+    Args:
+      clicks (int): The amount of scrolling to do. A positive value is the mouse
+      wheel moving forward (scrolling up), a negative value is backwards (down).
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
     startx, starty = _position()
     width, height = _size()
 
@@ -382,5 +490,32 @@ def scroll(clicks, x=None, y=None):
     _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
 
 
-vscroll = scroll
-hscroll = scroll
+def _hscroll(clicks, x, y):
+    """Send the mouse horizontal scroll event to Windows by calling the
+    mouse_event() win32 function.
+
+    Args:
+      clicks (int): The amount of scrolling to do. A positive value is the mouse
+      wheel moving right, a negative value is moving left.
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
+    return _scroll(clicks, x, y)
+
+
+def _vscroll(clicks, x, y):
+    """A wrapper for _scroll(), which does vertical scrolling.
+
+    Args:
+      clicks (int): The amount of scrolling to do. A positive value is the mouse
+      wheel moving forward (scrolling up), a negative value is backwards (down).
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
+    return _scroll(clicks, x, y)

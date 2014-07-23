@@ -170,10 +170,9 @@ def click(button='left', x=None, y=None, clicks=1, interval=0.0):
       None
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
-        5, 6, or 7
+      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3
     """
-    if button not in ('left', 'middle', 'right', 1, 2, 3, 4, 5, 6, 7):
+    if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
 
     moveTo(x, y)
@@ -214,7 +213,7 @@ def rightClick(x=None, y=None):
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    click('right', x, y, 1, interval)
+    click('right', x, y)
 
 def doubleClick(x=None, y=None, interval=0.0, button='left'):
     """Performs a double click.
@@ -302,7 +301,7 @@ def scroll(clicks, x=None, y=None):
     Returns:
       None
     """
-    return platformModule.scroll(clicks, x, y)
+    return platformModule._scroll(clicks, x, y)
 
 def hscroll(clicks, x=None, y=None):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
@@ -323,7 +322,7 @@ def hscroll(clicks, x=None, y=None):
     Returns:
       None
     """
-    return platformModule.hscroll(clicks, x, y)
+    return platformModule._hscroll(clicks, x, y)
 
 def vscroll(clicks, x=None, y=None):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
@@ -344,7 +343,7 @@ def vscroll(clicks, x=None, y=None):
     Returns:
       None
     """
-    return platformModule.vscroll(clicks, x, y)
+    return platformModule._vscroll(clicks, x, y)
 
 
 
@@ -481,6 +480,36 @@ def dragRel(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, bu
 
 
 def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
+    """Handles the actual move or drag event, since different platforms
+    implement them differently.
+
+    On Windows & Linux, a drag is a normal mouse move while a mouse button is
+    held down. On OS X, a distinct "drag" event must be used instead.
+
+    The code for moving and dragging the mouse is similar, so this function
+    handles both. Users should call the moveTo() or dragTo() functions instead
+    of calling _mouseMoveDragTo().
+
+    Args:
+      moveOrDrag (str): Either 'move' or 'drag', for the type of action this is.
+      x (int, float, None, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default.
+      y (int, float, None, optional): How far up (for negative values) or
+        down (for positive values) to move the cursor. 0 by default.
+      duration (float, optional): The amount of time it takes to move the mouse
+        cursor to the new xy coordinates. If 0, then the mouse cursor is moved
+        instantaneously. 0.0 by default.
+      tween (func, optional): The tweening function used if the duration is not
+        0. A linear tween is used by default. See the tweens.py file for
+        details.
+      button (str, int, optional): The mouse button clicked. Must be one of
+        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
+        default.
+
+    Returns:
+      None
+    """
+
     # The move and drag code is similar, but OS X requires a special drag event instead of just a move event when dragging.
     # See https://stackoverflow.com/a/2696107/1893164
 

@@ -1,5 +1,7 @@
 # NOTE - It is a known issue that the keyboard-related functions don't work on Ubuntu VMs in Virtualbox.
 
+import pyautogui.util
+
 from Xlib.display import Display
 from Xlib import X
 from Xlib.ext.xtest import fake_input
@@ -25,7 +27,7 @@ def _size():
 
 
 
-def vscroll(clicks, x=None, y=None):
+def _vscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     if clicks == 0:
         return
@@ -35,10 +37,10 @@ def vscroll(clicks, x=None, y=None):
     else:
         button = 5 # scroll down
 
-    click(x, y, button=button, clicks=abs(clicks))
+    _click(x, y, button=button, clicks=abs(clicks))
 
 
-def hscroll(clicks, x=None, y=None):
+def _hscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     if clicks == 0:
         return
@@ -48,13 +50,11 @@ def hscroll(clicks, x=None, y=None):
     else:
         button = 6 # scroll left
 
-    click(x, y, button=button, clicks=abs(clicks))
+    _click(x, y, button=button, clicks=abs(clicks))
 
 
-
-#def scroll(clicks, x=None, y=None):
-#    return vscroll(clicks, x, y)
-scroll = vscroll
+def _scroll(clicks, x=None, y=None):
+    return _vscroll(clicks, x, y)
 
 
 def _click(button, x, y):
@@ -91,12 +91,25 @@ def _mouseUp(button, x, y):
 
 
 def _keyDown(character):
+    """Performs a keyboard key press without the release. This will put that
+    key in a held down state.
+
+    NOTE: For some reason, this does not seem to cause key repeats like would
+    happen if a keyboard key was held down on a text field.
+
+    Args:
+      key (str): The key to be pressed down. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS.
+
+    Returns:
+      None
+    """
     if type(character) == int:
         fake_input(_display, X.KeyPress, character)
         _display.sync()
         return
 
-    needsShift = isShiftCharacter(character)
+    needsShift = pyautogui.util.isShiftCharacter(character)
     if needsShift:
         fake_input(_display, X.KeyPress, keyboardMapping['shift'])
 
@@ -108,6 +121,16 @@ def _keyDown(character):
 
 
 def _keyUp(character):
+    """Performs a keyboard key release (without the press down beforehand).
+
+    Args:
+      key (str): The key to be released up. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS.
+
+    Returns:
+      None
+    """
+
     """
     Release a given character key. Also works with character keycodes as
     integers, but not keysyms.

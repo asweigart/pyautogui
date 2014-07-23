@@ -181,8 +181,8 @@ def _size():
 
 
 
-def scroll(clicks, x=None, y=None):
-    vscroll(clicks, x, y)
+def _scroll(clicks, x=None, y=None):
+    _vscroll(clicks, x, y)
 
 
 """
@@ -191,7 +191,7 @@ According to https://developer.apple.com/library/mac/documentation/Carbon/Refere
 The scrolling functions will create multiple events that scroll 10 each, and then scroll the remainder.
 """
 
-def vscroll(clicks, x=None, y=None):
+def _vscroll(clicks, x=None, y=None):
     moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
@@ -206,7 +206,7 @@ def vscroll(clicks, x=None, y=None):
     CGEventPost(kCGHIDEventTap, scrollWheelEvent)
 
 
-def hscroll(clicks, x=None, y=None):
+def _hscroll(clicks, x=None, y=None):
     moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
