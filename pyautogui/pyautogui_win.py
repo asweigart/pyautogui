@@ -154,6 +154,7 @@ keyboardMapping.update({
     'del': 0x2e, # VK_DELETE
     'delete': 0x2e, # VK_DELETE
     'help': 0x2f, # VK_HELP
+    'win': 0x5b, # VK_LWIN
     'winleft': 0x5b, # VK_LWIN
     'winright': 0x5c, # VK_RWIN
     'apps': 0x5d, # VK_APPS

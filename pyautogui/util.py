@@ -19,7 +19,8 @@ KEYBOARD_KEYS = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
      'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
      'shift', 'shiftleft', 'shiftright', 'sleep', 'stop', 'subtract', 'tab',
-     'up', 'volumedown', 'volumemute', 'volumeup', 'winleft', 'winright', 'yen']
+     'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
+     'command', 'option', 'optionleft', 'optionright']
 
 
 def isShiftCharacter(character):
