@@ -447,7 +447,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, but
     mouseUp(button)
 
 
-def dragRel(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, button='left'):
+def dragRel(x=None, y=0, duration=0.0, tween=pyautogui.tweens.linearTween, button='left'):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -474,8 +474,17 @@ def dragRel(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, bu
     Returns:
       None
     """
+    if x is None:
+        x = 0
+    if y is None:
+        y = 0
+
+    if x == 0 and y == 0:
+        return # no-op case
+
+    mousex, mousey = platformModule._position()
     mouseDown(button)
-    _mouseMoveDragTo('drag', x, y, duration, tween, button)
+    _mouseMoveDragTo('drag', mousex + x, mousey + y, duration, tween, button)
     mouseUp(button)
 
 
@@ -515,6 +524,9 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     assert moveOrDrag in ('move', 'drag'), "moveOrDrag must be in ('move', 'drag'), not %s" % (moveOrDrag)
 
+    if sys.platform != 'darwin':
+        moveOrDrag = 'move' # only OS X needs to use the drag
+
     if x is None and y is None:
         return # special case for no mouse movement at all
 
@@ -552,6 +564,7 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
         if moveOrDrag == 'move':
             platformModule._moveTo(linePoints[tweenedN][0], linePoints[tweenedN][1])
         else:
+            # only OS X needs the drag event specifically
             platformModule._dragTo(linePoints[tweenedN][0], linePoints[tweenedN][1], button)
 
     # Ensure that no matter what the tween function returns, the mouse ends up
