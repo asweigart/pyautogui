@@ -224,7 +224,9 @@ class TestKeyboard(unittest.TestCase):
         else:
             response = input()
         self.assertEqual(response, 'Hello world!')
-        self.assertTrue(time.time() - startTime >  1.2, 'Only took %s seconds, expected > 1.2 seconds.' % (time.time() - startTime))
+        elapsed = time.time() - startTime
+        self.assertTrue(1.3 < elapsed <  1.4, 'Took %s seconds, expected 1.3 < x 1.4 seconds.' % (elapsed))
+
 
     def test_typewrite_editable(self):
         # Backspace test
@@ -264,6 +266,21 @@ class TestKeyboard(unittest.TestCase):
         else:
             response = input()
         self.assertEqual(response, 'xabcz')
+
+
+    def test_pause(self):
+        oldValue = pyautogui.PAUSE
+
+        startTime = time.time()
+        pyautogui.PAUSE = 0.35 # there should be a 0.35 second pause after each call
+        pyautogui.moveTo(0, 0)
+        pyautogui.moveRel(0,1)
+        pyautogui.moveTo(0, 0)
+
+        elapsed = time.time() - startTime
+        self.assertTrue(1.0 < elapsed <  1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
+
+        pyautogui.PAUSE = oldValue # restore the old PAUSE value
 
 
 if __name__ == '__main__':
