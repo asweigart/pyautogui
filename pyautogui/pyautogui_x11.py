@@ -37,7 +37,7 @@ def _vscroll(clicks, x=None, y=None):
     else:
         button = 5 # scroll down
 
-    _click(x, y, button=button, clicks=abs(clicks))
+    _click(x, y, button=button, clicks=abs(clicks)) # TODO - broken
 
 
 def _hscroll(clicks, x=None, y=None):
@@ -50,14 +50,14 @@ def _hscroll(clicks, x=None, y=None):
     else:
         button = 6 # scroll left
 
-    _click(x, y, button=button, clicks=abs(clicks))
+    _click(x, y, button=button, clicks=abs(clicks)) # TODO - broken
 
 
 def _scroll(clicks, x=None, y=None):
     return _vscroll(clicks, x, y)
 
 
-def _click(button, x, y):
+def _click(x, y, button):
     if button == 'left':
         button = 1
     elif button == 'middle':

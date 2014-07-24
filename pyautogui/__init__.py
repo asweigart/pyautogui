@@ -152,7 +152,7 @@ def mouseUp(button='left', x=None, y=None, _pause=True):
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def click(button='left', x=None, y=None, clicks=1, interval=0.0, _pause=True):
+def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -187,14 +187,14 @@ def click(button='left', x=None, y=None, clicks=1, interval=0.0, _pause=True):
     x, y = platformModule._position()
     for i in range(clicks):
         if button == 1 or str(button).lower() == 'left':
-            platformModule._click('left', x, y)
+            platformModule._click(x, y, 'left')
         elif button == 2 or str(button).lower() == 'middle':
-            platformModule._click('middle', x, y)
+            platformModule._click(x, y, 'middle')
         elif button == 3 or str(button).lower() == 'right':
-            platformModule._click('right', x, y)
+            platformModule._click(x, y, 'right')
         else:
             # These mouse buttons for hor. and vert. scrolling only apply to x11:
-            platformModule._click(button, x, y)
+            platformModule._click(x, y, button)
 
         time.sleep(interval)
 
@@ -224,7 +224,7 @@ def rightClick(x=None, y=None, _pause=True):
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    click('right', x, y, _pause=False)
+    click(x, y, 1, 0.0, 'right', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
@@ -259,7 +259,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
         5, 6, or 7
     """
 
-    click(button, x, y, 2, interval, _pause=False)
+    click(x, y, 2, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
@@ -293,7 +293,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    click(button, x, y, 3, interval, _pause=False)
+    click(x, y, 3, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 

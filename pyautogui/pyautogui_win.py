@@ -419,7 +419,7 @@ def _mouseUp(button, x, y):
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
-def _click(button, x, y):
+def _click(x, y, button):
     """Send the mouse click event to Windows by calling the mouse_event() win32
     function.
 

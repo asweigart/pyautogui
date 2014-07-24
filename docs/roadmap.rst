@@ -13,3 +13,5 @@ Future features planned (not planned for specific versions yet):
 - Click coordinates relative to a window, instead of the entire screen.
 - Make it easier to work on systems with multiple monitors.
 - Basic image recognition, using the Pillow/PIL modules.
+- GetKeyState() type of function
+- Ability to set global hotkey on all platforms so that there can be an easy "kill switch" for GUI automation programs.
