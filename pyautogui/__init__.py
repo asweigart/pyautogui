@@ -219,10 +219,30 @@ def rightClick(x=None, y=None, _pause=True):
 
     Returns:
       None
+    """
+    click(x, y, 1, 0.0, 'right', _pause=False)
+    if _pause and PAUSE != 0:
+        time.sleep(PAUSE)
 
-    Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
-        5, 6, or 7
+
+def middlelick(x=None, y=None, _pause=True):
+    """Performs a middle mouse button click.
+
+    This is a wrapper function for click('right', x, y).
+
+    The x and y parameters detail where the mouse event happens. If None, the
+    current mouse position is used. If a float value, it is rounded down. If
+    outside the boundaries of the screen, the event happens at edge of the
+    screen.
+
+    Args:
+      x (int, float, None, optional): The x position on the screen where the
+        click happens. None by default.
+      y (int, float, None, optional): The y position on the screen where the
+        click happens. None by default.
+
+    Returns:
+      None
     """
     click(x, y, 1, 0.0, 'right', _pause=False)
     if _pause and PAUSE != 0:
@@ -399,7 +419,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, _pa
 
 
 
-def moveRel(x=0, y=0, duration=0.0, tween=pyautogui.tweens.linearTween, _pause=True):
+def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linearTween, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -426,16 +446,16 @@ def moveRel(x=0, y=0, duration=0.0, tween=pyautogui.tweens.linearTween, _pause=T
 
     # This may seem silly, but I wanted the user to be able to pass None for
     # an argument just so that it is consistent with moveTo().
-    if x is None:
-        x = 0
-    if y is None:
-        y = 0
+    if xOffset is None:
+        xOffset = 0
+    if yOffset is None:
+        yOffset = 0
 
-    if x == 0 and y == 0:
+    if xOffset == 0 and yOffset == 0:
         return # no-op case
 
     mousex, mousey = platformModule._position()
-    moveTo(mousex + x, mousey + y, duration, tween, _pause=False)
+    moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
@@ -476,7 +496,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, but
         time.sleep(PAUSE)
 
 
-def dragRel(x=None, y=0, duration=0.0, tween=pyautogui.tweens.linearTween, button='left', _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linearTween, button='left', _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -503,17 +523,17 @@ def dragRel(x=None, y=0, duration=0.0, tween=pyautogui.tweens.linearTween, butto
     Returns:
       None
     """
-    if x is None:
-        x = 0
-    if y is None:
-        y = 0
+    if xOffset is None:
+        xOffset = 0
+    if yOffset is None:
+        yOffset = 0
 
-    if x == 0 and y == 0:
+    if xOffset == 0 and yOffset == 0:
         return # no-op case
 
     mousex, mousey = platformModule._position()
     mouseDown(button, _pause=False)
-    _mouseMoveDragTo('drag', mousex + x, mousey + y, duration, tween, button)
+    _mouseMoveDragTo('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
     mouseUp(button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
