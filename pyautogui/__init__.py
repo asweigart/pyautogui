@@ -225,7 +225,7 @@ def rightClick(x=None, y=None, _pause=True):
         time.sleep(PAUSE)
 
 
-def middlelick(x=None, y=None, _pause=True):
+def middleClick(x=None, y=None, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -244,7 +244,7 @@ def middlelick(x=None, y=None, _pause=True):
     Returns:
       None
     """
-    click(x, y, 1, 0.0, 'right', _pause=False)
+    click(x, y, 1, 0.0, 'middle', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
