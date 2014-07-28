@@ -168,7 +168,7 @@ class TypewriteThread(threading.Thread):
         super(TypewriteThread, self).__init__()
 
     def run(self):
-        time.sleep(0.25)
+        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND!
         pyautogui.typewrite(self.msg, self.interval)
 
 
@@ -225,7 +225,7 @@ class TestKeyboard(unittest.TestCase):
             response = input()
         self.assertEqual(response, 'Hello world!')
         elapsed = time.time() - startTime
-        self.assertTrue(1.3 < elapsed <  1.4, 'Took %s seconds, expected 1.3 < x 1.4 seconds.' % (elapsed))
+        self.assertTrue(1.0 < elapsed <  2.0, 'Took %s seconds, expected 1.0 < x 2.0 seconds.' % (elapsed))
 
 
     def test_typewrite_editable(self):

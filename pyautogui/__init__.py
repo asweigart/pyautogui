@@ -2,6 +2,8 @@
 # BSD license
 # Al Sweigart al@inventwithpython.com
 
+__version__ = '0.9.0'
+
 import sys
 import time
 import pyautogui.tweens
