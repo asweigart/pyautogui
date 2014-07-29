@@ -308,7 +308,7 @@ The scrolling functions will create multiple events that scroll 10 each, and the
 """
 
 def _vscroll(clicks, x=None, y=None):
-    moveTo(x, y)
+    _moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
@@ -323,7 +323,7 @@ def _vscroll(clicks, x=None, y=None):
 
 
 def _hscroll(clicks, x=None, y=None):
-    moveTo(x, y)
+    _moveTo(x, y)
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(

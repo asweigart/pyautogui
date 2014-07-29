@@ -90,7 +90,7 @@ def _mouseUp(button, x, y):
     _display.sync()
 
 
-def _keyDown(character):
+def _keyDown(key):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -107,23 +107,23 @@ def _keyDown(character):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    if type(character) == int:
-        fake_input(_display, X.KeyPress, character)
+    if type(key) == int:
+        fake_input(_display, X.KeyPress, key)
         _display.sync()
         return
 
-    needsShift = pyautogui.util.isShiftCharacter(character)
+    needsShift = pyautogui.util.isShiftCharacter(key)
     if needsShift:
         fake_input(_display, X.KeyPress, keyboardMapping['shift'])
 
-    fake_input(_display, X.KeyPress, keyboardMapping[character])
+    fake_input(_display, X.KeyPress, keyboardMapping[key])
 
     if needsShift:
         fake_input(_display, X.KeyRelease, keyboardMapping['shift'])
     _display.sync()
 
 
-def _keyUp(character):
+def _keyUp(key):
     """Performs a keyboard key release (without the press down beforehand).
 
     Args:
@@ -141,10 +141,10 @@ def _keyUp(character):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    if type(character) == int:
-        keycode = character
+    if type(key) == int:
+        keycode = key
     else:
-        keycode = keyboardMapping[character]
+        keycode = keyboardMapping[key]
 
     fake_input(_display, X.KeyRelease, keycode)
     _display.sync()
@@ -290,4 +290,4 @@ keyboardMapping.update({
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
-    keyboardMapping[c] = Xlib.XK.string_to_keysym(c)
+    keyboardMapping[c] = _display.keysym_to_keycode(Xlib.XK.string_to_keysym(c))
