@@ -1,13 +1,14 @@
 # NOTE - It is a known issue that the keyboard-related functions don't work on Ubuntu VMs in Virtualbox.
 
 import pyautogui.util
+import sys
 
 from Xlib.display import Display
 from Xlib import X
 from Xlib.ext.xtest import fake_input
 import Xlib.XK
 
-import sys
+
 if sys.platform in ('java', 'darwin', 'win32'):
     raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
 

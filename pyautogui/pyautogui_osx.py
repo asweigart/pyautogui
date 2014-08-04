@@ -1,11 +1,12 @@
 import time
+import sys
 
 import Quartz
 import AppKit
 
 import pyautogui.util
 
-import sys
+
 if sys.platform !=  'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
 

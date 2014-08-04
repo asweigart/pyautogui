@@ -1,8 +1,31 @@
 # PyAutoGUI: Cross-platform GUI automation for human beings.
 # BSD license
-# Al Sweigart al@inventwithpython.com
+# Al Sweigart al@inventwithpython.com (Send me feedback & suggestions!)
 
-__version__ = '0.9.0'
+"""
+IMPORTANT NOTE!
+
+To use this module on Mac OS X, you need the PyObjC module installed.
+For Python 3, run:
+    sudo pip3 install pyobjc-core
+    sudo pip3 install pyobjc
+For Python 2, run:
+    sudo pip install pyobjc-core
+    sudo pip install pyobjc
+(There's some bug with their installer, so install pyobjc-core first or else
+the install takes forever.)
+
+To use this module on Linux, you need Xlib module installed.
+For Python 3, run:
+    sudo pip3 install python3-Xlib
+For Python 2, run:
+    sudo pip install Xlib
+
+To use this module on Windows, you do not need anything else.
+"""
+
+
+__version__ = '0.9.1'
 
 import sys
 import time
