@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.1'
+__version__ = '0.9.2'
 
 import sys
 import time
