@@ -415,7 +415,7 @@ def vscroll(clicks, x=None, y=None, _pause=True):
 
 
 
-def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -444,7 +444,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, _pa
 
 
 
-def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linearTween, _pause=True):
+def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linear, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -487,7 +487,7 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linearTwe
 
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, button='left', _pause=True):
+def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, button='left', _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -521,7 +521,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linearTween, but
         time.sleep(PAUSE)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linearTween, button='left', _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linear, button='left', _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -632,16 +632,22 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
         return
 
     # Non-instant moving/dragging involves tweening:
-    linePoints = pyautogui.tweens.getLine(startx, starty, x, y)
-    timeSegment = duration / len(linePoints)
-    for n in range(len(linePoints)):
+    segments = max(width, height)
+    timeSegment = duration / segments
+    while timeSegment < 0.01: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
+        segments = int(segments * 0.9) # decrease segments by 90%.
+
+        timeSegment = duration / segments
+    for n in range(segments):
         time.sleep(timeSegment)
-        tweenedN = int(tween(n / len(linePoints)) * len(linePoints))
+        pointOnLine = tween(n / segments)
+        tweenX, tweenY = pyautogui.tweens.getPointOnLine(startx, starty, x, y, pointOnLine)
+        tweenX, tweenY = int(tweenX), int(tweenY)
         if moveOrDrag == 'move':
-            platformModule._moveTo(linePoints[tweenedN][0], linePoints[tweenedN][1])
+            platformModule._moveTo(tweenX, tweenY)
         else:
             # only OS X needs the drag event specifically
-            platformModule._dragTo(linePoints[tweenedN][0], linePoints[tweenedN][1], button)
+            platformModule._dragTo(tweenX, tweenY, button)
 
     # Ensure that no matter what the tween function returns, the mouse ends up
     # at the final destination.
@@ -715,11 +721,9 @@ def keyUp(key, _pause=True):
 def press(key, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
-    NOTE: For some reason, this does not seem to cause key repeats like would
-    happen if a keyboard key was held down on a text field.
-
     Args:
-      key (str): The key to be pressed
+      key (str): The key to be pressed. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS.
 
     Returns:
       None
