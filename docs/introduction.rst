@@ -18,13 +18,13 @@ For example, here is the complete code to move the mouse to the middle of the sc
 
 And that is all.
 
-**NOTE** - PyAutoGUI is not yet ready for deployment. It has only been tested widely on Windows 7 for Python 3.4. Also, this documentation is ugly and incomplete for now.
+PyAutoGUI can simulate moving the mouse, clicking the mouse, dragging with the mouse, pressing keys, pressing and holding keys, and pressing keyboard hotkey combinations.
 
 Dependencies
 ============
 
-On Windows, PyAutoGUI has no dependencies. It does **not** need the pywin32 module installed since it uses Python's own ctypes module.
+On Windows, PyAutoGUI has no dependencies. It does **not** need the ``pywin32`` module installed since it uses Python's own ``ctypes`` module.
 
-On OS X, PyAutoGUI requires [PyObjC](http://pythonhosted.org/pyobjc/install.html) installed for the AppKit and Quartz modules.
+On OS X, PyAutoGUI requires `PyObjC<http://pythonhosted.org/pyobjc/install.html>`_ installed for the AppKit and Quartz modules. The module names on PyPI to install are ``pyobjc-core`` and ``pyobjc`` (in that order).
 
-On Linux, PyAutoGUI requires python3-Xlib module installed.
+On Linux, PyAutoGUI requires ``python-xlib`` (for Python 2) or ``python3-Xlib`` (for Python 3) module installed.
