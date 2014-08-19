@@ -6,7 +6,13 @@
 Welcome to PyAutoGUI's documentation!
 =====================================
 
-THIS MODULE IS UNDER DEVELOPMENT NOT YET IN A USABLE STATE.
+Cross-platform GUI automation for human beings.
+
+PyAutoGUI is a Python module for programmatically controlling the mouse and keyboard.
+
+PyAutoGUI can be installed from the ``pip`` tool or downloaded from PyPI: https://pypi.python.org/pypi/PyAutoGUI
+
+The source is available on: https://github.com/asweigart/pyautogui
 
 Contents:
 
@@ -16,8 +22,10 @@ Contents:
    introduction.rst
    mouse.rst
    keyboard.rst
-   unittests.rst
+   tests.rst
    roadmap.rst
+
+This documentation is still a work in progress.
 
 
 Indices and tables

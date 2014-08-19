@@ -12,9 +12,9 @@ For example, here is the complete code to move the mouse to the middle of the sc
 
 .. code:: python
 
-    import pyautogui
-    screenWidth, screenHeight = pyautogui.size()
-    pyautogui.moveTo(screenWidth / 2, screenHeight / 2)
+    >>> import pyautogui
+    >>> screenWidth, screenHeight = pyautogui.size()
+    >>> pyautogui.moveTo(screenWidth / 2, screenHeight / 2)
 
 And that is all.
 
@@ -28,3 +28,16 @@ On Windows, PyAutoGUI has no dependencies. It does **not** need the ``pywin32`` 
 On OS X, PyAutoGUI requires `PyObjC<http://pythonhosted.org/pyobjc/install.html>`_ installed for the AppKit and Quartz modules. The module names on PyPI to install are ``pyobjc-core`` and ``pyobjc`` (in that order).
 
 On Linux, PyAutoGUI requires ``python-xlib`` (for Python 2) or ``python3-Xlib`` (for Python 3) module installed.
+
+Fail-Safes
+==========
+
+Like the enchanted brooms from the Sorcerer’s Apprentice that kept filling (and then overfilling) the bath with water, your program could get out of control (even though it is following your instructions) and need to be stopped. This can be difficult to do if the mouse is moving around on its own, preventing you from clicking on the program's window to close it down.
+
+As a safety feature, you can add delays after all of PyAutoGUI's functions by setting the ``pyautogui.PAUSE`` variable to a float or integer value of the number of seconds to pause. This can be helpful when interacting with other applications so that PyAutoGUI doesn't move too fast for them. For example:
+
+    >>> import pyautogui
+    >>> pyautogui.PAUSE = 2.5
+    >>> pyautogui.moveTo(100, 100); pyautogui.click()   # there will be a two and a half second pause after moving and another after the click
+
+All PyAutoGUI functions will block until they complete. (It is on the roadmap to add an optional non-blocking way to call these functions.)

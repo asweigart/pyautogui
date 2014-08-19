@@ -12,8 +12,8 @@ For example:
 
 .. code:: python
 
-    pyautogui.typewrite('Hello world!')                 # prints out "Hello world!" instantly
-    pyautogui.typewrite('Hello world!', interval=0.25)  # prints out "Hello world!" with a quarter second delay after each character
+    >>> pyautogui.typewrite('Hello world!')                 # prints out "Hello world!" instantly
+    >>> pyautogui.typewrite('Hello world!', interval=0.25)  # prints out "Hello world!" with a quarter second delay after each character
 
 You can only press single-character keys with ``typewrite()``, so you can't press the Shift or F1 keys, for example.
 
@@ -26,19 +26,19 @@ For example:
 
 .. code:: python
 
-    pyautogui.press('enter')  # press the Enter key
-    pyautogui.press('f1')     # press the F1 key
-    pyautogui.press('left')   # press the left arrow key
+    >>> pyautogui.press('enter')  # press the Enter key
+    >>> pyautogui.press('f1')     # press the F1 key
+    >>> pyautogui.press('left')   # press the left arrow key
 
 The ``press()`` function is really just a wrapper for the ``keyDown()`` and ``keyUp()`` functions, which simulate pressing a key down and then releasing it up. These functions can be called by themselves. For example, to press the left arrow key three times while holding down the Shift key, call the following:
 
 .. code:: python
 
-    pyautogui.keyDown('shift')  # hold down the shift key
-    pyautogui.press('left')     # press the left arrow key
-    pyautogui.press('left')     # press the left arrow key
-    pyautogui.press('left')     # press the left arrow key
-    pyautogui.keyUp('shift')    # release the shift key
+    >>> pyautogui.keyDown('shift')  # hold down the shift key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.keyUp('shift')    # release the shift key
 
 The hotkey() Function
 =====================
@@ -47,18 +47,18 @@ To make pressing hotkeys or keyboard shortcuts convenient, the ``hotkey()`` can 
 
 .. code:: python
 
-    pyautogui.hotkey('ctrl', 'shift', 'esc')
+    >>> pyautogui.hotkey('ctrl', 'shift', 'esc')
 
 . . .is equivalent to this code:
 
 .. code:: python
 
-    pyautogui.keyDown('ctrl')
-    pyautogui.keyDown('shift')
-    pyautogui.keyDown('esc')
-    pyautogui.keyUp('esc')
-    pyautogui.keyUp('shift')
-    pyautogui.keyUp('ctrl')
+    >>> pyautogui.keyDown('ctrl')
+    >>> pyautogui.keyDown('shift')
+    >>> pyautogui.keyDown('esc')
+    >>> pyautogui.keyUp('esc')
+    >>> pyautogui.keyUp('shift')
+    >>> pyautogui.keyUp('ctrl')
 
 
 KEYBOARD_KEYS

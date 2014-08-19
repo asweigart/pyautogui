@@ -10,7 +10,7 @@ runningOnPython2 = sys.version_info[0] == 2
 
 class TestGeneral(unittest.TestCase):
     def test_accessibleNames(self):
-        # This is a platform-specific test, you need to run this file on Win/OSX/Linux for full code coverage.
+        # Check that all the functions are defined.
 
         # mouse-related API
         pyautogui.moveTo
