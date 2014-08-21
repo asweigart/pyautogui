@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 
 import sys
 import time
@@ -722,16 +722,20 @@ def press(key, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
-      key (str): The key to be pressed. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS.
+      key (str, list): The key to be pressed. The valid names are listed in
+      pyautogui.util.KEYBOARD_KEYS. Can also be a list of such strings.
 
     Returns:
       None
     """
-    if len(key) > 1:
-        key = key.lower()
-    platformModule._keyDown(key)
-    platformModule._keyUp(key)
+    if type(key) == str:
+        key = [key]
+
+    key = [s.lower() for s in key]
+
+    for k in key:
+        platformModule._keyDown(k)
+        platformModule._keyUp(k)
 
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
