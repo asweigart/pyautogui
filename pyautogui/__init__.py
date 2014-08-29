@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 
 import sys
 import time
@@ -100,7 +100,7 @@ def onScreen(*args):
 # Mouse Functions
 # ===============
 
-def mouseDown(button='left', x=None, y=None, _pause=True):
+def mouseDown(x=None, y=None, button='left', _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -109,13 +109,13 @@ def mouseDown(button='left', x=None, y=None, _pause=True):
     screen.
 
     Args:
-      button (str, int, optional): The mouse button pressed down. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
       x (int, float, None, optional): The x position on the screen where the
         mouse down happens. None by default.
       y (int, float, None, optional): The y position on the screen where the
         mouse down happens. None by default.
+      button (str, int, optional): The mouse button pressed down. Must be one of
+        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
+        default.
 
     Returns:
       None
@@ -139,7 +139,7 @@ def mouseDown(button='left', x=None, y=None, _pause=True):
         time.sleep(PAUSE)
 
 
-def mouseUp(button='left', x=None, y=None, _pause=True):
+def mouseUp(x=None, y=None, button='left', _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -148,13 +148,13 @@ def mouseUp(button='left', x=None, y=None, _pause=True):
     screen.
 
     Args:
-      button (str, int, optional): The mouse button released. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
       x (int, float, None, optional): The x position on the screen where the
         mouse up happens. None by default.
       y (int, float, None, optional): The y position on the screen where the
         mouse up happens. None by default.
+      button (str, int, optional): The mouse button released. Must be one of
+        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
+        default.
 
     Returns:
       None

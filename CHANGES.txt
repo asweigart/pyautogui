@@ -2,3 +2,4 @@ v0.9.0, 2014/07/28 -- Initial release.
 v0.9.2, 2014/08/19 -- Added complete set of tween functions.
 v0.9.3, 2014/08/21 -- Added ability to pass a list to press().
 v0.9.4, 2014/08/28 -- Fixed uppercase bug.
+v0.9.5, 2014/08/28 -- Made parameter order for mouseDown() and mouseUp() consistent with click().

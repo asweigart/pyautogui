@@ -79,13 +79,13 @@ def _moveTo(x, y):
     _display.sync()
 
 
-def _mouseDown(button, x, y):
+def _mouseDown(x, y, button):
     _moveTo(x, y)
     fake_input(_display, X.ButtonPress, button)
     _display.sync()
 
 
-def _mouseUp(button, x, y):
+def _mouseUp(x, y, button):
     _moveTo(x, y)
     fake_input(_display, X.ButtonRelease, button)
     _display.sync()

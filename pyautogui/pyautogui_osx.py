@@ -340,7 +340,7 @@ def _hscroll(clicks, x=None, y=None):
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
-def _mouseDown(button, x, y):
+def _mouseDown(x, y, button):
     if button == 'left':
         _sendMouseEvent(Quartz.kCGEventLeftMouseDown, x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':
@@ -351,7 +351,7 @@ def _mouseDown(button, x, y):
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
-def _mouseUp(button, x, y):
+def _mouseUp(x, y, button):
     if button == 'left':
         _sendMouseEvent(Quartz.kCGEventLeftMouseUp, x, y, Quartz.kCGMouseButtonLeft)
     elif button == 'middle':

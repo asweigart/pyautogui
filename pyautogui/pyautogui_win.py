@@ -375,14 +375,14 @@ def _moveTo(x, y):
     ctypes.windll.user32.SetCursorPos(x, y)
 
 
-def _mouseDown(button, x, y):
+def _mouseDown(x, y, button):
     """Send the mouse down event to Windows by calling the mouse_event() win32
     function.
 
     Args:
-      button (str): The mouse button, either 'left', 'middle', or 'right'
       x (int): The x position of the mouse event.
       y (int): The y position of the mouse event.
+      button (str): The mouse button, either 'left', 'middle', or 'right'
 
     Returns:
       None
@@ -397,14 +397,14 @@ def _mouseDown(button, x, y):
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
-def _mouseUp(button, x, y):
+def _mouseUp(x, y, button):
     """Send the mouse up event to Windows by calling the mouse_event() win32
     function.
 
     Args:
-      button (str): The mouse button, either 'left', 'middle', or 'right'
       x (int): The x position of the mouse event.
       y (int): The y position of the mouse event.
+      button (str): The mouse button, either 'left', 'middle', or 'right'
 
     Returns:
       None
