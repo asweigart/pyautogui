@@ -31,6 +31,6 @@ Example Usage
     >>> pyautogui.typewrite('Hello world!', interval=0.25)  # type with quarter-second pause in between each key
     >>> pyautogui.press('esc')
     >>> pyautogui.keyDown('shift')
-    >>> pyautogui.press('left', 'left', 'left', 'left', 'left', 'left')
+    >>> pyautogui.typewrite(['left', 'left', 'left', 'left', 'left', 'left'])
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.hotkey('ctrl', 'c')
