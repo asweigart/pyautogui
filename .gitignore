@@ -1,0 +1,5 @@
+dist
+_build
+*.pyc
+__pycache__
+PyAutoGUI.egg-info
