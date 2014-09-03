@@ -25,12 +25,13 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.5'
+__version__ = '0.9.6'
 
 import sys
 import time
 import pyautogui.tweens
 import pyautogui.util
+import pymsgbox
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
@@ -806,3 +807,10 @@ def hotkey(*args, **kwargs):
         time.sleep(PAUSE)
 
 
+# PyMsgBox Functions
+# =================
+
+alert = pymsgbox.alert
+confirm = pymsgbox.confirm
+prompt = pymsgbox.prompt
+password = pymsgbox.password

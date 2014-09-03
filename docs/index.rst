@@ -22,6 +22,7 @@ Contents:
    introduction.rst
    mouse.rst
    keyboard.rst
+   msgbox.rst
    tests.rst
    roadmap.rst
 
