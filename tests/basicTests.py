@@ -3,7 +3,7 @@ import sys
 import os
 import time
 import threading
-sys.path.append(os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('..'))
 import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
@@ -163,13 +163,23 @@ class TestMouse(unittest.TestCase):
 
 class TypewriteThread(threading.Thread):
     def __init__(self, msg, interval=0.0):
+        super(TypewriteThread, self).__init__()
         self.msg = msg
         self.interval = interval
-        super(TypewriteThread, self).__init__()
 
     def run(self):
-        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND!
+        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
         pyautogui.typewrite(self.msg, self.interval)
+
+
+class PressThread(threading.Thread):
+    def __init__(self, keysArg):
+        super(PressThread, self).__init__()
+        self.keysArg = keysArg
+
+    def run(self):
+        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
+        pyautogui.press(self.keysArg)
 
 
 class TestKeyboard(unittest.TestCase):
@@ -281,6 +291,34 @@ class TestKeyboard(unittest.TestCase):
         self.assertTrue(1.0 < elapsed <  1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
 
         pyautogui.PAUSE = oldValue # restore the old PAUSE value
+
+    def test_press(self):
+        # '' test
+        t = PressThread('enter')
+        t.start()
+        if runningOnPython2:
+            response = raw_input()
+        else:
+            response = input()
+        self.assertEqual(response, '')
+
+        # 'a' test, also test sending list of 1- and multi-length strings
+        t = PressThread(['a', 'enter'])
+        t.start()
+        if runningOnPython2:
+            response = raw_input()
+        else:
+            response = input()
+        self.assertEqual(response, 'a')
+
+        # 'ba' test, also test sending list of 1- and multi-length strings
+        t = PressThread(['a', 'left', 'b', 'enter'])
+        t.start()
+        if runningOnPython2:
+            response = raw_input()
+        else:
+            response = input()
+        self.assertEqual(response, 'ba')
 
 
 if __name__ == '__main__':

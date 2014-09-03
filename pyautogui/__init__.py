@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 
 import sys
 import time
@@ -719,7 +719,7 @@ def keyUp(key, _pause=True):
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def press(key, _pause=True):
+def press(keys, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -729,12 +729,17 @@ def press(key, _pause=True):
     Returns:
       None
     """
-    if type(key) == str:
-        key = [key] # put string in a list
+    if type(keys) == str:
+        keys = [keys] # put string in a list
     else:
-        key = [s.lower() for s in key if len(s) > 1] # make sure all strings like 'esc' or 'enter' are lowercase
+        lowerKeys = []
+        for s in keys:
+            if len(s) > 1:
+                lowerKeys.append(s.lower())
+            else:
+                lowerKeys.append(s)
 
-    for k in key:
+    for k in keys:
         platformModule._keyDown(k)
         platformModule._keyUp(k)
 
