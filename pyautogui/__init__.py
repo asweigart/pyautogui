@@ -25,28 +25,75 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.7'
+__version__ = '0.9.8'
 
 import sys
 import time
 import pyautogui.tweens
 import pyautogui.util
 import pymsgbox
+import pytweening
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
-    import pyautogui.pyautogui_java as platformModule
+    import pyautogui._pyautogui_java as platformModule
 elif sys.platform == 'darwin':
-    import pyautogui.pyautogui_osx as platformModule
+    import pyautogui._pyautogui_osx as platformModule
 elif sys.platform == 'win32':
-    import pyautogui.pyautogui_win as platformModule
+    import pyautogui._pyautogui_win as platformModule
 else:
-    import pyautogui.pyautogui_x11 as platformModule
+    import pyautogui._pyautogui_x11 as platformModule
 
 
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
 
 PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. Useful for debugging.
+
+
+
+
+# PyMsgBox Functions
+# =================
+alert = pymsgbox.alert
+confirm = pymsgbox.confirm
+prompt = pymsgbox.prompt
+password = pymsgbox.password
+
+# PyTweening Functions
+# ====================
+getPointOnLine = pytweening.getPointOnLine
+linear = pytweening.linear
+easeInQuad = pytweening.easeInQuad
+easeOutQuad = pytweening.easeOutQuad
+easeInOutQuad = pytweening.easeInOutQuad
+easeInCubic = pytweening.easeInCubic
+easeOutCubic = pytweening.easeOutCubic
+easeInOutCubic = pytweening.easeInOutCubic
+easeInQuart = pytweening.easeInQuart
+easeOutQuart = pytweening.easeOutQuart
+easeInOutQuart = pytweening.easeInOutQuart
+easeInQuint = pytweening.easeInQuint
+easeOutQuint = pytweening.easeOutQuint
+easeInOutQuint = pytweening.easeInOutQuint
+easeInSine = pytweening.easeInSine
+easeOutSine = pytweening.easeOutSine
+easeInOutSine = pytweening.easeInOutSine
+easeInExpo = pytweening.easeInExpo
+easeOutExpo = pytweening.easeOutExpo
+easeInOutExpo = pytweening.easeInOutExpo
+easeInCirc = pytweening.easeInCirc
+easeOutCirc = pytweening.easeOutCirc
+easeInOutCirc = pytweening.easeInOutCirc
+easeInElastic = pytweening.easeInElastic
+easeOutElastic = pytweening.easeOutElastic
+easeInOutElastic = pytweening.easeInOutElastic
+easeInBack = pytweening.easeInBack
+easeOutBack = pytweening.easeOutBack
+easeInOutBack = pytweening.easeInOutBack
+easeInBounce = pytweening.easeInBounce
+easeOutBounce = pytweening.easeOutBounce
+easeInOutBounce = pytweening.easeInOutBounce
+
 
 # General Functions
 # =================
@@ -416,7 +463,7 @@ def vscroll(clicks, x=None, y=None, _pause=True):
 
 
 
-def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -445,7 +492,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, _pause=T
 
 
 
-def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linear, _pause=True):
+def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -488,7 +535,7 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linear, _
 
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, button='left', _pause=True):
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -522,7 +569,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=pyautogui.tweens.linear, button='
         time.sleep(PAUSE)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=pyautogui.tweens.linear, button='left', _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -642,7 +689,7 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
     for n in range(segments):
         time.sleep(timeSegment)
         pointOnLine = tween(n / segments)
-        tweenX, tweenY = pyautogui.tweens.getPointOnLine(startx, starty, x, y, pointOnLine)
+        tweenX, tweenY = pyautogui.getPointOnLine(startx, starty, x, y, pointOnLine)
         tweenX, tweenY = int(tweenX), int(tweenY)
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
@@ -812,10 +859,3 @@ def hotkey(*args, **kwargs):
         time.sleep(PAUSE)
 
 
-# PyMsgBox Functions
-# =================
-
-alert = pymsgbox.alert
-confirm = pymsgbox.confirm
-prompt = pymsgbox.prompt
-password = pymsgbox.password

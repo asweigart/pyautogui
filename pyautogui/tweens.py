@@ -1,5 +1,7 @@
 import pytweening
 
+
+# This is just left here for backwards compatibility. I'll be deprecating this in favor of pyautogui.linear, pyautogui.easeInQuad, etc.
 getPointOnLine = pytweening.getPointOnLine
 linear = pytweening.linear
 easeInQuad = pytweening.easeInQuad
