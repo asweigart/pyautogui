@@ -1,4 +1,5 @@
 .. default-role:: code
+
 ============
 Introduction
 ============
@@ -45,12 +46,16 @@ Dependencies
 
 On Windows, PyAutoGUI has no dependencies. It does **not** need the ``pywin32`` module installed since it uses Python's own ``ctypes`` module.
 
-On OS X, PyAutoGUI requires `PyObjC<http://pythonhosted.org/pyobjc/install.html>`_ installed for the AppKit and Quartz modules. The module names on PyPI to install are ``pyobjc-core`` and ``pyobjc`` (in that order).
+On OS X, PyAutoGUI requires PyObjC_ installed for the AppKit and Quartz modules. The module names on PyPI to install are ``pyobjc-core`` and ``pyobjc`` (in that order).
+
+.. _PyObjC: http://pythonhosted.org/pyobjc/install.html
 
 On Linux, PyAutoGUI requires ``python-xlib`` (for Python 2) or ``python3-Xlib`` (for Python 3) module installed.
 
 Fail-Safes
 ==========
+
+.. image:: sorcerers_apprentice_brooms.png
 
 Like the enchanted brooms from the Sorcerer’s Apprentice that kept filling (and then overfilling) the bath with water, your program could get out of control (even though it is following your instructions) and need to be stopped. This can be difficult to do if the mouse is moving around on its own, preventing you from clicking on the program's window to close it down.
 

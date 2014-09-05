@@ -20,11 +20,14 @@ Contents:
    :maxdepth: 2
 
    introduction.rst
+   install.rst
+   general.rst
    mouse.rst
    keyboard.rst
    msgbox.rst
    tests.rst
    roadmap.rst
+   cookbook.rst
 
 This documentation is still a work in progress.
 
