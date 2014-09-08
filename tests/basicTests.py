@@ -8,6 +8,12 @@ import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
 
+if runningOnPython2:
+    INPUT_FUNC = raw_input
+else:
+    INPUT_FUNC = input
+
+
 class TestGeneral(unittest.TestCase):
     def test_accessibleNames(self):
         # Check that all the functions are defined.
@@ -189,19 +195,13 @@ class TestKeyboard(unittest.TestCase):
         # 'Hello world!\n' test
         t = TypewriteThread('Hello world!\n')
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'Hello world!')
 
         # 'Hello world!\n' as a list argument
         t = TypewriteThread(list('Hello world!\n'))
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'Hello world!')
 
         # All printable ASCII characters test
@@ -212,10 +212,7 @@ class TestKeyboard(unittest.TestCase):
 
         t = TypewriteThread(allKeys + '\n')
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, allKeys)
 
     def checkForValidCharacters(self, msg):
@@ -229,10 +226,7 @@ class TestKeyboard(unittest.TestCase):
         t = TypewriteThread('Hello world!\n', 0.1)
         startTime = time.time()
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'Hello world!')
         elapsed = time.time() - startTime
         self.assertTrue(1.0 < elapsed <  2.0, 'Took %s seconds, expected 1.0 < x 2.0 seconds.' % (elapsed))
@@ -242,10 +236,7 @@ class TestKeyboard(unittest.TestCase):
         # Backspace test
         t = TypewriteThread(['a', 'b', 'c', '\b', 'backspace', 'x', 'y', 'z', '\n'])
         t.start()
-        if sys.version_info[0] == 2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'axyz')
 
         # TODO - Currently the arrow keys don't seem to work entirely correctly on OS X.
@@ -253,28 +244,19 @@ class TestKeyboard(unittest.TestCase):
             # Arrow key test
             t = TypewriteThread(['a', 'b', 'c', 'left', 'left', 'right', 'x', '\n'])
             t.start()
-            if sys.version_info[0] == 2:
-                response = raw_input()
-            else:
-                response = input()
+            response = INPUT_FUNC()
             self.assertEqual(response, 'abxc')
 
         # Del key test
         t = TypewriteThread(['a', 'b', 'c', 'left', 'left','left', 'del', 'delete', '\n'])
         t.start()
-        if sys.version_info[0] == 2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'c')
 
         # Home and end key test
         t = TypewriteThread(['a', 'b', 'c', 'home', 'x','end', 'z', '\n'])
         t.start()
-        if sys.version_info[0] == 2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'xabcz')
 
 
@@ -296,38 +278,26 @@ class TestKeyboard(unittest.TestCase):
         # '' test
         t = PressThread('enter')
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, '')
 
         # 'a' test, also test sending list of 1- and multi-length strings
         t = PressThread(['a', 'enter'])
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'a')
 
         # 'ba' test, also test sending list of 1- and multi-length strings
         t = PressThread(['a', 'left', 'b', 'enter'])
         t.start()
-        if runningOnPython2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, 'ba')
 
     def test_typewrite_space(self):
         # Backspace test
         t = TypewriteThread(['space', ' ', '\n']) # test both 'space' and ' '
         t.start()
-        if sys.version_info[0] == 2:
-            response = raw_input()
-        else:
-            response = input()
+        response = INPUT_FUNC()
         self.assertEqual(response, '  ')
 
 if __name__ == '__main__':
