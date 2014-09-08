@@ -1,3 +1,4 @@
+v0.9.9, 2014/09/03 -- Bug fix with the mouseUp and mouseDown functions due to rearranging the parameters.
 v0.9.8, 2014/09/03 -- Moved tweening functions into pyautogui instead of separate pyautogui.tweens
 v0.9.7, 2014/09/03 -- Fixing a bug where single-character strings sent to press() were dropped. Added a unit test for this bug.
 v0.9.6, 2014/09/03 -- Added PyMsgBox & PyTweening as dependencies.

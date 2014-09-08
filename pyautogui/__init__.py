@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.8'
+__version__ = '0.9.9'
 
 import sys
 import time
@@ -177,11 +177,11 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
     moveTo(x, y, _pause=False)
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
     if button == 1 or str(button).lower() == 'left':
-        platformModule._mouseDown('left', x, y)
+        platformModule._mouseDown(x, y, 'left')
     elif button == 2 or str(button).lower() == 'middle':
-        platformModule._mouseDown('middle', x, y)
+        platformModule._mouseDown(x, y, 'middle')
     elif button == 3 or str(button).lower() == 'right':
-        platformModule._mouseDown('right', x, y)
+        platformModule._mouseDown(x, y, 'right')
 
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -216,11 +216,11 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
     moveTo(x, y, _pause=False)
     x, y = platformModule._position()
     if button == 1 or str(button).lower() == 'left':
-        platformModule._mouseUp('left', x, y)
+        platformModule._mouseUp(x, y, 'left')
     elif button == 2 or str(button).lower() == 'middle':
-        platformModule._mouseUp('middle', x, y)
+        platformModule._mouseUp(x, y, 'middle')
     elif button == 3 or str(button).lower() == 'right':
-        platformModule._mouseUp('right', x, y)
+        platformModule._mouseUp(x, y, 'right')
 
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)

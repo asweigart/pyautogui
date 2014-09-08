@@ -3,3 +3,4 @@ people who have submitted patches, reported bugs, added translations, helped
 answer newbie questions, and generally made PyAutoGUI that much better:
 
 Al Sweigart
+Ari Lacenski https://github.com/tensory
