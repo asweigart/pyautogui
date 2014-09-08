@@ -90,6 +90,7 @@ keyboardMapping.update({
     '`': 0x32, # kVK_ANSI_Grave
     '~': 0x32, # kVK_ANSI_Grave
     ' ': 0x31, # kVK_Space
+    'space': 0x31,
     '\r': 0x24, # kVK_Return
     '\n': 0x24, # kVK_Return
     'enter': 0x24, # kVK_Return

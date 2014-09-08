@@ -251,6 +251,7 @@ keyboardMapping.update({
     'altright':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Alt_R')),
     # These are added because unlike a-zA-Z0-9, the single characters do not have a
     ' ': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('space')),
+    'space': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('space')),
     '\t': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
     '\n': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Return')),  # for some reason this needs to be cr, not lf
     '\r': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Return')),

@@ -133,6 +133,7 @@ keyboardMapping.update({
     'accept': 0x1e, # VK_ACCEPT
     'modechange': 0x1f, # VK_MODECHANGE
     ' ': 0x20, # VK_SPACE
+    'space': 0x20,
     'pgup': 0x21, # VK_PRIOR
     'pgdn': 0x22, # VK_NEXT
     'pageup': 0x21, # VK_PRIOR

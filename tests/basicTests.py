@@ -320,6 +320,15 @@ class TestKeyboard(unittest.TestCase):
             response = input()
         self.assertEqual(response, 'ba')
 
+    def test_typewrite_space(self):
+        # Backspace test
+        t = TypewriteThread(['space', ' ', '\n']) # test both 'space' and ' '
+        t.start()
+        if sys.version_info[0] == 2:
+            response = raw_input()
+        else:
+            response = input()
+        self.assertEqual(response, '  ')
 
 if __name__ == '__main__':
     unittest.main()
