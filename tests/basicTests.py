@@ -47,8 +47,8 @@ class TestGeneral(unittest.TestCase):
     def test_size(self):
         width, height = pyautogui.size()
 
-        self.assertTrue(type(width) == int, 'Type of width is %s' % (type(width)))
-        self.assertTrue(type(height) == int, 'Type of height is %s' % (type(height)))
+        self.assertTrue(isinstance(width, int), 'Type of width is %s' % (type(width)))
+        self.assertTrue(isinstance(height, int), 'Type of height is %s' % (type(height)))
         self.assertTrue(width > 0, 'Width is set to %s' % (width))
         self.assertTrue(height > 0, 'Height is set to %s' % (height))
 
@@ -57,11 +57,21 @@ class TestGeneral(unittest.TestCase):
 
         if runningOnPython2 and sys.platform != 'darwin':
             # Python 2 on OS X returns int.
-            self.assertTrue(type(mousex) == long, 'Type of mousex is %s' % (type(mousex)))
-            self.assertTrue(type(mousey) == long, 'Type of mousey is %s' % (type(mousey)))
+            self.assertTrue(isinstance(mousex, long), 'Type of mousex is %s' % (type(mousex)))
+            self.assertTrue(isinstance(mousey, long), 'Type of mousey is %s' % (type(mousey)))
         else:
-            self.assertTrue(type(mousex) == int, 'Type of mousex is %s' % (type(mousex)))
-            self.assertTrue(type(mousey) == int, 'Type of mousey is %s' % (type(mousey)))
+            self.assertTrue(isinstance(mousex, int), 'Type of mousex is %s' % (type(mousex)))
+            self.assertTrue(isinstance(mousey, int), 'Type of mousey is %s' % (type(mousey)))
+
+        # Test passing x and y arguments to position().
+        pyautogui.moveTo(mousex + 1, mousey + 1)
+        x, y = pyautogui.position(mousex, None)
+        self.assertEqual(x, mousex)
+        self.assertNotEqual(y, mousey)
+
+        x, y = pyautogui.position(None, mousey)
+        self.assertNotEqual(x, mousex)
+        self.assertEqual(y, mousey)
 
     def test_onScreen(self):
         width, height = pyautogui.size()

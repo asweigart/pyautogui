@@ -98,14 +98,25 @@ easeInOutBounce = pytweening.easeInOutBounce
 # General Functions
 # =================
 
-def position():
+def position(x=None, y=None):
     """Returns the current xy coordinates of the mouse cursor as a two-integer
     tuple.
+
+    Args:
+      x (int, None, optional) - If not None, this argument overrides the x in
+        the return value.
+      y (int, None, optional) - If not None, this argument overrides the y in
+        the return value.
 
     Returns:
       (x, y) tuple of the current xy coordinates of the mouse cursor.
     """
-    return platformModule._position()
+    posx, posy = platformModule._position()
+    if x is not None:
+        posx = int(x)
+    if y is not None:
+        posy = int(y)
+    return posx, posy
 
 
 def size():
@@ -173,6 +184,7 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
+    x, y = position(x, y)
 
     moveTo(x, y, _pause=False)
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
@@ -212,6 +224,7 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
+    x, y = position(x, y)
 
     moveTo(x, y, _pause=False)
     x, y = platformModule._position()
@@ -255,9 +268,10 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
+    x, y = position(x, y)
 
     moveTo(x, y, _pause=False)
-    x, y = platformModule._position()
+
     for i in range(clicks):
         if button == 1 or str(button).lower() == 'left':
             platformModule._click(x, y, 'left')
@@ -411,6 +425,8 @@ def scroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    x, y = position(x, y)
+
     platformModule._scroll(clicks, x, y)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -434,6 +450,8 @@ def hscroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    x, y = position(x, y)
+
     platformModule._hscroll(clicks, x, y)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -457,6 +475,7 @@ def vscroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -653,6 +672,8 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     if x is None and y is None:
         return # special case for no mouse movement at all
+
+    x, y = position(x, y)
 
     width, height = platformModule._size()
     startx, starty = platformModule._position()
