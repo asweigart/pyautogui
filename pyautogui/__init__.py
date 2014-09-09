@@ -25,7 +25,7 @@ To use this module on Windows, you do not need anything else.
 """
 
 
-__version__ = '0.9.9'
+__version__ = '0.9.10'
 
 import sys
 import time
@@ -562,9 +562,9 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=Tru
     Returns:
       None
     """
-    mouseDown(button, _pause=False)
+    mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', x, y, duration, tween)
-    mouseUp(button, _pause=False)
+    mouseUp(button=button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
@@ -605,9 +605,9 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pa
         return # no-op case
 
     mousex, mousey = platformModule._position()
-    mouseDown(button, _pause=False)
+    mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
-    mouseUp(button, _pause=False)
+    mouseUp(button=button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
