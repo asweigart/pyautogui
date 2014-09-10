@@ -22,58 +22,18 @@ For Python 2, run:
     sudo pip install Xlib
 
 To use this module on Windows, you do not need anything else.
+
+You will need PIL/Pillow to use the screenshot features.
 """
 
 
-__version__ = '0.9.12'
+__version__ = '0.9.13'
 
 import sys
 import time
 import pyautogui.util
-import pymsgbox
-import pytweening
-
-getPointOnLine = pytweening.getPointOnLine
-linear = pytweening.linear
-easeInQuad = pytweening.easeInQuad
-easeOutQuad = pytweening.easeOutQuad
-easeInOutQuad = pytweening.easeInOutQuad
-easeInCubic = pytweening.easeInCubic
-easeOutCubic = pytweening.easeOutCubic
-easeInOutCubic = pytweening.easeInOutCubic
-easeInQuart = pytweening.easeInQuart
-easeOutQuart = pytweening.easeOutQuart
-easeInOutQuart = pytweening.easeInOutQuart
-easeInQuint = pytweening.easeInQuint
-easeOutQuint = pytweening.easeOutQuint
-easeInOutQuint = pytweening.easeInOutQuint
-easeInSine = pytweening.easeInSine
-easeOutSine = pytweening.easeOutSine
-easeInOutSine = pytweening.easeInOutSine
-easeInExpo = pytweening.easeInExpo
-easeOutExpo = pytweening.easeOutExpo
-easeInOutExpo = pytweening.easeInOutExpo
-easeInCirc = pytweening.easeInCirc
-easeOutCirc = pytweening.easeOutCirc
-easeInOutCirc = pytweening.easeInOutCirc
-easeInElastic = pytweening.easeInElastic
-easeOutElastic = pytweening.easeOutElastic
-easeInOutElastic = pytweening.easeInOutElastic
-easeInBack = pytweening.easeInBack
-easeOutBack = pytweening.easeOutBack
-easeInOutBack = pytweening.easeInOutBack
-easeInBounce = pytweening.easeInBounce
-easeOutBounce = pytweening.easeOutBounce
-easeInOutBounce = pytweening.easeInOutBounce
-
-
 import pyautogui.screenshotUtil
-"""
-try:
-    import pyautogui.screenshotUtil
-except:
-    pass
-"""
+
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
     #import pyautogui._pyautogui_java as platformModule
@@ -95,9 +55,9 @@ PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. U
 
 
 
-
 # PyMsgBox Functions
 # =================
+import pymsgbox
 alert = pymsgbox.alert
 confirm = pymsgbox.confirm
 prompt = pymsgbox.prompt
@@ -105,6 +65,7 @@ password = pymsgbox.password
 
 # PyTweening Functions
 # ====================
+import pytweening
 getPointOnLine = pytweening.getPointOnLine
 linear = pytweening.linear
 easeInQuad = pytweening.easeInQuad

@@ -1,14 +1,9 @@
-
 from setuptools import setup
-
-
-# Dynamically calculate the version based on pyautogui.VERSION.
-version = __import__('pyautogui').__version__
 
 
 setup(
     name='PyAutoGUI',
-    version=version,
+    version='0.9.12',
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
@@ -17,7 +12,7 @@ setup(
     license='BSD',
     packages=['pyautogui'],
     test_suite='tests',
-    install_requires=['pymsgbox', 'PyTweening>=1.0.1'],
+    install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 3 - Alpha',
