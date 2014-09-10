@@ -29,20 +29,64 @@ __version__ = '0.9.11'
 
 import sys
 import time
-import pyautogui.tweens
 import pyautogui.util
 import pymsgbox
 import pytweening
 
+getPointOnLine = pytweening.getPointOnLine
+linear = pytweening.linear
+easeInQuad = pytweening.easeInQuad
+easeOutQuad = pytweening.easeOutQuad
+easeInOutQuad = pytweening.easeInOutQuad
+easeInCubic = pytweening.easeInCubic
+easeOutCubic = pytweening.easeOutCubic
+easeInOutCubic = pytweening.easeInOutCubic
+easeInQuart = pytweening.easeInQuart
+easeOutQuart = pytweening.easeOutQuart
+easeInOutQuart = pytweening.easeInOutQuart
+easeInQuint = pytweening.easeInQuint
+easeOutQuint = pytweening.easeOutQuint
+easeInOutQuint = pytweening.easeInOutQuint
+easeInSine = pytweening.easeInSine
+easeOutSine = pytweening.easeOutSine
+easeInOutSine = pytweening.easeInOutSine
+easeInExpo = pytweening.easeInExpo
+easeOutExpo = pytweening.easeOutExpo
+easeInOutExpo = pytweening.easeInOutExpo
+easeInCirc = pytweening.easeInCirc
+easeOutCirc = pytweening.easeOutCirc
+easeInOutCirc = pytweening.easeInOutCirc
+easeInElastic = pytweening.easeInElastic
+easeOutElastic = pytweening.easeOutElastic
+easeInOutElastic = pytweening.easeInOutElastic
+easeInBack = pytweening.easeInBack
+easeOutBack = pytweening.easeOutBack
+easeInOutBack = pytweening.easeInOutBack
+easeInBounce = pytweening.easeInBounce
+easeOutBounce = pytweening.easeOutBounce
+easeInOutBounce = pytweening.easeInOutBounce
+
+
+import pyautogui.screenshotUtil
+"""
+try:
+    import pyautogui.screenshotUtil
+except:
+    pass
+"""
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
-    import pyautogui._pyautogui_java as platformModule
+    #import pyautogui._pyautogui_java as platformModule
+    raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
     import pyautogui._pyautogui_osx as platformModule
+    screenshot = pyautogui.screenshotUtil.screenshot_osx
 elif sys.platform == 'win32':
     import pyautogui._pyautogui_win as platformModule
+    screenshot = pyautogui.screenshotUtil.screenshot_win32
 else:
     import pyautogui._pyautogui_x11 as platformModule
+    screenshot = pyautogui.screenshotUtil.screenshot_linux
 
 
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
