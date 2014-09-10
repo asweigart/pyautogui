@@ -1,3 +1,4 @@
+v0.9.12, 2014/09/10 -- Fixed import bugs.
 v0.9.11, 2014/09/08 -- Fixed bug where None was being passed to platform-specific mouse functions.
 v0.9.10, 2014/09/08 -- Fixing the previous bug, for real this time.
 v0.9.9, 2014/09/03 -- Bug fix with the mouseUp and mouseDown functions due to rearranging the parameters.
