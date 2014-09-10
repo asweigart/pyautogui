@@ -41,6 +41,21 @@ Examples
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.hotkey('ctrl', 'c')
 
+This example drags the mouse in a square spiral shape in MS Paint (or any graphics drawing program):
+
+.. code:: python
+
+    >>> distance = 200
+    >>> while distance > 0:
+            pyautogui.dragRel(distance, 0, duration=0.5)   # move right
+            distance -= 5
+            pyautogui.dragRel(0, distance, duration=0.5)   # move down
+            pyautogui.dragRel(-distance, 0, duration=0.5)  # move left
+            distance -= 5
+            pyautogui.dragRel(0, -distance, duration=0.5)  # move up
+
+.. image:: square_spiral.png
+
 Dependencies
 ============
 
@@ -57,7 +72,7 @@ Fail-Safes
 
 .. image:: sorcerers_apprentice_brooms.png
 
-Like the enchanted brooms from the Sorcerer’s Apprentice that kept filling (and then overfilling) the bath with water, your program could get out of control (even though it is following your instructions) and need to be stopped. This can be difficult to do if the mouse is moving around on its own, preventing you from clicking on the program's window to close it down.
+Like the enchanted brooms from the Sorcerer’s Apprentice programmed to keep filling (and then overfilling) the bath with water, your program could get out of control (even though it is following your instructions) and need to be stopped. This can be difficult to do if the mouse is moving around on its own, preventing you from clicking on the program's window to close it down.
 
 As a safety feature, you can add delays after all of PyAutoGUI's functions by setting the ``pyautogui.PAUSE`` variable to a float or integer value of the number of seconds to pause. This can be helpful when interacting with other applications so that PyAutoGUI doesn't move too fast for them. For example:
 

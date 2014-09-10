@@ -13,6 +13,7 @@ if runningOnPython2:
 else:
     INPUT_FUNC = input
 
+# TODO - note that currently most of the click-related functionality is not tested.
 
 class TestGeneral(unittest.TestCase):
     def test_accessibleNames(self):
@@ -138,6 +139,7 @@ class TestMouse(unittest.TestCase):
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
+
     def test_moveRel(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
 
@@ -175,6 +177,16 @@ class TestMouse(unittest.TestCase):
         pyautogui.moveRel(None, -4)
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+
+
+    def test_scroll(self):
+        # TODO - currently this just checks that scrolling doesn't result in an error.
+        pyautogui.scroll(1)
+        pyautogui.scroll(-1)
+        pyautogui.hscroll(1)
+        pyautogui.hscroll(-1)
+        pyautogui.vscroll(1)
+        pyautogui.vscroll(-1)
 
 
 class TypewriteThread(threading.Thread):
