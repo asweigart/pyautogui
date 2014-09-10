@@ -5,11 +5,14 @@
 import datetime
 import os
 import subprocess
-import sys
 from PIL import Image
 
-whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-scrotExists = whichProc.wait() == 0
+try:
+    whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    scrotExists = whichProc.wait() == 0
+except:
+    # if there is no "which" program to find scrot, then assume there is no scrot.
+    scrotExists = False
 
 """
 Screencapture features (requires PIL/Pillow)
