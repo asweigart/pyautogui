@@ -326,11 +326,11 @@ class TestKeyboard(unittest.TestCase):
 class TestScreenshot(unittest.TestCase):
     # TODO - lots of warnings about unclosed file handles for these tests.
     def test_locate_filename(self):
-        self.assertEqual((94, 94), tuple(pyautogui.locate('slash.png', 'haystack1.png')))
-        self.assertEqual((93, 93), tuple(pyautogui.locate('slash.png', 'haystack2.png')))
+        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack1.png')))
+        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack2.png')))
 
-        self.assertEqual((94, 94), tuple(pyautogui.locate('slash.png', 'haystack1.png', grayscale=True)))
-        self.assertEqual((93, 93), tuple(pyautogui.locate('slash.png', 'haystack2.png', grayscale=True)))
+        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack1.png', grayscale=True)))
+        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack2.png', grayscale=True)))
 
         self.assertEqual(None, pyautogui.locate('slash.png', 'colornoise.png'))
         self.assertEqual(None, pyautogui.locate('slash.png', 'colornoise.png', grayscale=True))
@@ -345,11 +345,11 @@ class TestScreenshot(unittest.TestCase):
         haystack2Im = Image.open(haystack2Fp)
         colorNoiseIm = Image.open(colorNoiseFp)
 
-        self.assertEqual((94, 94), tuple(pyautogui.locate(slashIm, haystack1Im)))
-        self.assertEqual((93, 93), tuple(pyautogui.locate(slashIm, haystack2Im)))
+        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate(slashIm, haystack1Im)))
+        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate(slashIm, haystack2Im)))
 
-        self.assertEqual((94, 94), tuple(pyautogui.locate(slashIm, haystack1Im, grayscale=True)))
-        self.assertEqual((93, 93), tuple(pyautogui.locate(slashIm, haystack2Im, grayscale=True)))
+        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate(slashIm, haystack1Im, grayscale=True)))
+        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate(slashIm, haystack2Im, grayscale=True)))
 
         self.assertEqual(None, pyautogui.locate(slashIm, colorNoiseIm))
         self.assertEqual(None, pyautogui.locate(slashIm, colorNoiseIm, grayscale=True))
@@ -360,11 +360,11 @@ class TestScreenshot(unittest.TestCase):
         colorNoiseFp.close()
 
     def test_locateAll_filename(self):
-        self.assertEqual(((94, 94),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png')))
-        self.assertEqual(((93, 93), (94, 94), (95, 95)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png')))
+        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png')))
+        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png')))
 
-        self.assertEqual(((94, 94),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png', grayscale=True)))
-        self.assertEqual(((93, 93), (94, 94), (95, 95)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png', grayscale=True)))
+        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png', grayscale=True)))
+        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png', grayscale=True)))
 
         self.assertEqual((), tuple(pyautogui.locateAll('slash.png', 'colornoise.png')))
         self.assertEqual((), tuple(pyautogui.locateAll('slash.png', 'colornoise.png', grayscale=True)))
@@ -379,11 +379,11 @@ class TestScreenshot(unittest.TestCase):
         haystack2Im = Image.open(haystack2Fp)
         colorNoiseIm = Image.open(colorNoiseFp)
 
-        self.assertEqual(((94, 94),), tuple(pyautogui.locateAll(slashIm, haystack1Im)))
-        self.assertEqual(((93, 93), (94, 94), (95, 95)), tuple(pyautogui.locateAll(slashIm, haystack2Im)))
+        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll(slashIm, haystack1Im)))
+        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll(slashIm, haystack2Im)))
 
-        self.assertEqual(((94, 94),), tuple(pyautogui.locateAll(slashIm, haystack1Im, grayscale=True)))
-        self.assertEqual(((93, 93), (94, 94), (95, 95)), tuple(pyautogui.locateAll(slashIm, haystack2Im, grayscale=True)))
+        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll(slashIm, haystack1Im, grayscale=True)))
+        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll(slashIm, haystack2Im, grayscale=True)))
 
         self.assertEqual((), tuple(pyautogui.locateAll(slashIm, colorNoiseIm)))
         self.assertEqual((), tuple(pyautogui.locateAll(slashIm, colorNoiseIm, grayscale=True)))
@@ -392,6 +392,7 @@ class TestScreenshot(unittest.TestCase):
         haystack1Fp.close()
         haystack2Fp.close()
         colorNoiseFp.close()
+
 
 if __name__ == '__main__':
     unittest.main()

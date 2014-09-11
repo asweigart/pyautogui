@@ -59,7 +59,7 @@ def locateAll(needleImage, haystackImage, grayscale=False):
                     break
             if foundMatch:
                 # match, report the x and y
-                yield (matchx, y)
+                yield (matchx, y, needleWidth, needleHeight)
 
     if needleFileObj is not None:
         needleFileObj.close()
@@ -155,6 +155,8 @@ def kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation 
             yield startPos
 
 
+def center(coords):
+    return (coords[0] + int(coords[2]), coords[1] + int(coords[3]))
 
 
 
