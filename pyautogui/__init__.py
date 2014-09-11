@@ -32,7 +32,6 @@ __version__ = '0.9.13'
 import sys
 import time
 import pyautogui.util
-import pyautogui.screenshotUtil
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
@@ -40,19 +39,25 @@ if sys.platform.startswith('java'):
     raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
     import pyautogui._pyautogui_osx as platformModule
-    screenshot = pyautogui.screenshotUtil.screenshot_osx
 elif sys.platform == 'win32':
     import pyautogui._pyautogui_win as platformModule
-    screenshot = pyautogui.screenshotUtil.screenshot_win32
 else:
     import pyautogui._pyautogui_x11 as platformModule
-    screenshot = pyautogui.screenshotUtil.screenshot_linux
 
 
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
 
 PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 
+
+# Screenshot Functions
+# ====================
+import pyautogui.screenshotUtil
+screenshot = pyautogui.screenshotUtil.screenshot # move into this namespace
+locate = pyautogui.screenshotUtil.locate
+locateAll = pyautogui.screenshotUtil.locateAll
+locateOnScreen = pyautogui.screenshotUtil.locateOnScreen
+locateAllOnScreen = pyautogui.screenshotUtil.locateAllOnScreen
 
 
 # PyMsgBox Functions
