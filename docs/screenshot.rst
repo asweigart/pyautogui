@@ -49,6 +49,8 @@ You can't call the `moveTo()` and `click()` functions if you don't know the exac
     (1441, 582)
     >>> pyautogui.click(button7x, button7y)  # clicks the center of where the 7 button was found
 
+On a 1920 x 1080 screen, the locate function calls take about 1 or 2 seconds. This may be too slow for action video games, but works for most purposes and applications.
+
 There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the left and then down. The arguments can either be a
 
 - `locateOnScreen(image)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
@@ -71,3 +73,13 @@ The "locate all" functions can be used in for loops or passed to `list()`:
     (1838, 676, 50, 50)
     >>> list(pyautogui.locateAllOnScreen('someButton.png'))
     [(1101, 252, 50, 50), (59, 481, 50, 50), (1395, 640, 50, 50), (1838, 676, 50, 50)]
+
+Grayscale Matching
+------------------
+
+Optionally, you can pass `grayscale=True` to the locate functions to give a slight speedup (about 30%-ish). This desaturates the color from the images and screenshots, speeding up the locating but potentially causing false-positive matches.
+
+    >>> import pyautogui
+    >>> button7location = pyautogui.locateOnScreen('calc7key.png', grayscale=True)
+    >>> button7location
+    (1416, 562, 50, 41)
