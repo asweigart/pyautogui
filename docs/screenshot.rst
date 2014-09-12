@@ -1,15 +1,15 @@
 .. default-role:: code
 
-===========
-Screenshots
-===========
+====================
+Screenshot Functions
+====================
 
 PyAutoGUI can take screenshots, save them to files, and locate images within the screen. This is useful if you have a small image of, say, a button that needs to be clicked and want to locate it on the screen.
 
 Screenshot functionality requires the Pillow module. OS X uses the `screencapture` command, which comes with the operating system. Linux uses the `scrot` command, which can be installed by running `sudo apt-get install scrot`.
 
-Ubuntu Installation
-===================
+Special Notes About Ubuntu
+==========================
 
 Unfortunately, Ubuntu seems to have several deficiencies with installing Pillow. PNG and JPEG support are not included with Pillow out of the box on Ubuntu. The following links have more information
 

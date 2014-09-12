@@ -15,7 +15,8 @@ Future features planned (specific versions not planned yet):
 - GetKeyState() type of function
 - Ability to set global hotkey on all platforms so that there can be an easy "kill switch" for GUI automation programs.
 - Optional nonblocking pyautogui calls.
-
+- "strict" mode for keyboard - passing an invalid keyboard key causes an exception instead of silently skipping it.
+- rename keyboardMapping to KEYBOARD_MAPPING
 
 Window handling features:
  - pyautogui.getWindows()      # returns a dict of window titles mapped to window IDs
