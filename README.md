@@ -17,6 +17,12 @@ OS X needs the pyobjc-core and pyobjc module installed (in that order).
 
 Linux needs the python3-Xlib (or python-Xlib for Python 2) module installed.
 
+Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
+
+    https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
+
+    http://ubuntuforums.org/showthread.php?t=1751455
+
 Example Usage
 =============
 
