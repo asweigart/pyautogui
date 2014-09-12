@@ -339,7 +339,7 @@ class TestScreenshot(unittest.TestCase):
         slashFp = open('slash.png' ,'rb')
         haystack1Fp = open('haystack1.png' ,'rb')
         haystack2Fp = open('haystack2.png' ,'rb')
-        colorNoiseFp = open('colorNoise.png' ,'rb')
+        colorNoiseFp = open('colornoise.png' ,'rb')
         slashIm = Image.open(slashFp)
         haystack1Im = Image.open(haystack1Fp)
         haystack2Im = Image.open(haystack2Fp)
@@ -373,7 +373,7 @@ class TestScreenshot(unittest.TestCase):
         slashFp = open('slash.png' ,'rb')
         haystack1Fp = open('haystack1.png' ,'rb')
         haystack2Fp = open('haystack2.png' ,'rb')
-        colorNoiseFp = open('colorNoise.png' ,'rb')
+        colorNoiseFp = open('colornoise.png' ,'rb')
         slashIm = Image.open(slashFp)
         haystack1Im = Image.open(haystack1Fp)
         haystack2Im = Image.open(haystack2Fp)
@@ -392,6 +392,13 @@ class TestScreenshot(unittest.TestCase):
         haystack1Fp.close()
         haystack2Fp.close()
         colorNoiseFp.close()
+
+    def test_center(self):
+        self.assertEqual((10, 10), pyautogui.center((0, 0, 20, 20)))
+        self.assertEqual((10, 10), pyautogui.center((5, 5, 10, 10)))
+
+        self.assertEqual((100, 100), pyautogui.center((0, 0, 200, 200)))
+        self.assertEqual((100, 100), pyautogui.center((50, 50, 100, 100)))
 
 
 if __name__ == '__main__':

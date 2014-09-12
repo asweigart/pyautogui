@@ -1,6 +1,11 @@
 # Screenshot-related features of PyAutoGUI
 
-# UNDER CONSTRUCTION
+"""
+So, apparently Pillow support on Ubuntu 64-bit has several additional steps since it doesn't have JPEG/PNG support out of the box. Description here:
+
+https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
+http://ubuntuforums.org/showthread.php?t=1751455
+"""
 
 import datetime
 import os
@@ -20,7 +25,7 @@ except:
 
 
 
-def locateAll(needleImage, haystackImage, grayscale=False):
+def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
     needleFileObj = None
     haystackFileObj = None
     if isinstance(needleImage, str):
@@ -49,6 +54,8 @@ def locateAll(needleImage, haystackImage, grayscale=False):
     assert len(needleImageFirstRow) == needleWidth
     assert [len(row) for row in needleImageRows] == [needleWidth] * needleHeight
 
+    numMatchesFound = 0
+
     for y in range(haystackHeight):
         for matchx in kmp(needleImageFirstRow, haystackImageData[y * haystackWidth:(y+1) * haystackWidth]):
             foundMatch = True
@@ -58,9 +65,18 @@ def locateAll(needleImage, haystackImage, grayscale=False):
                     foundMatch = False
                     break
             if foundMatch:
-                # match, report the x and y
+                # Match found, report the x, y, width, height of where the matching region is in haystack.
+                numMatchesFound += 1
                 yield (matchx, y, needleWidth, needleHeight)
+                if limit is not None and numMatchesFound >= limit:
+                    # Limit has been reached. Close file handles.
+                    if needleFileObj is not None:
+                        needleFileObj.close()
+                    if haystackFileObj is not None:
+                        haystackFileObj.close()
 
+
+    # There was no limit or the limit wasn't reached, but close the file handles anyway.
     if needleFileObj is not None:
         needleFileObj.close()
     if haystackFileObj is not None:
@@ -68,17 +84,12 @@ def locateAll(needleImage, haystackImage, grayscale=False):
 
 
 def locate(needleImage, haystackImage, grayscale=False):
-    if RUNNING_PYTHON_2:
-        try:
-            foundAt = locateAll(needleImage, haystackImage, grayscale).next() # return just the first item from the generator
-        except StopIteration:
-            foundAt = None
+    # Note: The gymnastics in this function is because we want to make sure to exhaust the iterator so that the needle and haystack files are closed in locateAll.
+    points = tuple(locateAll(needleImage, haystackImage, grayscale, 1))
+    if len(points) > 0:
+        return points[0]
     else:
-        try:
-            foundAt = next(locateAll(needleImage, haystackImage, grayscale)) # return just the first item from the generator
-        except StopIteration:
-            foundAt = None
-    return foundAt
+        return None
 
 
 def locateOnScreen(image, grayscale=False):
@@ -88,9 +99,9 @@ def locateOnScreen(image, grayscale=False):
     return retVal
 
 
-def locateAllOnScreen(image, grayscale=False):
+def locateAllOnScreen(image, grayscale=False, limit=None):
     screenshotIm = screenshot()
-    retVal = locateAll(image, screenshotIm, grayscale)
+    retVal = locateAll(image, screenshotIm, grayscale, limit)
     screenshotIm.fp.close()
     return retVal
 
@@ -122,8 +133,7 @@ def screenshot_linux(imageFilename=None):
     else:
         tmpFilename = imageFilename
     if scrotExists:
-        proc = subprocess.call(['scrot', tmpFilename])
-        proc.wait()
+        subprocess.call(['scrot', tmpFilename])
         im = Image.open(tmpFilename)
         if imageFilename is None:
             os.unlink(tmpFilename)
@@ -156,7 +166,7 @@ def kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation 
 
 
 def center(coords):
-    return (coords[0] + int(coords[2]), coords[1] + int(coords[3]))
+    return (coords[0] + int(coords[2] / 2), coords[1] + int(coords[3] / 2))
 
 
 

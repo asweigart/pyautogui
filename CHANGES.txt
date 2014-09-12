@@ -1,3 +1,4 @@
+v0.9.13, 2014/09/11 -- Fixed OS X scrolling bug. Added screenshot features.
 v0.9.12, 2014/09/10 -- Fixed import bugs.
 v0.9.11, 2014/09/08 -- Fixed bug where None was being passed to platform-specific mouse functions.
 v0.9.10, 2014/09/08 -- Fixing the previous bug, for real this time.
