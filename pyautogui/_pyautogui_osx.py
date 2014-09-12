@@ -314,13 +314,17 @@ def _vscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
-            None, Quartz.kCGScrollEventUnitLine, 1,
-            10 if clicks >= 0 else -10)
+            None, # no source
+            Quartz.kCGScrollEventUnitLine, # units
+            1, # wheelCount (number of dimensions)
+            10 if clicks >= 0 else -10) # vertical movement
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
     scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
-        None, Quartz.kCGScrollEventUnitLine, 1,
-        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10))
+        None, # no source
+        Quartz.kCGScrollEventUnitLine, # units
+        1, # wheelCount (number of dimensions)
+        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10)) # vertical movement
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
@@ -329,15 +333,19 @@ def _hscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
-            None, Quartz.kCGScrollEventUnitLine, 2,
-            None,
-            10 if clicks >= 0 else -10)
+            None, # no source
+            Quartz.kCGScrollEventUnitLine, # units
+            2, # wheelCount (number of dimensions)
+            0, # vertical movement
+            10 if clicks >= 0 else -10) # horizontal movement
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
     scrollWheelEvent = Quartz.CGEventCreateScrollWheelEvent(
-        None, Quartz.kCGScrollEventUnitLine, 2,
-        None,
-        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10))
+        None, # no source
+        Quartz.kCGScrollEventUnitLine, # units
+        2, # wheelCount (number of dimensions)
+        0, # vertical movement
+        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10)) # horizontal movement
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
