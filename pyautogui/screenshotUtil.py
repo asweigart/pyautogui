@@ -95,14 +95,16 @@ def locate(needleImage, haystackImage, grayscale=False):
 def locateOnScreen(image, grayscale=False):
     screenshotIm = screenshot()
     retVal = locate(image, screenshotIm, grayscale)
-    screenshotIm.fp.close()
+    if 'fp' in dir(screenshotIm):
+        screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 
 def locateAllOnScreen(image, grayscale=False, limit=None):
     screenshotIm = screenshot()
     retVal = locateAll(image, screenshotIm, grayscale, limit)
-    screenshotIm.fp.close()
+    if 'fp' in dir(screenshotIm):
+        screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 

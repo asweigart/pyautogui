@@ -1,20 +1,73 @@
+.. default-role:: code
+
+===========
 Screenshots
 ===========
 
-TODO - finish these docs
+PyAutoGUI can take screenshots, save them to files, and locate images within the screen. This is useful if you have a small image of, say, a button that needs to be clicked and want to locate it on the screen.
 
-Screenshot functionality requires PIL/Pillow
+Screenshot functionality requires the Pillow module. OS X uses the `screencapture` command, which comes with the operating system. Linux uses the `scrot` command, which can be installed by running `sudo apt-get install scrot`.
 
-OS X uses "screencapture" command (comes with OS X). Linux requires 'scrot' to be installed.
+Ubuntu Installation
+===================
 
-    screenshot() - Returns a PIL Image object of a screenshot.
+Unfortunately, Ubuntu seems to have several deficiencies with installing Pillow. PNG and JPEG support are not included with Pillow out of the box on Ubuntu. The following links have more information
 
-    screenshot(filename) - Returns a PIL Image object of a screenshot, but also saves it to a file.
+The screenshot() Function
+=========================
 
-    locateOnScreen(image) - Returns (x, y) coordinate of first found instance of the image on the screen. 'image' can be a string of an image filename or a PIL Image object. Returns None if not found on the screen.
+Calling `screenshot()` will return an Image object (see the Pillow or PIL module documentation for details). Passing a string of a filename will save the screenshot to a file as well as return it as an Image object.
 
-    locateAllOnScreen(image) - Returns an iterator the returns (x, y) coordinates.
+.. code:: python
 
-    locate(needle_image, haystack_image) - Returns (x, y) coordinate of first found instance of the needle_image on the haystack_image. Arguments can be a string of an image filename or a PIL Image object. Returns None if not found on the screen.
+    >>> import pyautogui
+    >>> im1 = pyautogui.screenshot()
+    >>> im2 = pyautogui.screenshot('my_screenshot.png')
 
-    locateAll(needle_image, haystack_image) - Returns an iterator the returns (x, y) coordinates.
+On a 1920 x 1080 screen, the `screenshot()` function takes roughly 100 milliseconds - it's not fast but it's not slow.
+
+
+The Locate Functions
+====================
+
+You can visually locate something on the screen if you have an image file of it. For example, say the calculator app was running on your computer and looked like this:
+
+.. image:: calculator.png
+
+You can't call the `moveTo()` and `click()` functions if you don't know the exact screen coordinates of where the calculator buttons are. The calculator can appear in a slightly different place each time it is launched, causing you to re-find the coordinates each time. However, if you have an image of the button, such as the image of the 7 button:
+
+.. image:: calc7key.png
+
+. . . you can call the `locateOnScreen('calc7key.png')` function to get the screen coordinates. The return value is a 4-integer tuple: (left, top, width, height). This tuple can be passed to `center()` to get the X and Y coordinates at the center of this region. If the image can't be found on the screen, `locateOnScreen()` returns `None`.
+
+    >>> import pyautogui
+    >>> button7location = pyautogui.locateOnScreen('calc7key.png')
+    >>> button7location
+    (1416, 562, 50, 41)
+    >>> button7x, button7y = pyautogui.center(button7location)
+    >>> button7x, button7y
+    (1441, 582)
+    >>> pyautogui.click(button7x, button7y)  # clicks the center of where the 7 button was found
+
+There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the left and then down. The arguments can either be a
+
+- `locateOnScreen(image)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
+
+- `locateAllOnScreen(image)` - Returns a generator that yields (left, top, width, height) tuples for where the image is found on the screen.
+
+- `locate(needleImage, haystackImage)` - Returns (left, top, width, height) coordinate of first found instance of `needleImage` in `haystackImage`. Returns None if not found on the screen.
+
+- `locateAll(needleImage, haystackImage)` - Returns a generator that yields (left, top, width, height) tuples for where `needleImage` is found in `haystackImage`.
+
+The "locate all" functions can be used in for loops or passed to `list()`:
+
+    >>> import pyautogui
+    >>> for pos in pyautogui.locateAllOnScreen('someButton.png')
+    ...   print(pos)
+    ...
+    (1101, 252, 50, 50)
+    (59, 481, 50, 50)
+    (1395, 640, 50, 50)
+    (1838, 676, 50, 50)
+    >>> list(pyautogui.locateAllOnScreen('someButton.png'))
+    [(1101, 252, 50, 50), (59, 481, 50, 50), (1395, 640, 50, 50), (1838, 676, 50, 50)]
