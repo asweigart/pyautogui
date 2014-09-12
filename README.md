@@ -26,6 +26,9 @@ Pillow needs to be installed, and on Linux you may need to install additional li
 Example Usage
 =============
 
+Keyboard and Mouse Control
+--------------------------
+
     >>> import pyautogui
     >>> screenWidth, screenHeight = pyautogui.size()
     >>> currentMouseX, currentMouseY = pyautogui.position()
@@ -40,3 +43,36 @@ Example Usage
     >>> pyautogui.typewrite(['left', 'left', 'left', 'left', 'left', 'left'])
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.hotkey('ctrl', 'c')
+
+Display Message Boxes
+---------------------
+
+    >>> import pyautogui
+    >>> pyautogui.alert('This is an alert box.')
+    'OK'
+    >>> pyautogui.confirm('Shall I proceed?')
+    'Cancel'
+    >>> pyautogui.confirm('Enter option.', buttons=['A', 'B', 'C'])
+    'B'
+    >>> pyautogui.prompt('What is your name?')
+    'Al'
+    >>> pyautogui.password('Enter password (text will be hidden)')
+    'swordfish'
+
+Screenshot Functions
+--------------------
+
+(PyAutoGUI uses Pillow for image-related features.)
+
+    >>> import pyautogui
+    >>> im1 = pyautogui.screenshot()
+    >>> im1.save('my_screenshot.png')
+    >>> im2 = pyautogui.screenshot('my_screenshot2.png')
+
+    >>> import pyautogui
+    >>> pyautogui.locateOnScreen('button.png') # returns (left, top, width, height) of matching region
+    (1416, 562, 50, 41)
+    >>> buttonx, buttony = pyautogui.center(button7location)
+    >>> buttonx, buttony
+    (1441, 582)
+    >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
