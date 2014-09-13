@@ -86,3 +86,5 @@ You can add delays after all of PyAutoGUI's functions by setting the ``pyautogui
     >>> pyautogui.moveTo(100, 100); pyautogui.click()   # there will be a two and a half second pause after moving and another after the click
 
 All PyAutoGUI functions will block until they complete. (It is on the roadmap to add an optional non-blocking way to call these functions.)
+
+**It is advised to use FAILSAFE along with setting PAUSE.**
