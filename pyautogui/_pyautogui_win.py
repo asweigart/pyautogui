@@ -542,3 +542,4 @@ def _vscroll(clicks, x, y):
       None
     """
     return _scroll(clicks, x, y)
+

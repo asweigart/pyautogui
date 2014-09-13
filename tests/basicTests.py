@@ -400,6 +400,16 @@ class TestScreenshot(unittest.TestCase):
         self.assertEqual((100, 100), pyautogui.center((0, 0, 200, 200)))
         self.assertEqual((100, 100), pyautogui.center((50, 50, 100, 100)))
 
+class TestFailSafe(unittest.TestCase):
+    def test_failsafe(self):
+        pyautogui.moveTo(1, 1) # make sure mouse doesn't start at 0, 0
+        pyautogui.FAILSAFE = True
+        self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo(0, 0))
+
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(1, 1) # move out of 0, 0
+        pyautogui.moveTo(0, 0) # This line should not cause the fail safe exception to be raised.
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -48,7 +48,7 @@ else:
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
 
 PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. Useful for debugging.
-
+FAILSAFE = False
 
 # Screenshot Functions
 # ====================
@@ -197,6 +197,7 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
     x, y = position(x, y)
 
+    _failSafeCheck()
     moveTo(x, y, _pause=False)
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
     if button == 1 or str(button).lower() == 'left':
@@ -237,6 +238,7 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
     x, y = position(x, y)
 
+    _failSafeCheck()
     moveTo(x, y, _pause=False)
     x, y = platformModule._position()
     if button == 1 or str(button).lower() == 'left':
@@ -281,9 +283,11 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
     x, y = position(x, y)
 
+    _failSafeCheck()
     moveTo(x, y, _pause=False)
 
     for i in range(clicks):
+        _failSafeCheck()
         if button == 1 or str(button).lower() == 'left':
             platformModule._click(x, y, 'left')
         elif button == 2 or str(button).lower() == 'middle':
@@ -318,6 +322,7 @@ def rightClick(x=None, y=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     click(x, y, 1, 0.0, 'right', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -342,6 +347,7 @@ def middleClick(x=None, y=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     click(x, y, 1, 0.0, 'middle', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -376,7 +382,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-
+    _failSafeCheck()
     click(x, y, 2, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -411,6 +417,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
+    _failSafeCheck()
     click(x, y, 3, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -436,6 +443,7 @@ def scroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     x, y = position(x, y)
 
     platformModule._scroll(clicks, x, y)
@@ -461,6 +469,7 @@ def hscroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     x, y = position(x, y)
 
     platformModule._hscroll(clicks, x, y)
@@ -486,6 +495,7 @@ def vscroll(clicks, x=None, y=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
     if _pause and PAUSE != 0:
@@ -516,6 +526,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     _mouseMoveDragTo('move', x, y, duration, tween)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -557,6 +568,8 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
     if xOffset == 0 and yOffset == 0:
         return # no-op case
 
+    _failSafeCheck()
+
     mousex, mousey = platformModule._position()
     moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
     if _pause and PAUSE != 0:
@@ -592,6 +605,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=Tru
     Returns:
       None
     """
+    _failSafeCheck()
     mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', x, y, duration, tween)
     mouseUp(button=button, _pause=False)
@@ -633,6 +647,8 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pa
 
     if xOffset == 0 and yOffset == 0:
         return # no-op case
+
+    _failSafeCheck()
 
     mousex, mousey = platformModule._position()
     mouseDown(button=button, _pause=False)
@@ -703,6 +719,8 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
     elif y >= height:
         y = height - 1
 
+    _failSafeCheck()
+
     # If the duration is small enough, just move the cursor there instantly.
     if duration <= MINIMUM_DURATION:
         if moveOrDrag == 'move':
@@ -714,12 +732,13 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
     # Non-instant moving/dragging involves tweening:
     segments = max(width, height)
     timeSegment = duration / segments
-    while timeSegment < 0.01: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
+    while timeSegment < 0.05: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
         segments = int(segments * 0.9) # decrease segments by 90%.
-
         timeSegment = duration / segments
+
     for n in range(segments):
         time.sleep(timeSegment)
+        _failSafeCheck()
         pointOnLine = tween(n / segments)
         tweenX, tweenY = pyautogui.getPointOnLine(startx, starty, x, y, pointOnLine)
         tweenX, tweenY = int(tweenX), int(tweenY)
@@ -735,6 +754,8 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
         platformModule._moveTo(x, y)
     else:
         platformModule._dragTo(x, y, button)
+
+    _failSafeCheck()
 
 # Keyboard Functions
 # ==================
@@ -776,6 +797,8 @@ def keyDown(key, _pause=True):
     """
     if len(key) > 1:
         key = key.lower()
+
+    _failSafeCheck()
     platformModule._keyDown(key)
 
     if _pause and PAUSE != 0:
@@ -793,6 +816,8 @@ def keyUp(key, _pause=True):
     """
     if len(key) > 1:
         key = key.lower()
+
+    _failSafeCheck()
     platformModule._keyUp(key)
 
     if _pause and PAUSE != 0:
@@ -819,6 +844,7 @@ def press(keys, _pause=True):
                 lowerKeys.append(s)
 
     for k in keys:
+        _failSafeCheck()
         platformModule._keyDown(k)
         platformModule._keyUp(k)
 
@@ -848,12 +874,14 @@ def typewrite(message, interval=0.0, _pause=True):
     """
     interval = float(interval)
 
+    _failSafeCheck()
 
     for c in message:
         if len(c) > 1:
             c = c.lower()
         press(c, _pause=False)
         time.sleep(interval)
+        _failSafeCheck()
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
@@ -876,6 +904,8 @@ def hotkey(*args, **kwargs):
     """
     interval = float(kwargs.get('interval', 0.0))
 
+    _failSafeCheck()
+
     for c in args:
         if len(c) > 1:
             c = c.lower()
@@ -891,3 +921,9 @@ def hotkey(*args, **kwargs):
         time.sleep(PAUSE)
 
 
+class FailSafeException(Exception):
+    pass
+
+def _failSafeCheck():
+    if FAILSAFE and position() == (0, 0):
+        raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner.')

@@ -74,7 +74,12 @@ Fail-Safes
 
 Like the enchanted brooms from the Sorcerer’s Apprentice programmed to keep filling (and then overfilling) the bath with water, your program could get out of control (even though it is following your instructions) and need to be stopped. This can be difficult to do if the mouse is moving around on its own, preventing you from clicking on the program's window to close it down.
 
-As a safety feature, you can add delays after all of PyAutoGUI's functions by setting the ``pyautogui.PAUSE`` variable to a float or integer value of the number of seconds to pause. This can be helpful when interacting with other applications so that PyAutoGUI doesn't move too fast for them. For example:
+As a safety feature, you can set `pyautogui.FAILSAFE = True` in which case PyAutoGUI functions will raise a `pyautogui.FailSafeException` if the mouse cursor is in the upper left corner of the screen. If you lose control and need to stop the current PyAutoGUI function, keep moving the mouse cursor up and to the left.
+
+    >>> import pyautogui
+    >>> pyautogui.FAILSAFE = True
+
+You can add delays after all of PyAutoGUI's functions by setting the ``pyautogui.PAUSE`` variable to a float or integer value of the number of seconds to pause. This can be helpful when interacting with other applications so that PyAutoGUI doesn't move too fast for them. For example:
 
     >>> import pyautogui
     >>> pyautogui.PAUSE = 2.5
