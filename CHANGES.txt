@@ -1,3 +1,4 @@
+v0.9.15, 2014/09/12 -- Added fail-safe feature.
 v0.9.14, 2014/09/11 -- Fixed bug with locateOnScreen().
 v0.9.13, 2014/09/11 -- Fixed OS X scrolling bug. Added screenshot features.
 v0.9.12, 2014/09/10 -- Fixed import bugs.
