@@ -16,14 +16,14 @@ from PIL import ImageOps
 
 RUNNING_PYTHON_2 = sys.version_info[0] == 2
 
+scrotExists = False
 try:
-    whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    scrotExists = whichProc.wait() == 0
+    if sys.platform not in ('java', 'darwin', 'win32'):
+        whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        scrotExists = whichProc.wait() == 0
 except:
     # if there is no "which" program to find scrot, then assume there is no scrot.
-    scrotExists = False
-
-
+    pass
 
 def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
     needleFileObj = None
@@ -36,7 +36,6 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
         # 'image' is a filename, load the Image object
         haystackFileObj = open(haystackImage, 'rb')
         haystackImage = Image.open(haystackFileObj)
-
 
     if grayscale:
         needleImage = ImageOps.grayscale(needleImage)
