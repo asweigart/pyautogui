@@ -69,10 +69,21 @@ Screenshot Functions
     >>> im1.save('my_screenshot.png')
     >>> im2 = pyautogui.screenshot('my_screenshot2.png')
 
+You can also locate where an image is on the screen:
+
     >>> import pyautogui
-    >>> pyautogui.locateOnScreen('button.png') # returns (left, top, width, height) of matching region
+    >>> button7location = pyautogui.locateOnScreen('button.png') # returns (left, top, width, height) of matching region
+    >>> button7location
     (1416, 562, 50, 41)
     >>> buttonx, buttony = pyautogui.center(button7location)
+    >>> buttonx, buttony
+    (1441, 582)
+    >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
+
+The locateCenterOnScreen() function returns the center of this match region:
+
+    >>> import pyautogui
+    >>> buttonx, buttony = pyautogui.locateCenterOnScreen('button.png') # returns (x, y) of matching region
     >>> buttonx, buttony
     (1441, 582)
     >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
