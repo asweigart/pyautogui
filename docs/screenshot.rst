@@ -59,15 +59,15 @@ On a 1920 x 1080 screen, the locate function calls take about 1 or 2 seconds. Th
 
 There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the left and then down. The arguments can either be a
 
-- `locateOnScreen(image)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
+- `locateOnScreen(image, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
 
-- `locateCenterOnScreen(image)` - Returns (x, y) coordinates of the center of the first found instance of the `image` on the screen. Returns None if not found on the screen.
+- `locateCenterOnScreen(image, grayscale=False)` - Returns (x, y) coordinates of the center of the first found instance of the `image` on the screen. Returns None if not found on the screen.
 
-- `locateAllOnScreen(image)` - Returns a generator that yields (left, top, width, height) tuples for where the image is found on the screen.
+- `locateAllOnScreen(image, grayscale=False)` - Returns a generator that yields (left, top, width, height) tuples for where the image is found on the screen.
 
-- `locate(needleImage, haystackImage)` - Returns (left, top, width, height) coordinate of first found instance of `needleImage` in `haystackImage`. Returns None if not found on the screen.
+- `locate(needleImage, haystackImage, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of `needleImage` in `haystackImage`. Returns None if not found on the screen.
 
-- `locateAll(needleImage, haystackImage)` - Returns a generator that yields (left, top, width, height) tuples for where `needleImage` is found in `haystackImage`.
+- `locateAll(needleImage, haystackImage, grayscale=False)` - Returns a generator that yields (left, top, width, height) tuples for where `needleImage` is found in `haystackImage`.
 
 The "locate all" functions can be used in for loops or passed to `list()`:
 
