@@ -49,11 +49,19 @@ You can't call the `moveTo()` and `click()` functions if you don't know the exac
     (1441, 582)
     >>> pyautogui.click(button7x, button7y)  # clicks the center of where the 7 button was found
 
+The `locateCenterOnScreen()` function is probably the one you want to use most often:
+
+    >>> import pyautogui
+    >>> x, y = pyautogui.locateCenterOnScreen('calc7key.png')
+    >>> pyautogui.click(x, y)
+
 On a 1920 x 1080 screen, the locate function calls take about 1 or 2 seconds. This may be too slow for action video games, but works for most purposes and applications.
 
 There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the left and then down. The arguments can either be a
 
 - `locateOnScreen(image)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
+
+- `locateCenterOnScreen(image)` - Returns (x, y) coordinates of the center of the first found instance of the `image` on the screen. Returns None if not found on the screen.
 
 - `locateAllOnScreen(image)` - Returns a generator that yields (left, top, width, height) tuples for where the image is found on the screen.
 

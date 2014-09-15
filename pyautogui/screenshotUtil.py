@@ -37,6 +37,7 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
         haystackFileObj = open(haystackImage, 'rb')
         haystackImage = Image.open(haystackFileObj)
 
+
     if grayscale:
         needleImage = ImageOps.grayscale(needleImage)
         haystackImage = ImageOps.grayscale(haystackImage)
@@ -105,6 +106,10 @@ def locateAllOnScreen(image, grayscale=False, limit=None):
     if 'fp' in dir(screenshotIm):
         screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
+
+
+def locateCenterOnScreen(image, grayscale=False):
+    return center(locateOnScreen(image, grayscale))
 
 
 def screenshot_win32(imageFilename=None):
