@@ -182,6 +182,9 @@ def pixelMatchesColor(x, y, expectedRGBColor, tolerance=0):
     return (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance)
 
 
+def pixel(x, y):
+    return screenshot().getpixel((x, y))
+
 
 # set the screenshot() function based on the platform running this module
 if sys.platform.startswith('java'):

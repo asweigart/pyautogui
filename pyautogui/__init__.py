@@ -63,6 +63,7 @@ locateAllOnScreen = pyautogui.screenshotUtil.locateAllOnScreen
 locateCenterOnScreen = pyautogui.screenshotUtil.locateCenterOnScreen
 center = pyautogui.screenshotUtil.center
 pixelMatchesColor = pyautogui.screenshotUtil.pixelMatchesColor
+pixel = pyautogui.screenshotUtil.pixel
 
 # PyMsgBox Functions
 # =================
