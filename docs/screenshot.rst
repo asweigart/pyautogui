@@ -91,3 +91,37 @@ Optionally, you can pass `grayscale=True` to the locate functions to give a slig
     >>> button7location = pyautogui.locateOnScreen('calc7key.png', grayscale=True)
     >>> button7location
     (1416, 562, 50, 41)
+
+Pixel Matching
+--------------
+
+To obtain the RGB color of a pixel in a screenshot, use the Image object's `getpixel()` method:
+
+    >>> import pyautogui
+    >>> im = pyautogui.screenshot()
+    >>> im.getpixel((100, 200))
+    (130, 135, 144)
+
+Or as a single function, call the `pixel()` PyAutoGUI function, which is a wrapper for the previous calls:
+
+    >>> import pyautogui
+    >>> pyautogui.pixel(100, 200)
+    (130, 135, 144)
+
+If you just need to verify that a single pixel matches a given pixel, call the `pixelMatchesColor()` function, passing it the X coordinate, Y coordinate, and RGB tuple of the color it represents:
+
+    >>> import pyautogui
+    >>> pyautogui.pixelMatchesColor(100, 200, (130, 135, 144))
+    True
+    >>> pyautogui.pixelMatchesColor(100, 200, (0, 0, 0))
+    False
+
+The optional `tolerance` keyword argument specifies how much each of the red, green, and blue values can vary while still matching:
+
+    >>> import pyautogui
+    >>> pyautogui.pixelMatchesColor(100, 200, (130, 135, 144))
+    True
+    >>> pyautogui.pixelMatchesColor(100, 200, (140, 125, 134))
+    False
+    >>> pyautogui.pixelMatchesColor(100, 200, (140, 125, 134), tolerance=10)
+    True
