@@ -4,7 +4,7 @@ import sys
 import Quartz
 import AppKit
 
-import pyautogui.util
+import pyautogui
 
 
 if sys.platform !=  'darwin':
@@ -19,7 +19,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.util.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
 keyboardMapping.update({
     'a': 0x00, # kVK_ANSI_A
     's': 0x01, # kVK_ANSI_S
@@ -236,7 +236,7 @@ def _normalKeyEvent(key, upDown):
     assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
 
     try:
-        if pyautogui.util.isShiftCharacter(key):
+        if pyautogui.isShiftCharacter(key):
             key_code = keyboardMapping[key.lower()]
 
             event = Quartz.CGEventCreateKeyboardEvent(None,

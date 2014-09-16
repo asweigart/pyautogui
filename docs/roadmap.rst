@@ -30,3 +30,4 @@ Window handling features:
  - win.position()  # returns (x, y) of top-left corner
  - win.moveRel(x=0, y=0)   # moves relative to the x, y of top-left corner of the window
  - win.clickRel(x=0, y=0, clicks=1, interval=0.0, button='left')  # click relative to the x, y of top-left corner of the window
+ - Additions to screenshot functionality so that it can capture specific windows instead of full screen.

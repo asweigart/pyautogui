@@ -196,3 +196,6 @@ elif sys.platform == 'win32':
     from PIL import ImageGrab
 else:
     screenshot = _screenshot_linux
+
+
+grab = screenshot # for compatibility with Pillow/PIL's ImageGrab module.

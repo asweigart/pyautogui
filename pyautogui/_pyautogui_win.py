@@ -4,7 +4,7 @@
 
 import ctypes
 import ctypes.wintypes
-import pyautogui.util
+import pyautogui
 
 import sys
 if sys.platform !=  'win32':
@@ -104,7 +104,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.util.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
 keyboardMapping.update({
     'backspace': 0x08, # VK_BACK
     '\b': 0x08, # VK_BACK
@@ -264,7 +264,7 @@ def _keyDown(key):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS.
+      pyautogui.KEYBOARD_KEYS.
 
     Returns:
       None
@@ -272,7 +272,7 @@ def _keyDown(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    needsShift = pyautogui.util.isShiftCharacter(key)
+    needsShift = pyautogui.isShiftCharacter(key)
 
     """
     # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
@@ -305,7 +305,7 @@ def _keyUp(key):
 
     Args:
       key (str): The key to be released up. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS.
+      pyautogui.KEYBOARD_KEYS.
 
     Returns:
       None
@@ -313,7 +313,7 @@ def _keyUp(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    needsShift = pyautogui.util.isShiftCharacter(key)
+    needsShift = pyautogui.isShiftCharacter(key)
     """
     # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
     if key in keyboardMapping.keys():
