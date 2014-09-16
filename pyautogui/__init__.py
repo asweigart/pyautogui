@@ -34,7 +34,7 @@ import time
 
 # move these functions into this namespace
 from pyautogui.util import *
-from pyautogui.screenshotUtil import *
+from pyscreeze import *
 from pymsgbox import *
 from pytweening import *
 

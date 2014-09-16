@@ -15,13 +15,17 @@ On Windows, this is:
 On OS X, this is:
 
     sudo pip3 install pyobjc-core
+
     sudo pip3 install pyobjc
+
     sudo pip3 install pyautogui
 
 On Linux, this is:
 
     sudo apt-get install python-tk
+
     sudo pip3 install python3-Xlib
+
     sudo pip3 install pyautogui
 
 (python-tk is required only for Python 2.x, since it does not come with the tkinter module that the message box features use.)

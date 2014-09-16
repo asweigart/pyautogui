@@ -59,6 +59,8 @@ class TestGeneral(unittest.TestCase):
         pyautogui.center
         pyautogui.pixelMatchesColor
         pyautogui.pixel
+        pyautogui.screenshot
+        pyautogui.grab
 
         # Tweening-related API
         pyautogui.getLine
@@ -373,82 +375,6 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, '  ')
 
-class TestScreenshot(unittest.TestCase):
-    # TODO - lots of warnings about unclosed file handles for these tests.
-    def test_locate_filename(self):
-        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack1.png')))
-        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack2.png')))
-
-        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack1.png', grayscale=True)))
-        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate('slash.png', 'haystack2.png', grayscale=True)))
-
-        self.assertEqual(None, pyautogui.locate('slash.png', 'colornoise.png'))
-        self.assertEqual(None, pyautogui.locate('slash.png', 'colornoise.png', grayscale=True))
-
-    def test_locate_im(self):
-        slashFp = open('slash.png' ,'rb')
-        haystack1Fp = open('haystack1.png' ,'rb')
-        haystack2Fp = open('haystack2.png' ,'rb')
-        colorNoiseFp = open('colornoise.png' ,'rb')
-        slashIm = Image.open(slashFp)
-        haystack1Im = Image.open(haystack1Fp)
-        haystack2Im = Image.open(haystack2Fp)
-        colorNoiseIm = Image.open(colorNoiseFp)
-
-        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate(slashIm, haystack1Im)))
-        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate(slashIm, haystack2Im)))
-
-        self.assertEqual((94, 94, 4, 4), tuple(pyautogui.locate(slashIm, haystack1Im, grayscale=True)))
-        self.assertEqual((93, 93, 4, 4), tuple(pyautogui.locate(slashIm, haystack2Im, grayscale=True)))
-
-        self.assertEqual(None, pyautogui.locate(slashIm, colorNoiseIm))
-        self.assertEqual(None, pyautogui.locate(slashIm, colorNoiseIm, grayscale=True))
-
-        slashFp.close()
-        haystack1Fp.close()
-        haystack2Fp.close()
-        colorNoiseFp.close()
-
-    def test_locateAll_filename(self):
-        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png')))
-        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png')))
-
-        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll('slash.png', 'haystack1.png', grayscale=True)))
-        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll('slash.png', 'haystack2.png', grayscale=True)))
-
-        self.assertEqual((), tuple(pyautogui.locateAll('slash.png', 'colornoise.png')))
-        self.assertEqual((), tuple(pyautogui.locateAll('slash.png', 'colornoise.png', grayscale=True)))
-
-    def test_locateAll_im(self):
-        slashFp = open('slash.png' ,'rb')
-        haystack1Fp = open('haystack1.png' ,'rb')
-        haystack2Fp = open('haystack2.png' ,'rb')
-        colorNoiseFp = open('colornoise.png' ,'rb')
-        slashIm = Image.open(slashFp)
-        haystack1Im = Image.open(haystack1Fp)
-        haystack2Im = Image.open(haystack2Fp)
-        colorNoiseIm = Image.open(colorNoiseFp)
-
-        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll(slashIm, haystack1Im)))
-        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll(slashIm, haystack2Im)))
-
-        self.assertEqual(((94, 94, 4, 4),), tuple(pyautogui.locateAll(slashIm, haystack1Im, grayscale=True)))
-        self.assertEqual(((93, 93, 4, 4), (94, 94, 4, 4), (95, 95, 4, 4)), tuple(pyautogui.locateAll(slashIm, haystack2Im, grayscale=True)))
-
-        self.assertEqual((), tuple(pyautogui.locateAll(slashIm, colorNoiseIm)))
-        self.assertEqual((), tuple(pyautogui.locateAll(slashIm, colorNoiseIm, grayscale=True)))
-
-        slashFp.close()
-        haystack1Fp.close()
-        haystack2Fp.close()
-        colorNoiseFp.close()
-
-    def test_center(self):
-        self.assertEqual((10, 10), pyautogui.center((0, 0, 20, 20)))
-        self.assertEqual((10, 10), pyautogui.center((5, 5, 10, 10)))
-
-        self.assertEqual((100, 100), pyautogui.center((0, 0, 200, 200)))
-        self.assertEqual((100, 100), pyautogui.center((50, 50, 100, 100)))
 
 class TestFailSafe(unittest.TestCase):
     def test_failsafe(self):
