@@ -31,9 +31,13 @@ __version__ = '0.9.17'
 
 import sys
 import time
-import pyautogui.util
 
-KEYBOARD_KEYS = pyautogui.util.KEYBOARD_KEYS # move into this namespace
+# move these functions into this namespace
+from pyautogui.util import *
+from pyautogui.screenshotUtil import *
+from pymsgbox import *
+from pytweening import *
+
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
@@ -51,63 +55,6 @@ MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0
 
 PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = False
-
-# Screenshot Functions
-# ====================
-import pyautogui.screenshotUtil
-screenshot = pyautogui.screenshotUtil.screenshot # move into this namespace
-locate = pyautogui.screenshotUtil.locate
-locateAll = pyautogui.screenshotUtil.locateAll
-locateOnScreen = pyautogui.screenshotUtil.locateOnScreen
-locateAllOnScreen = pyautogui.screenshotUtil.locateAllOnScreen
-locateCenterOnScreen = pyautogui.screenshotUtil.locateCenterOnScreen
-center = pyautogui.screenshotUtil.center
-pixelMatchesColor = pyautogui.screenshotUtil.pixelMatchesColor
-pixel = pyautogui.screenshotUtil.pixel
-
-# PyMsgBox Functions
-# =================
-import pymsgbox
-alert = pymsgbox.alert
-confirm = pymsgbox.confirm
-prompt = pymsgbox.prompt
-password = pymsgbox.password
-
-# PyTweening Functions
-# ====================
-import pytweening
-getPointOnLine = pytweening.getPointOnLine
-linear = pytweening.linear
-easeInQuad = pytweening.easeInQuad
-easeOutQuad = pytweening.easeOutQuad
-easeInOutQuad = pytweening.easeInOutQuad
-easeInCubic = pytweening.easeInCubic
-easeOutCubic = pytweening.easeOutCubic
-easeInOutCubic = pytweening.easeInOutCubic
-easeInQuart = pytweening.easeInQuart
-easeOutQuart = pytweening.easeOutQuart
-easeInOutQuart = pytweening.easeInOutQuart
-easeInQuint = pytweening.easeInQuint
-easeOutQuint = pytweening.easeOutQuint
-easeInOutQuint = pytweening.easeInOutQuint
-easeInSine = pytweening.easeInSine
-easeOutSine = pytweening.easeOutSine
-easeInOutSine = pytweening.easeInOutSine
-easeInExpo = pytweening.easeInExpo
-easeOutExpo = pytweening.easeOutExpo
-easeInOutExpo = pytweening.easeInOutExpo
-easeInCirc = pytweening.easeInCirc
-easeOutCirc = pytweening.easeOutCirc
-easeInOutCirc = pytweening.easeInOutCirc
-easeInElastic = pytweening.easeInElastic
-easeOutElastic = pytweening.easeOutElastic
-easeInOutElastic = pytweening.easeInOutElastic
-easeInBack = pytweening.easeInBack
-easeOutBack = pytweening.easeOutBack
-easeInOutBack = pytweening.easeInOutBack
-easeInBounce = pytweening.easeInBounce
-easeOutBounce = pytweening.easeOutBounce
-easeInOutBounce = pytweening.easeInOutBounce
 
 
 # General Functions
@@ -742,7 +689,7 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
         time.sleep(timeSegment)
         _failSafeCheck()
         pointOnLine = tween(n / segments)
-        tweenX, tweenY = pyautogui.getPointOnLine(startx, starty, x, y, pointOnLine)
+        tweenX, tweenY = getPointOnLine(startx, starty, x, y, pointOnLine)
         tweenX, tweenY = int(tweenX), int(tweenY)
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
@@ -792,7 +739,7 @@ def keyDown(key, _pause=True):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS.
+      KEYBOARD_KEYS.
 
     Returns:
       None
@@ -811,7 +758,7 @@ def keyUp(key, _pause=True):
 
     Args:
       key (str): The key to be released up. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS.
+      KEYBOARD_KEYS.
 
     Returns:
       None
@@ -830,7 +777,7 @@ def press(keys, _pause=True):
 
     Args:
       key (str, list): The key to be pressed. The valid names are listed in
-      pyautogui.util.KEYBOARD_KEYS. Can also be a list of such strings.
+      KEYBOARD_KEYS. Can also be a list of such strings.
 
     Returns:
       None
@@ -867,7 +814,7 @@ def typewrite(message, interval=0.0, _pause=True):
     Args:
       message (str, list): If a string, then the characters to be pressed. If a
         list, then the key names of the keys to press in order. The valid names
-        are listed in pyautogui.util.KEYBOARD_KEYS.
+        are listed in KEYBOARD_KEYS.
       interval (float, optional): The number of seconds in between each press.
         0.0 by default, for no pause in between presses.
 

@@ -46,6 +46,56 @@ class TestGeneral(unittest.TestCase):
         pyautogui.hscroll
         pyautogui.vscroll
 
+        # util API
+        pyautogui.KEYBOARD_KEYS
+        pyautogui.isShiftCharacter
+
+        # Screenshot-related API
+        pyautogui.locateAll
+        pyautogui.locate
+        pyautogui.locateOnScreen
+        pyautogui.locateAllOnScreen
+        pyautogui.locateCenterOnScreen
+        pyautogui.center
+        pyautogui.pixelMatchesColor
+        pyautogui.pixel
+
+        # Tweening-related API
+        pyautogui.getLine
+        pyautogui.getPointOnLine
+        pyautogui.linear
+        pyautogui.easeInQuad
+        pyautogui.easeOutQuad
+        pyautogui.easeInOutQuad
+        pyautogui.easeInCubic
+        pyautogui.easeOutCubic
+        pyautogui.easeInOutCubic
+        pyautogui.easeInQuart
+        pyautogui.easeOutQuart
+        pyautogui.easeInOutQuart
+        pyautogui.easeInQuint
+        pyautogui.easeOutQuint
+        pyautogui.easeInOutQuint
+        pyautogui.easeInSine
+        pyautogui.easeOutSine
+        pyautogui.easeInOutSine
+        pyautogui.easeInExpo
+        pyautogui.easeOutExpo
+        pyautogui.easeInOutExpo
+        pyautogui.easeInCirc
+        pyautogui.easeOutCirc
+        pyautogui.easeInOutCirc
+        pyautogui.easeInElastic
+        pyautogui.easeOutElastic
+        pyautogui.easeInOutElastic
+        pyautogui.easeInBack
+        pyautogui.easeOutBack
+        pyautogui.easeInOutBack
+        pyautogui.easeInBounce
+        pyautogui.easeOutBounce
+        pyautogui.easeInOutBounce
+
+
     def test_size(self):
         width, height = pyautogui.size()
 

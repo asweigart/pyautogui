@@ -57,7 +57,7 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
     numMatchesFound = 0
 
     for y in range(haystackHeight):
-        for matchx in kmp(needleImageFirstRow, haystackImageData[y * haystackWidth:(y+1) * haystackWidth]):
+        for matchx in _kmp(needleImageFirstRow, haystackImageData[y * haystackWidth:(y+1) * haystackWidth]):
             foundMatch = True
             for searchy in range(1, needleHeight):
                 haystackStart = (searchy + y) * haystackWidth + matchx
@@ -112,14 +112,14 @@ def locateCenterOnScreen(image, grayscale=False):
     return center(locateOnScreen(image, grayscale))
 
 
-def screenshot_win32(imageFilename=None):
+def _screenshot_win32(imageFilename=None):
     im = ImageGrab.grab()
     if imageFilename is not None:
         im.save(imageFilename)
     return im
 
 
-def screenshot_osx(imageFilename=None):
+def _screenshot_osx(imageFilename=None):
     if imageFilename is None:
         tmpFilename = '.screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
     else:
@@ -131,7 +131,7 @@ def screenshot_osx(imageFilename=None):
     return im
 
 
-def screenshot_linux(imageFilename=None):
+def _screenshot_linux(imageFilename=None):
     if not scrotExists:
         raise NotImplementedError('"scrot" must be installed to use screenshot functions in Linux. Run: sudo apt-get install scrot')
     if imageFilename is None:
@@ -149,7 +149,7 @@ def screenshot_linux(imageFilename=None):
 
 
 
-def kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation (to be used by screen capture)
+def _kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation (to be used by screen capture)
     # build table of shift amounts
     shifts = [1] * (len(needle) + 1)
     shift = 1
@@ -190,9 +190,9 @@ def pixel(x, y):
 if sys.platform.startswith('java'):
     raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
-    screenshot = screenshot_osx
+    screenshot = _screenshot_osx
 elif sys.platform == 'win32':
-    screenshot = screenshot_win32
+    screenshot = _screenshot_win32
     from PIL import ImageGrab
 else:
-    screenshot = screenshot_linux
+    screenshot = _screenshot_linux
