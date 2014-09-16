@@ -21,7 +21,7 @@ You can only press single-character keys with ``typewrite()``, so you can't pres
 The press(), keyDown(), and keyUp() Functions
 =============================================
 
-To press these keys, call the ``press()`` function and pass it a string from the ``pyautogui.util.KEYBOARD_KEYS`` such as ``enter``, ``esc``, ``f1``. See `KEYBOARD_KEYS`_.
+To press these keys, call the ``press()`` function and pass it a string from the ``pyautogui.KEYBOARD_KEYS`` such as ``enter``, ``esc``, ``f1``. See `KEYBOARD_KEYS`_.
 
 For example:
 
