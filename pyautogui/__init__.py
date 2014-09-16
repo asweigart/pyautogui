@@ -33,6 +33,8 @@ import sys
 import time
 import pyautogui.util
 
+KEYBOARD_KEYS = pyautogui.util.KEYBOARD_KEYS # move into this namespace
+
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
     #import pyautogui._pyautogui_java as platformModule
@@ -575,8 +577,6 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
     moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
-
-
 
 
 def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=True):
