@@ -175,6 +175,13 @@ def center(coords):
     return (coords[0] + int(coords[2] / 2), coords[1] + int(coords[3] / 2))
 
 
+def pixelMatchesColor(x, y, expectedRGBColor, tolerance=0):
+    r, g, b = screenshot().getpixel((x, y))
+    exR, exG, exB = expectedRGBColor
+
+    return (abs(r - exR) <= tolerance) and (abs(g - exG) <= tolerance) and (abs(b - exB) <= tolerance)
+
+
 
 # set the screenshot() function based on the platform running this module
 if sys.platform.startswith('java'):
