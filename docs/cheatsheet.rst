@@ -4,7 +4,7 @@
 Cheat Sheet
 ===========
 
-This is a quickstart reference to using PyAutoGUI. All the keyword arguments in these examples are optional.
+This is a quickstart reference to using PyAutoGUI. **All the keyword arguments in the examples on this page are optional.**
 
     >>> import pyautogui
 
@@ -108,7 +108,7 @@ The `prompt()` function will return `None` if the user clicked Cancel.
 Screenshot Functions
 --------------------
 
-PyAutoGUI uses Pillow/PIL for it's image-related data.
+PyAutoGUI uses Pillow/PIL for its image-related data.
 
 On Linux, you must run `sudo apt-get install scrot` to use the screenshot features.
 
