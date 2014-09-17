@@ -19,7 +19,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
 keyboardMapping.update({
     'a': 0x00, # kVK_ANSI_A
     's': 0x01, # kVK_ANSI_S

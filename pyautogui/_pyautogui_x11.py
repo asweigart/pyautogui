@@ -100,7 +100,7 @@ def _keyDown(key):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      pyautogui.KEYBOARD_KEYS.
+      pyautogui.KEY_NAMES.
 
     Returns:
       None
@@ -129,7 +129,7 @@ def _keyUp(key):
 
     Args:
       key (str): The key to be released up. The valid names are listed in
-      pyautogui.KEYBOARD_KEYS.
+      pyautogui.KEY_NAMES.
 
     Returns:
       None
@@ -161,7 +161,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEYBOARD_KEYS])
+keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
 keyboardMapping.update({
     'backspace':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
     '\b':                _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
