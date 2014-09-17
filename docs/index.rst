@@ -21,6 +21,7 @@ Contents:
 
    introduction.rst
    install.rst
+   cheatsheet.rst
    general.rst
    mouse.rst
    keyboard.rst
