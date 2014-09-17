@@ -25,6 +25,7 @@ Contents:
    mouse.rst
    keyboard.rst
    msgbox.rst
+   screenshot.rst
    tests.rst
    roadmap.rst
    cookbook.rst
