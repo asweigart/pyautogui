@@ -128,10 +128,10 @@ The `locateAllOnScreen()` function will return a generator for all the locations
     ...
     ...
     (863, 117, 70, 13)
-    (623, 137, 70, 13),
-    (853, 577, 70, 13),
-    (883, 617, 70, 13),
-    (973, 657, 70, 13),
+    (623, 137, 70, 13)
+    (853, 577, 70, 13)
+    (883, 617, 70, 13)
+    (973, 657, 70, 13)
     (933, 877, 70, 13)
 
     >>> list(pyautogui.locateAllOnScreen('looksLikeThis.png'))
@@ -139,8 +139,8 @@ The `locateAllOnScreen()` function will return a generator for all the locations
 
 The `locateCenterOnScreen()` function just returns the XY coordinates of the middle of where the image is found on the screen:
 
-    >>> pyautogui.locateCenterOnScreen('looksLikeThis.png')
-    (658, 83)
+    >>> pyautogui.locateCenterOnScreen('looksLikeThis.png')  # returns center x and y
+    (898, 423)
 
 These functions return `None` if the image couldn't be found on the screen.
 
