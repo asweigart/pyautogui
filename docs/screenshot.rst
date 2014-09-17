@@ -26,6 +26,10 @@ Calling `screenshot()` will return an Image object (see the Pillow or PIL module
 
 On a 1920 x 1080 screen, the `screenshot()` function takes roughly 100 milliseconds - it's not fast but it's not slow.
 
+There is also an optional `region` keyword argument, if you do not want a screenshot of the entire screen. You can pass a four-integer tuple of the left, top, width, and height of the region to capture:
+
+    >>> import pyautogui
+    >>> im = pyautogui.screenshot(region=(0,0, 300, 400))
 
 The Locate Functions
 ====================
