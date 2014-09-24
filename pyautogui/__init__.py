@@ -27,7 +27,7 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
-__version__ = '0.9.18'
+__version__ = '0.9.19'
 
 import sys
 import time
@@ -81,8 +81,8 @@ else:
 
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
 
-PAUSE = 0.0 # The number of seconds to pause after EVERY public function call. Useful for debugging.
-FAILSAFE = False
+PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
+FAILSAFE = True
 
 
 # General Functions
@@ -903,4 +903,4 @@ class FailSafeException(Exception):
 
 def _failSafeCheck():
     if FAILSAFE and position() == (0, 0):
-        raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner.')
+        raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')

@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='PyAutoGUI',
-    version='0.9.18',
+    version='0.9.19',
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
@@ -15,7 +15,7 @@ setup(
     install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Win32 (MS Windows)',
         'Environment :: X11 Applications',
         'Environment :: MacOS X',
