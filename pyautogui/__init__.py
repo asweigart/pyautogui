@@ -102,10 +102,12 @@ def position(x=None, y=None):
       (x, y) tuple of the current xy coordinates of the mouse cursor.
     """
     posx, posy = platformModule._position()
+    posx = int(posx)
+    posy = int(posy)
     if x is not None:
-        posx = int(posx)
+        posx = int(x)
     if y is not None:
-        posy = int(posy)
+        posy = int(y)
     return posx, posy
 
 
@@ -910,17 +912,18 @@ def displayMousePosition():
   """This function is meant to be run from the command line. It will
   automatically display the location and RGB of the mouse cursor."""
   print('Press Ctrl-C to quit.')
-try:
-    while True:
-        # Get and print the mouse coordinates.
-        x, y = pyautogui.position()
-        positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
-        pixelColor = pyautogui.screenshot().getpixel((x, y))
-        positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
-        positionStr += ', ' + str(pixelColor[1]).rjust(3)
-        positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
-        sys.stdout.write(positionStr)
-        sys.stdout.write('\b' * len(positionStr))
-        sys.stdout.flush()
-except KeyboardInterrupt:
-    pass
+  try:
+      while True:
+          # Get and print the mouse coordinates.
+          x, y = position()
+          positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
+          pixelColor = screenshot().getpixel((x, y))
+          positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
+          positionStr += ', ' + str(pixelColor[1]).rjust(3)
+          positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
+          sys.stdout.write(positionStr)
+          sys.stdout.write('\b' * len(positionStr))
+          sys.stdout.flush()
+  except KeyboardInterrupt:
+      sys.stdout.write('\n')
+
