@@ -103,9 +103,9 @@ def position(x=None, y=None):
     """
     posx, posy = platformModule._position()
     if x is not None:
-        posx = int(x)
+        posx = int(posx)
     if y is not None:
-        posy = int(y)
+        posy = int(posy)
     return posx, posy
 
 
@@ -904,3 +904,23 @@ class FailSafeException(Exception):
 def _failSafeCheck():
     if FAILSAFE and position() == (0, 0):
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
+
+
+def displayMousePosition():
+  """This function is meant to be run from the command line. It will
+  automatically display the location and RGB of the mouse cursor."""
+  print('Press Ctrl-C to quit.')
+try:
+    while True:
+        # Get and print the mouse coordinates.
+        x, y = pyautogui.position()
+        positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
+        pixelColor = pyautogui.screenshot().getpixel((x, y))
+        positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
+        positionStr += ', ' + str(pixelColor[1]).rjust(3)
+        positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
+        sys.stdout.write(positionStr)
+        sys.stdout.write('\b' * len(positionStr))
+        sys.stdout.flush()
+except KeyboardInterrupt:
+    pass
