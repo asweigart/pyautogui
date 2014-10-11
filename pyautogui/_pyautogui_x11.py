@@ -70,8 +70,8 @@ def _click(x, y, button):
     else:
         assert False, "button argument not in ('left', 'middle', 'right', 4, 5, 6, 7)"
 
-    _mouseDown(button, x, y)
-    _mouseUp(button, x, y)
+    _mouseDown(x, y, button)
+    _mouseUp(x, y, button)
 
 
 def _moveTo(x, y):
