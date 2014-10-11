@@ -1,3 +1,4 @@
+v0.9.20, 2014/10/11 -- Fixed parameter order bug on Linux.
 v0.9.19, 2014/09/24 -- Set fail-safe and pause features to be enabled by default.
 v0.9.18, 2014/09/16 -- Moved screenshot features to a separate "PyScreeze" module.
 v0.9.17, 2014/09/15 -- Added pixel() and pixelMatchesColor() functions.

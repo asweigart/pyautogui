@@ -4,3 +4,4 @@ answer newbie questions, and generally made PyAutoGUI that much better:
 
 Al Sweigart
 Ari Lacenski https://github.com/tensory
+https://github.com/hey-sancho
