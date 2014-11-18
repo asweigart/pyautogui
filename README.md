@@ -1,4 +1,3 @@
-=========
 PyAutoGUI
 =========
 
@@ -11,6 +10,8 @@ Source code available at https://github.com/asweigart/pyautogui
 Dependencies
 ============
 
+If you are installing PyAutoGUI from PyPI using pip:
+
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
 OS X needs the pyobjc-core and pyobjc module installed (in that order).
@@ -22,6 +23,12 @@ Pillow needs to be installed, and on Linux you may need to install additional li
     https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
 
     http://ubuntuforums.org/showthread.php?t=1751455
+
+If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
+
+* pyscreeze
+* pymsgbox
+* pytweening
 
 Example Usage
 =============
