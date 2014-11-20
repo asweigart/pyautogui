@@ -17,6 +17,38 @@ else:
 # TODO - note that currently most of the click-related functionality is not tested.
 
 class TestGeneral(unittest.TestCase):
+    TWEENS = {'linear': pyautogui.linear,
+        'easeInQuad': pyautogui.easeInQuad,
+        'easeOutQuad': pyautogui.easeOutQuad,
+        'easeInOutQuad': pyautogui.easeInOutQuad,
+        'easeInCubic': pyautogui.easeInCubic,
+        'easeOutCubic': pyautogui.easeOutCubic,
+        'easeInOutCubic': pyautogui.easeInOutCubic,
+        'easeInQuart': pyautogui.easeInQuart,
+        'easeOutQuart': pyautogui.easeOutQuart,
+        'easeInOutQuart': pyautogui.easeInOutQuart,
+        'easeInQuint': pyautogui.easeInQuint,
+        'easeOutQuint': pyautogui.easeOutQuint,
+        'easeInOutQuint': pyautogui.easeInOutQuint,
+        'easeInSine': pyautogui.easeInSine,
+        'easeOutSine': pyautogui.easeOutSine,
+        'easeInOutSine': pyautogui.easeInOutSine,
+        'easeInExpo': pyautogui.easeInExpo,
+        'easeOutExpo': pyautogui.easeOutExpo,
+        'easeInOutExpo': pyautogui.easeInOutExpo,
+        'easeInCirc': pyautogui.easeInCirc,
+        'easeOutCirc': pyautogui.easeOutCirc,
+        'easeInOutCirc': pyautogui.easeInOutCirc,
+        'easeInElastic': pyautogui.easeInElastic,
+        'easeOutElastic': pyautogui.easeOutElastic,
+        'easeInOutElastic': pyautogui.easeInOutElastic,
+        'easeInBack': pyautogui.easeInBack,
+        'easeOutBack': pyautogui.easeOutBack,
+        'easeInOutBack': pyautogui.easeInOutBack,
+        'easeInBounce': pyautogui.easeInBounce,
+        'easeOutBounce': pyautogui.easeOutBounce,
+        'easeInOutBounce': pyautogui.easeInOutBounce,}
+
     def test_accessibleNames(self):
         # Check that all the functions are defined.
 
@@ -192,6 +224,21 @@ class TestMouse(unittest.TestCase):
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
+    def test_moveToWithTween(self):
+        # NOTE - The user moving the mouse during this test will cause it to fail.
+        DEST = 200, 200
+
+        def resetMouse():
+            # Set up mouse
+            pyautogui.moveTo(100, 100)
+            mousepos = pyautogui.position()
+            self.assertTrue(mousepos == (100, 100), 'Mouse could not be reset to (1, 1). mousepos set to %s' % (mousepos,))
+
+        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+            resetMouse()
+            pyautogui.moveTo(DEST[0], DEST[1], duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
+            mousepos = pyautogui.position()
+            self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
 
     def test_moveRel(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
@@ -231,6 +278,21 @@ class TestMouse(unittest.TestCase):
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
+    def test_moveRelWithTween(self):
+        # NOTE - The user moving the mouse during this test will cause it to fail.
+        DEST = 200, 200
+
+        def resetMouse():
+            # Set up mouse
+            pyautogui.moveTo(100, 100)
+            mousepos = pyautogui.position()
+            self.assertTrue(mousepos == (100, 100), 'Mouse could not be reset to (1, 1). mousepos set to %s' % (mousepos,))
+
+        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+            resetMouse()
+            pyautogui.moveRel(100, 100, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
+            mousepos = pyautogui.position()
+            self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
 
     def test_scroll(self):
         # TODO - currently this just checks that scrolling doesn't result in an error.
