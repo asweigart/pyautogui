@@ -37,6 +37,8 @@ from pyscreeze import *
 from pymsgbox import *
 from pytweening import *
 
+import pyscreeze # used so we can change the RAISE_IF_NOT_FOUND and GRAYSCALE_DEFAULT variables
+
 
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
@@ -151,7 +153,7 @@ def onScreen(*args):
 # Mouse Functions
 # ===============
 
-def mouseDown(x=None, y=None, button='left', _pause=True):
+def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -160,8 +162,8 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        mouse down happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        mouse down happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         mouse down happens. None by default.
       button (str, int, optional): The mouse button pressed down. Must be one of
@@ -176,6 +178,8 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
 
     _failSafeCheck()
@@ -192,7 +196,7 @@ def mouseDown(x=None, y=None, button='left', _pause=True):
         time.sleep(PAUSE)
 
 
-def mouseUp(x=None, y=None, button='left', _pause=True):
+def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -201,8 +205,8 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        mouse up happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        mouse up happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         mouse up happens. None by default.
       button (str, int, optional): The mouse button released. Must be one of
@@ -217,6 +221,8 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
 
     _failSafeCheck()
@@ -232,7 +238,7 @@ def mouseUp(x=None, y=None, button='left', _pause=True):
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
+def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -241,11 +247,8 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
     screen.
 
     Args:
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where
+        the click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       clicks (int, optional): The number of clicks to perform. 1 by default.
@@ -253,6 +256,9 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
       interval (float, optional): The number of seconds in between each click,
         if the number of clicks is greater than 1. 0.0 by default, for no
         pause in between clicks.
+      button (str, int, optional): The mouse button clicked. Must be one of
+        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
+        default.
 
     Returns:
       None
@@ -262,10 +268,12 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, _pause=False)
+    moveTo(x, y, duration=duration, tween=tween, _pause=False)
 
     for i in range(clicks):
         _failSafeCheck()
@@ -284,7 +292,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', _pause=True):
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def rightClick(x=None, y=None, _pause=True):
+def rightClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -295,8 +303,8 @@ def rightClick(x=None, y=None, _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -304,12 +312,14 @@ def rightClick(x=None, y=None, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'right', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def middleClick(x=None, y=None, _pause=True):
+def middleClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -320,8 +330,8 @@ def middleClick(x=None, y=None, _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -329,12 +339,14 @@ def middleClick(x=None, y=None, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'middle', _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def doubleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
+def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -345,8 +357,8 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
@@ -364,12 +376,14 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
         5, 6, or 7
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     click(x, y, 2, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def tripleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
+def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
     """Performs a triple click..
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -380,8 +394,8 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
@@ -399,11 +413,13 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', _pause=True):
         5, 6, or 7
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     click(x, y, 3, interval, button, _pause=False)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def scroll(clicks, x=None, y=None, _pause=True):
+def scroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -416,8 +432,8 @@ def scroll(clicks, x=None, y=None, _pause=True):
 
     Args:
       clicks (int, float): The amount of scrolling to perform.
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -425,13 +441,15 @@ def scroll(clicks, x=None, y=None, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
 
-    platformModule._scroll(clicks, x, y)
+    platformModule._scroll(clicks, x, y, duration, tween)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def hscroll(clicks, x=None, y=None, _pause=True):
+def hscroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -442,8 +460,8 @@ def hscroll(clicks, x=None, y=None, _pause=True):
 
     Args:
       clicks (int, float): The amount of scrolling to perform.
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -451,13 +469,15 @@ def hscroll(clicks, x=None, y=None, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
 
     platformModule._hscroll(clicks, x, y)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def vscroll(clicks, x=None, y=None, _pause=True):
+def vscroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -468,8 +488,8 @@ def vscroll(clicks, x=None, y=None, _pause=True):
 
     Args:
       clicks (int, float): The amount of scrolling to perform.
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -477,6 +497,8 @@ def vscroll(clicks, x=None, y=None, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
     if _pause and PAUSE != 0:
@@ -493,8 +515,8 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): The x position on the screen where the
-        click happens. None by default.
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -508,6 +530,8 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     _mouseMoveDragTo('move', x, y, duration, tween)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
@@ -524,8 +548,8 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
     screen.
 
     Args:
-      x (int, float, None, optional): How far left (for negative values) or
-        right (for positive values) to move the cursor. 0 by default.
+      x (int, float, None, tuple, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default. If tuple, this is used for x and y.
       y (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -545,6 +569,9 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
         xOffset = 0
     if yOffset is None:
         yOffset = 0
+
+    if type(xOffset) == tuple:
+        xOffset, yOffset = xOffset[0], xOffset[1]
 
     if xOffset == 0 and yOffset == 0:
         return # no-op case
@@ -567,8 +594,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=Tru
     screen.
 
     Args:
-      x (int, float, None, optional): How far left (for negative values) or
-        right (for positive values) to move the cursor. 0 by default.
+      x (int, float, None, tuple, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default. If tuple, this is used for x and y.
       y (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -585,6 +612,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=Tru
       None
     """
     _failSafeCheck()
+    if type(x) == tuple:
+        x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', x, y, duration, tween)
     mouseUp(button=button, _pause=False)
@@ -602,8 +631,8 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pa
     screen.
 
     Args:
-      x (int, float, None, optional): How far left (for negative values) or
-        right (for positive values) to move the cursor. 0 by default.
+      x (int, float, None, tuple, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default. If tuple, this is used for xOffset and yOffset.
       y (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -623,6 +652,9 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pa
         xOffset = 0
     if yOffset is None:
         yOffset = 0
+
+    if type(xOffset) == tuple:
+        xOffset, yOffset = xOffset[0], xOffset[1]
 
     if xOffset == 0 and yOffset == 0:
         return # no-op case
@@ -908,22 +940,27 @@ def _failSafeCheck():
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
 
 
-def displayMousePosition():
-  """This function is meant to be run from the command line. It will
-  automatically display the location and RGB of the mouse cursor."""
-  print('Press Ctrl-C to quit.')
-  try:
-      while True:
-          # Get and print the mouse coordinates.
-          x, y = position()
-          positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
-          pixelColor = screenshot().getpixel((x, y))
-          positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
-          positionStr += ', ' + str(pixelColor[1]).rjust(3)
-          positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
-          sys.stdout.write(positionStr)
-          sys.stdout.write('\b' * len(positionStr))
-          sys.stdout.flush()
-  except KeyboardInterrupt:
-      sys.stdout.write('\n')
-
+def displayMousePosition(xOffset=0, yOffset=0):
+    """This function is meant to be run from the command line. It will
+    automatically display the location and RGB of the mouse cursor."""
+    print('Press Ctrl-C to quit.')
+    if xOffset != 0 or yOffset != 0:
+        print('xOffset: %s yOffset: %s' % (xOffset, yOffset))
+    resolution = size()
+    try:
+        while True:
+            # Get and print the mouse coordinates.
+            x, y = position()
+            positionStr = 'X: ' + str(x - xOffset).rjust(4) + ' Y: ' + str(y - yOffset).rjust(4)
+            if (x - xOffset) < 0 or (y - yOffset) < 0 or (x - xOffset) >= resolution[0] or (y - yOffset) >= resolution[1]:
+                pixelColor = ('NaN', 'NaN', 'NaN')
+            else:
+                pixelColor = screenshot().getpixel((x - xOffset, y - yOffset))
+            positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
+            positionStr += ', ' + str(pixelColor[1]).rjust(3)
+            positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
+            sys.stdout.write(positionStr)
+            sys.stdout.write('\b' * len(positionStr))
+            sys.stdout.flush()
+    except KeyboardInterrupt:
+        sys.stdout.write('\n')
