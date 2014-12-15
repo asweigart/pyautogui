@@ -955,7 +955,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
             if (x - xOffset) < 0 or (y - yOffset) < 0 or (x - xOffset) >= resolution[0] or (y - yOffset) >= resolution[1]:
                 pixelColor = ('NaN', 'NaN', 'NaN')
             else:
-                pixelColor = screenshot().getpixel((x - xOffset, y - yOffset))
+                pixelColor = screenshot().getpixel((x, y))
             positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
             positionStr += ', ' + str(pixelColor[1]).rjust(3)
             positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
