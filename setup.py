@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='PyAutoGUI',
-    version='0.9.20',
+    version='0.9.21',
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
