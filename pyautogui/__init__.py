@@ -419,7 +419,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def scroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def scroll(clicks, x=None, y=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -445,11 +445,11 @@ def scroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
-    platformModule._scroll(clicks, x, y, duration, tween)
+    platformModule._scroll(clicks, x, y)
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def hscroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def hscroll(clicks, x=None, y=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -477,7 +477,7 @@ def hscroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
     if _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def vscroll(clicks, x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def vscroll(clicks, x=None, y=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 

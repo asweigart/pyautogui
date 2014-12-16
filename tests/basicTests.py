@@ -49,6 +49,18 @@ class TestGeneral(unittest.TestCase):
         'easeOutBounce': pyautogui.easeOutBounce,
         'easeInOutBounce': pyautogui.easeInOutBounce,}
 
+
+    def setUp(self):
+        self.oldFailsafeSetting = pyautogui.FAILSAFE
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
+        pyautogui.FAILSAFE = True
+
+
+    def tearDown(self):
+        pyautogui.FAILSAFE = self.oldFailsafeSetting
+
+
     def test_accessibleNames(self):
         # Check that all the functions are defined.
 
@@ -138,10 +150,11 @@ class TestGeneral(unittest.TestCase):
         self.assertTrue(width > 0, 'Width is set to %s' % (width))
         self.assertTrue(height > 0, 'Height is set to %s' % (height))
 
+
     def test_position(self):
         mousex, mousey = pyautogui.position()
 
-        if runningOnPython2 and sys.platform != 'darwin':
+        if (runningOnPython2 and sys.version_info[2] not in (6, 7)) and sys.platform != 'darwin':
             # Python 2 on OS X returns int.
             self.assertTrue(isinstance(mousex, long), 'Type of mousex is %s' % (type(mousex)))
             self.assertTrue(isinstance(mousey, long), 'Type of mousey is %s' % (type(mousey)))
@@ -158,6 +171,7 @@ class TestGeneral(unittest.TestCase):
         x, y = pyautogui.position(None, mousey)
         self.assertNotEqual(x, mousex)
         self.assertEqual(y, mousey)
+
 
     def test_onScreen(self):
         width, height = pyautogui.size()
@@ -189,7 +203,33 @@ class TestGeneral(unittest.TestCase):
         self.assertFalse(pyautogui.onScreen([width, height]))
 
 
+    def test_pause(self):
+        oldValue = pyautogui.PAUSE
+
+        startTime = time.time()
+        pyautogui.PAUSE = 0.35 # there should be a 0.35 second pause after each call
+        pyautogui.moveTo(1, 1)
+        pyautogui.moveRel(0,1)
+        pyautogui.moveTo(1, 1)
+
+        elapsed = time.time() - startTime
+        self.assertTrue(1.0 < elapsed <  1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
+
+        pyautogui.PAUSE = oldValue # restore the old PAUSE value
+
+
 class TestMouse(unittest.TestCase):
+    def setUp(self):
+        self.oldFailsafeSetting = pyautogui.FAILSAFE
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
+        pyautogui.FAILSAFE = True
+
+
+    def tearDown(self):
+        pyautogui.FAILSAFE = self.oldFailsafeSetting
+
+
     def test_moveTo(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
 
@@ -224,6 +264,7 @@ class TestMouse(unittest.TestCase):
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
 
+
     def test_moveToWithTween(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
         DEST = 200, 200
@@ -239,6 +280,7 @@ class TestMouse(unittest.TestCase):
             pyautogui.moveTo(DEST[0], DEST[1], duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = pyautogui.position()
             self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
+
 
     def test_moveRel(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
@@ -278,6 +320,7 @@ class TestMouse(unittest.TestCase):
         mousepos = pyautogui.position()
         self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
 
+
     def test_moveRelWithTween(self):
         # NOTE - The user moving the mouse during this test will cause it to fail.
         DEST = 200, 200
@@ -293,6 +336,7 @@ class TestMouse(unittest.TestCase):
             pyautogui.moveRel(100, 100, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = pyautogui.position()
             self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
+
 
     def test_scroll(self):
         # TODO - currently this just checks that scrolling doesn't result in an error.
@@ -310,6 +354,7 @@ class TypewriteThread(threading.Thread):
         self.msg = msg
         self.interval = interval
 
+
     def run(self):
         time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
         pyautogui.typewrite(self.msg, self.interval)
@@ -320,6 +365,7 @@ class PressThread(threading.Thread):
         super(PressThread, self).__init__()
         self.keysArg = keysArg
 
+
     def run(self):
         time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
         pyautogui.press(self.keysArg)
@@ -328,6 +374,18 @@ class PressThread(threading.Thread):
 class TestKeyboard(unittest.TestCase):
     # NOTE: The terminal window running this script must be in focus during the keyboard tests.
     # You cannot run this as a scheduled task or remotely.
+
+    def setUp(self):
+        self.oldFailsafeSetting = pyautogui.FAILSAFE
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
+        pyautogui.FAILSAFE = True
+
+
+    def tearDown(self):
+        pyautogui.FAILSAFE = self.oldFailsafeSetting
+
+
     def test_typewrite(self):
         # 'Hello world!\n' test
         t = TypewriteThread('Hello world!\n')
@@ -351,6 +409,7 @@ class TestKeyboard(unittest.TestCase):
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, allKeys)
+
 
     def checkForValidCharacters(self, msg):
         for c in msg:
@@ -397,20 +456,6 @@ class TestKeyboard(unittest.TestCase):
         self.assertEqual(response, 'xabcz')
 
 
-    def test_pause(self):
-        oldValue = pyautogui.PAUSE
-
-        startTime = time.time()
-        pyautogui.PAUSE = 0.35 # there should be a 0.35 second pause after each call
-        pyautogui.moveTo(0, 0)
-        pyautogui.moveRel(0,1)
-        pyautogui.moveTo(0, 0)
-
-        elapsed = time.time() - startTime
-        self.assertTrue(1.0 < elapsed <  1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
-
-        pyautogui.PAUSE = oldValue # restore the old PAUSE value
-
     def test_press(self):
         # '' test
         t = PressThread('enter')
@@ -430,6 +475,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, 'ba')
 
+
     def test_typewrite_space(self):
         # Backspace test
         t = TypewriteThread(['space', ' ', '\n']) # test both 'space' and ' '
@@ -440,13 +486,18 @@ class TestKeyboard(unittest.TestCase):
 
 class TestFailSafe(unittest.TestCase):
     def test_failsafe(self):
-        pyautogui.moveTo(1, 1) # make sure mouse doesn't start at 0, 0
+        self.oldFailsafeSetting = pyautogui.FAILSAFE
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(42, 42) # make sure mouse is not in failsafe position to begin with
+
         pyautogui.FAILSAFE = True
-        self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo(0, 0))
+        pyautogui.moveTo(0, 0) # move mouse to 0, 0, since the fail safe check happens at the START of the moveTo()
+        self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, 0, 0)
 
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(1, 1) # move out of 0, 0
-        pyautogui.moveTo(0, 0) # This line should not cause the fail safe exception to be raised.
+        pyautogui.moveTo(0, 0)# This line should not cause the fail safe exception to be raised.
+
+        pyautogui.FAILSAFE = self.oldFailsafeSetting
 
 
 if __name__ == '__main__':
