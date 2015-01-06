@@ -153,7 +153,7 @@ def onScreen(*args):
 # Mouse Functions
 # ===============
 
-def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=True):
+def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -192,11 +192,13 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=
     elif button == 3 or str(button).lower() == 'right':
         platformModule._mouseDown(x, y, 'right')
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=True):
+def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -235,10 +237,12 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, _pause=Tr
     elif button == 3 or str(button).lower() == 'right':
         platformModule._mouseUp(x, y, 'right')
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
+def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -289,10 +293,12 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
 
         time.sleep(interval)
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def rightClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -315,11 +321,14 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     if type(x) == tuple:
         x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'right', _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def middleClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -342,11 +351,14 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     if type(x) == tuple:
         x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'middle', _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
+def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -379,11 +391,14 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     if type(x) == tuple:
         x, y = x[0], x[1]
     click(x, y, 2, interval, button, _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, _pause=True):
+def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a triple click..
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -416,10 +431,13 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     if type(x) == tuple:
         x, y = x[0], x[1]
     click(x, y, 3, interval, button, _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def scroll(clicks, x=None, y=None, _pause=True):
+def scroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -446,10 +464,13 @@ def scroll(clicks, x=None, y=None, _pause=True):
     x, y = position(x, y)
 
     platformModule._scroll(clicks, x, y)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def hscroll(clicks, x=None, y=None, _pause=True):
+def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -474,10 +495,13 @@ def hscroll(clicks, x=None, y=None, _pause=True):
     x, y = position(x, y)
 
     platformModule._hscroll(clicks, x, y)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def vscroll(clicks, x=None, y=None, _pause=True):
+def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -501,12 +525,15 @@ def vscroll(clicks, x=None, y=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
 
-def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -533,12 +560,15 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, _pause=True):
     if type(x) == tuple:
         x, y = x[0], x[1]
     _mouseMoveDragTo('move', x, y, duration, tween)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
 
-def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
+def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -580,11 +610,14 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, _pause=True):
 
     mousex, mousey = platformModule._position()
     moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=True):
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -617,11 +650,14 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', _pause=Tru
     mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', x, y, duration, tween)
     mouseUp(button=button, _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -665,7 +701,10 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', _pa
     mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
     mouseUp(button=button, _pause=False)
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
@@ -792,7 +831,7 @@ def isValidKey(key):
     return platformModule.keyboardMapping.get(key, None) != None
 
 
-def keyDown(key, _pause=True):
+def keyDown(key, pause=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -812,10 +851,12 @@ def keyDown(key, _pause=True):
     _failSafeCheck()
     platformModule._keyDown(key)
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def keyUp(key, _pause=True):
+def keyUp(key, pause=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
     Args:
@@ -831,10 +872,12 @@ def keyUp(key, _pause=True):
     _failSafeCheck()
     platformModule._keyUp(key)
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def press(keys, _pause=True):
+def press(keys, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -859,10 +902,12 @@ def press(keys, _pause=True):
         platformModule._keyDown(k)
         platformModule._keyUp(k)
 
-    if _pause and PAUSE != 0:
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def typewrite(message, interval=0.0, _pause=True):
+def typewrite(message, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
@@ -893,7 +938,10 @@ def typewrite(message, interval=0.0, _pause=True):
         press(c, _pause=False)
         time.sleep(interval)
         _failSafeCheck()
-    if _pause and PAUSE != 0:
+
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
 
@@ -928,7 +976,9 @@ def hotkey(*args, **kwargs):
         platformModule._keyUp(c)
         time.sleep(interval)
 
-    if kwargs.get('_pause', True) and PAUSE != 0:
+    if kwargs.get('pause', None) is not None and _pause:
+        time.sleep(pause)
+    elif kwargs.get('_pause', True) and PAUSE != 0:
         time.sleep(PAUSE)
 
 
