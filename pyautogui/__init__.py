@@ -27,7 +27,7 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
-__version__ = '0.9.22'
+__version__ = '0.9.23'
 
 import sys
 import time
@@ -178,7 +178,7 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
@@ -223,7 +223,7 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
@@ -272,7 +272,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
@@ -318,7 +318,7 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=Tr
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'right', _pause=False)
 
@@ -348,7 +348,7 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     click(x, y, 1, 0.0, 'middle', _pause=False)
 
@@ -388,7 +388,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     click(x, y, 2, interval, button, _pause=False)
 
@@ -428,7 +428,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     click(x, y, 3, interval, button, _pause=False)
 
@@ -459,7 +459,7 @@ def scroll(clicks, x=None, y=None, pause=None, _pause=True):
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
@@ -490,7 +490,7 @@ def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
@@ -521,7 +521,7 @@ def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
@@ -557,7 +557,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     _mouseMoveDragTo('move', x, y, duration, tween)
 
@@ -600,7 +600,7 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause
     if yOffset is None:
         yOffset = 0
 
-    if type(xOffset) == tuple:
+    if type(xOffset) in (tuple, list):
         xOffset, yOffset = xOffset[0], xOffset[1]
 
     if xOffset == 0 and yOffset == 0:
@@ -645,7 +645,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
       None
     """
     _failSafeCheck()
-    if type(x) == tuple:
+    if type(x) in (tuple, list):
         x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
     _mouseMoveDragTo('drag', x, y, duration, tween)
@@ -689,7 +689,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
     if yOffset is None:
         yOffset = 0
 
-    if type(xOffset) == tuple:
+    if type(xOffset) in (tuple, list):
         xOffset, yOffset = xOffset[0], xOffset[1]
 
     if xOffset == 0 and yOffset == 0:
