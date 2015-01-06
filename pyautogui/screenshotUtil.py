@@ -119,16 +119,12 @@ def _screenshot_win32(imageFilename=None):
     return im
 
 
-def _screenshot_osx(imageFilename=None, silent=False):
+def _screenshot_osx(imageFilename=None):
     if imageFilename is None:
         tmpFilename = '.screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
     else:
         tmpFilename = imageFilename
-    if silent:
-        cmd = ['screencapture', '-x', tmpFilename]
-    else:
-        cmd = ['screencapture', tmpFilename]
-    subprocess.call(cmd)
+    subprocess.call(['screencapture', '-x', tmpFilename])
     im = Image.open(tmpFilename)
     if imageFilename is None:
         os.unlink(tmpFilename)
