@@ -124,7 +124,7 @@ def _screenshot_osx(imageFilename=None):
         tmpFilename = '.screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
     else:
         tmpFilename = imageFilename
-    subprocess.call(['screencapture', tmpFilename])
+    subprocess.call(['screencapture', '-x', tmpFilename])
     im = Image.open(tmpFilename)
     if imageFilename is None:
         os.unlink(tmpFilename)
