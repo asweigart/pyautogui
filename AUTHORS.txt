@@ -4,4 +4,12 @@ answer newbie questions, and generally made PyAutoGUI that much better:
 
 Al Sweigart
 Ari Lacenski https://github.com/tensory
+Christopher Valles https://github.com/christophervalles
+Clayton A. Alves https://github.com/claytonaalves
+cryzed https://github.com/cryzed
+David Siah https://github.com/dsiah
+Eric https://github.com/bleuetnoir
+https://github.com/danielboone
 https://github.com/hey-sancho
+https://github.com/lb1a
+Jeremy R. Gray https://github.com/jeremygray
