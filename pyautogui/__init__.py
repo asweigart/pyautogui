@@ -742,15 +742,15 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     # Non-instant moving/dragging involves tweening:
     segments = max(width, height)
-    timeSegment = duration / segments
+    timeSegment = float(duration) / segments
     while timeSegment < 0.05: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
         segments = int(segments * 0.9) # decrease segments by 90%.
-        timeSegment = duration / segments
+        timeSegment = float(duration) / segments
 
     for n in range(segments):
         time.sleep(timeSegment)
         _failSafeCheck()
-        pointOnLine = tween(n / segments)
+        pointOnLine = tween(float(n) / segments)
         tweenX, tweenY = getPointOnLine(startx, starty, x, y, pointOnLine)
         tweenX, tweenY = int(tweenX), int(tweenY)
         if moveOrDrag == 'move':
