@@ -1,3 +1,4 @@
+v0.9.22, 2015/01/06 -- Added "pause" keyword argument to functions to override PAUSE setting for specific calls.
 v0.9.21, 2014/12/15 -- Added keyword arguments to functions, improved unit tests.
 v0.9.20, 2014/10/11 -- Fixed parameter order bug on Linux.
 v0.9.19, 2014/09/24 -- Set fail-safe and pause features to be enabled by default.
