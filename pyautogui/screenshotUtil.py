@@ -26,10 +26,12 @@ except:
     pass
 
 
-def locateAll(needleImage, haystackImage, grayscale=False, limit=None, confidence=0.999):
+def locateAll(needleImage, haystackImage, grayscale=False, limit=None, confidence=0.999, downsample=1):
     """generate location(s) of needle image in haystack, confidence threshold
+
+    downsample = skip image lines to speed up computation; try 2, 3, or 4
+        default 1 == none, safe but slow
     """
-    # code adapted from https://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image/9253805#9253805
     # "OpenCV uses BGR channel order by default, so be careful, e.g. when you compare an image you loaded with cv2.imread to an image you converted from PIL to numpy. You can always use cv2.cvtColor to convert between formats."
     if grayscale:
         load_fmt = cv2.CV_LOAD_IMAGE_GRAYSCALE
@@ -47,12 +49,20 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None, confidenc
     else:
         raise NotImplementedError  # TO-DO: convert to cv; see caveat about BGR conversion
 
+    # throw away some image data to speed up matching?
+    if downsample in [2, 3, 4]:
+        haystackImage = haystackImage[::downsample, ::downsample]
+        needleImage = needleImage[::downsample,::downsample]
+    else:
+        downsample = 1
+
+    # from https://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image/9253805#9253805
     result = cv2.matchTemplate(haystackImage, needleImage, cv2.TM_CCOEFF_NORMED)
     match_indices = np.arange(result.size)[(result > confidence).flatten()]
     unraveled = np.unravel_index(match_indices, result.shape)
 
     for y, matchx in zip(unraveled[0], unraveled[1]):
-        yield (matchx, y, needleWidth, needleHeight)
+        yield (matchx * downsample, y * downsample, needleWidth, needleHeight)
 
 
 def locate(needleImage, haystackImage, grayscale=False):
