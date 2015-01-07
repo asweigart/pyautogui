@@ -11,8 +11,6 @@ import datetime
 import os
 import subprocess
 import sys
-from PIL import Image
-from PIL import ImageOps
 import cv2
 import numpy as np
 
@@ -30,24 +28,24 @@ except:
 
 def locateAll(needleImage, haystackImage, grayscale=False, limit=None, confidence=0.999):
     """generate location(s) of needle image in haystack, confidence threshold
-
-    `grayscale` is ignored, for backwards compatibilty only
     """
     # code adapted from https://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image/9253805#9253805
     # "OpenCV uses BGR channel order by default, so be careful, e.g. when you compare an image you loaded with cv2.imread to an image you converted from PIL to numpy. You can always use cv2.cvtColor to convert between formats."
+    if grayscale:
+        load_fmt = cv2.CV_LOAD_IMAGE_GRAYSCALE
+    else:
+        load_fmt = cv2.CV_LOAD_IMAGE_COLOR
+
+    # load images from filenames:
     if isinstance(needleImage, str):
-        # 'image' is a filename, load the Image object
-        needleImage = cv2.imread(needleImage)
+        needleImage = cv2.imread(needleImage, load_fmt)
+        needleHeight, needleWidth = needleImage.shape[:2]
     else:
-        # TO-DO: convert to cv; see caveat about conversion
-        pass  # will probably fail below
+        raise NotImplementedError  # TO-DO: convert to cv; see caveat about BGR conversion
     if isinstance(haystackImage, str):
-        # 'image' is a filename, load the Image object
-        haystackImage = cv2.imread(haystackImage)
+        haystackImage = cv2.imread(haystackImage, load_fmt)
     else:
-        # TO-DO: convert to cv; see caveat about conversion
-        pass  # will probably fail below
-    needleHeight, needleWidth = needleImage.shape[:2]
+        raise NotImplementedError  # TO-DO: convert to cv; see caveat about BGR conversion
 
     result = cv2.matchTemplate(haystackImage, needleImage, cv2.TM_CCOEFF_NORMED)
     match_indices = np.arange(result.size)[(result > confidence).flatten()]
