@@ -36,6 +36,7 @@ import time
 from pyscreeze import *
 from pymsgbox import *
 from pytweening import *
+from screenshotUtil import *
 
 import pyscreeze # used so we can change the RAISE_IF_NOT_FOUND and GRAYSCALE_DEFAULT variables
 

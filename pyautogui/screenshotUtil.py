@@ -13,6 +13,8 @@ import subprocess
 import sys
 from PIL import Image
 from PIL import ImageOps
+import cv2
+import numpy as np
 
 RUNNING_PYTHON_2 = sys.version_info[0] == 2
 
@@ -25,62 +27,34 @@ except:
     # if there is no "which" program to find scrot, then assume there is no scrot.
     pass
 
-def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
-    needleFileObj = None
-    haystackFileObj = None
+
+def locateAll(needleImage, haystackImage, grayscale=False, limit=None, confidence=0.999):
+    """generate location(s) of needle image in haystack, confidence threshold
+
+    `grayscale` is ignored, for backwards compatibilty only
+    """
+    # code adapted from https://stackoverflow.com/questions/7670112/finding-a-subimage-inside-a-numpy-image/9253805#9253805
+    # "OpenCV uses BGR channel order by default, so be careful, e.g. when you compare an image you loaded with cv2.imread to an image you converted from PIL to numpy. You can always use cv2.cvtColor to convert between formats."
     if isinstance(needleImage, str):
         # 'image' is a filename, load the Image object
-        needleFileObj = open(needleImage, 'rb')
-        needleImage = Image.open(needleFileObj)
+        needleImage = cv2.imread(needleImage)
+    else:
+        # TO-DO: convert to cv; see caveat about conversion
+        pass  # will probably fail below
     if isinstance(haystackImage, str):
         # 'image' is a filename, load the Image object
-        haystackFileObj = open(haystackImage, 'rb')
-        haystackImage = Image.open(haystackFileObj)
+        haystackImage = cv2.imread(haystackImage)
+    else:
+        # TO-DO: convert to cv; see caveat about conversion
+        pass  # will probably fail below
+    needleHeight, needleWidth = needleImage.shape[:2]
 
+    result = cv2.matchTemplate(haystackImage, needleImage, cv2.TM_CCOEFF_NORMED)
+    match_indices = np.arange(result.size)[(result > confidence).flatten()]
+    unraveled = np.unravel_index(match_indices, result.shape)
 
-    if grayscale:
-        needleImage = ImageOps.grayscale(needleImage)
-        haystackImage = ImageOps.grayscale(haystackImage)
-
-    needleWidth, needleHeight = needleImage.size
-    haystackWidth, haystackHeight = haystackImage.size
-
-    needleImageData = tuple(needleImage.getdata()) # TODO - rename to needleImageData??
-    haystackImageData = tuple(haystackImage.getdata())
-
-    needleImageRows = [needleImageData[y * needleWidth:(y+1) * needleWidth] for y in range(needleHeight)] # LEFT OFF - check this
-    needleImageFirstRow = needleImageRows[0]
-
-    assert len(needleImageFirstRow) == needleWidth
-    assert [len(row) for row in needleImageRows] == [needleWidth] * needleHeight
-
-    numMatchesFound = 0
-
-    for y in range(haystackHeight):
-        for matchx in _kmp(needleImageFirstRow, haystackImageData[y * haystackWidth:(y+1) * haystackWidth]):
-            foundMatch = True
-            for searchy in range(1, needleHeight):
-                haystackStart = (searchy + y) * haystackWidth + matchx
-                if needleImageData[searchy * needleWidth:(searchy+1) * needleWidth] != haystackImageData[haystackStart:haystackStart + needleWidth]:
-                    foundMatch = False
-                    break
-            if foundMatch:
-                # Match found, report the x, y, width, height of where the matching region is in haystack.
-                numMatchesFound += 1
-                yield (matchx, y, needleWidth, needleHeight)
-                if limit is not None and numMatchesFound >= limit:
-                    # Limit has been reached. Close file handles.
-                    if needleFileObj is not None:
-                        needleFileObj.close()
-                    if haystackFileObj is not None:
-                        haystackFileObj.close()
-
-
-    # There was no limit or the limit wasn't reached, but close the file handles anyway.
-    if needleFileObj is not None:
-        needleFileObj.close()
-    if haystackFileObj is not None:
-        haystackFileObj.close()
+    for y, matchx in zip(unraveled[0], unraveled[1]):
+        yield (matchx, y, needleWidth, needleHeight)
 
 
 def locate(needleImage, haystackImage, grayscale=False):
@@ -146,29 +120,6 @@ def _screenshot_linux(imageFilename=None):
         return im
     else:
         raise Exception('The scrot program must be installed to take a screenshot with PyAutoGUI on Linux. Run: sudo apt-get install scrot')
-
-
-
-def _kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation (to be used by screen capture)
-    # build table of shift amounts
-    shifts = [1] * (len(needle) + 1)
-    shift = 1
-    for pos in range(len(needle)):
-        while shift <= pos and needle[pos] != needle[pos-shift]:
-            shift += shifts[pos-shift]
-        shifts[pos+1] = shift
-
-    # do the actual search
-    startPos = 0
-    matchLen = 0
-    for c in haystack:
-        while matchLen == len(needle) or \
-              matchLen >= 0 and needle[matchLen] != c:
-            startPos += shifts[matchLen]
-            matchLen -= shifts[matchLen]
-        matchLen += 1
-        if matchLen == len(needle):
-            yield startPos
 
 
 def center(coords):
