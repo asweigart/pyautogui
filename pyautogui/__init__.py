@@ -648,7 +648,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', x, y, duration, tween)
+    _mouseMoveDragTo('drag', x, y, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
     if pause is not None and _pause:
