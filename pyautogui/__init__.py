@@ -877,7 +877,7 @@ def keyUp(key, pause=None, _pause=True):
     elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def press(keys, n=1, pause=None, _pause=True):
+def press(keys, presses=1, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -897,7 +897,7 @@ def press(keys, n=1, pause=None, _pause=True):
             else:
                 lowerKeys.append(s)
 
-    for i in range(n):
+    for i in range(presses):
         for k in keys:
             _failSafeCheck()
             platformModule._keyDown(k)
