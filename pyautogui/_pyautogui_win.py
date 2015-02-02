@@ -108,7 +108,6 @@ keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
 keyboardMapping.update({
     'backspace': 0x08, # VK_BACK
     '\b': 0x08, # VK_BACK
-    'windows': 0x5B, #VK_LWIN
     'super': 0x5B, #VK_LWIN
     'tab': 0x09, # VK_TAB
     '\t': 0x09, # VK_TAB
