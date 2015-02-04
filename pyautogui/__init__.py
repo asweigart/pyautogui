@@ -903,10 +903,10 @@ def press(keys, presses=1, pause=None, _pause=True):
             platformModule._keyDown(k)
             platformModule._keyUp(k)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+        if pause is not None and _pause:
+            time.sleep(pause)
+        elif _pause and PAUSE != 0:
+            time.sleep(PAUSE)
 
 def typewrite(message, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
