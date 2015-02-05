@@ -877,13 +877,18 @@ def keyUp(key, pause=None, _pause=True):
     elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
-def press(keys, presses=1, pause=None, _pause=True):
+def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
       key (str, list): The key to be pressed. The valid names are listed in
       KEYBOARD_KEYS. Can also be a list of such strings.
-
+      presses (integer, optiional): the number of press repetition
+      1 by default, for just one press
+      interval (float, optional): How many seconds between each press.
+      0.0 by default, for no pause between presses.
+      pause (float, optional): How many seconds in the end of function process.
+      None by default, for no pause in the end of function process.
     Returns:
       None
     """
@@ -896,17 +901,18 @@ def press(keys, presses=1, pause=None, _pause=True):
                 lowerKeys.append(s.lower())
             else:
                 lowerKeys.append(s)
-
+    interval = float(interval)
     for i in range(presses):
         for k in keys:
             _failSafeCheck()
             platformModule._keyDown(k)
             platformModule._keyUp(k)
-
-        if pause is not None and _pause:
-            time.sleep(pause)
-        elif _pause and PAUSE != 0:
-            time.sleep(PAUSE)
+        time.sleep(interval)
+        
+    if pause is not None and _pause:
+        time.sleep(pause)
+    elif _pause and PAUSE != 0:
+        time.sleep(PAUSE)
 
 def typewrite(message, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
