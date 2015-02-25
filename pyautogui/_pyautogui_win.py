@@ -474,6 +474,7 @@ def _sendMouseEvent(ev, x, y, dwData=0):
     width, height = _size()
     convertedX = 65536 * x // width + 1
     convertedY = 65536 * y // height + 1
+    ctypes.windll.kernel32.SetLastError(0)
     ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
 
     if ctypes.windll.kernel32.GetLastError() != 0:
