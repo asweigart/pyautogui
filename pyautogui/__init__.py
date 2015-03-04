@@ -298,6 +298,44 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     elif _pause and PAUSE != 0:
         time.sleep(PAUSE)
 
+def click_img(image, timeout=5, timeout_interval=0.1, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+    """Try during timeout passed performs pressing a mouse button down and then immediately releasing it on the set image.
+
+    Args:
+      image (file path):image path sought
+        None by default.
+      timeout (float, optional): Time in secounds that function keep trying. 
+        5 by default.
+      timeout_interval (float, optional): Interval time in secounds for try click again. 
+        For example, passing 0.5 each 0.5 secounds it is tried click again.
+      clicks (int, optional): The number of clicks to perform. 1 by default.
+        For example, passing 2 would do a doubleclick.
+      interval (float, optional): The number of seconds in between each click,
+        if the number of clicks is greater than 1. 0.0 by default, for no
+        pause in between clicks.
+      button (str, int, optional): The mouse button clicked. Must be one of
+        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
+        default.
+
+    Returns:
+      None
+
+    Raises:
+      ValueError: Timeout. The image can not be found
+    """
+
+    k = 0
+    # The sleep function is set timeout_interval secouds, so k must be compared with timeout/timeout_interval
+    while k<float(timeout)/timeout_interval:
+        position = locateCenterOnScreen(image)
+        if position:
+            click(position[0], position[1], clicks=clicks, interval=interval, button=button, duration=duration, tween=tween, pause=pause, _pause=_pause)
+            break
+        k += 1
+        time.sleep(timeout_interval)
+    else:
+        raise ValueError('Timeout. The image can not be found')
+
 def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a right mouse button click.
 
