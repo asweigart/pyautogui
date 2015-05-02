@@ -8,6 +8,8 @@ from Xlib import X
 from Xlib.ext.xtest import fake_input
 import Xlib.XK
 
+BUTTON_NAME_MAPPING = {'left': 1, 'middle': 2, 'right': 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
+
 
 if sys.platform in ('java', 'darwin', 'win32'):
     raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
@@ -59,16 +61,8 @@ def _scroll(clicks, x=None, y=None):
 
 
 def _click(x, y, button):
-    if button == 'left':
-        button = 1
-    elif button == 'middle':
-        button = 2
-    elif button == 'right':
-        button = 3
-    elif button in (4, 5, 6, 7):
-        pass
-    else:
-        assert False, "button argument not in ('left', 'middle', 'right', 4, 5, 6, 7)"
+    assert button in BUTTON_NAME_MAPPING.keys(), "button argument not in ('left', 'middle', 'right', 4, 5, 6, 7)"
+    button = BUTTON_NAME_MAPPING[button]
 
     _mouseDown(x, y, button)
     _mouseUp(x, y, button)
@@ -81,12 +75,16 @@ def _moveTo(x, y):
 
 def _mouseDown(x, y, button):
     _moveTo(x, y)
+    assert button in BUTTON_NAME_MAPPING.keys(), "button argument not in ('left', 'middle', 'right', 4, 5, 6, 7)"
+    button = BUTTON_NAME_MAPPING[button]
     fake_input(_display, X.ButtonPress, button)
     _display.sync()
 
 
 def _mouseUp(x, y, button):
     _moveTo(x, y)
+    assert button in BUTTON_NAME_MAPPING.keys(), "button argument not in ('left', 'middle', 'right', 4, 5, 6, 7)"
+    button = BUTTON_NAME_MAPPING[button]
     fake_input(_display, X.ButtonRelease, button)
     _display.sync()
 
