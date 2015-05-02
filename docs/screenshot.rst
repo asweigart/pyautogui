@@ -11,7 +11,9 @@ Screenshot functionality requires the Pillow module. OS X uses the `screencaptur
 Special Notes About Ubuntu
 ==========================
 
-Unfortunately, Ubuntu seems to have several deficiencies with installing Pillow. PNG and JPEG support are not included with Pillow out of the box on Ubuntu. The following links have more information
+Unfortunately, Ubuntu seems to have several deficiencies with installing Pillow. PNG and JPEG support are not included with Pillow out of the box on Ubuntu. The following links have more information:
+https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
+http://ubuntuforums.org/showthread.php?t=1751455
 
 The screenshot() Function
 =========================
@@ -61,7 +63,7 @@ The `locateCenterOnScreen()` function is probably the one you want to use most o
 
 On a 1920 x 1080 screen, the locate function calls take about 1 or 2 seconds. This may be too slow for action video games, but works for most purposes and applications.
 
-There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the left and then down. The arguments can either be a
+There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the right and then down. The arguments can either be a
 
 - `locateOnScreen(image, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
 
