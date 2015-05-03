@@ -324,7 +324,7 @@ def _vscroll(clicks, x=None, y=None):
         None, # no source
         Quartz.kCGScrollEventUnitLine, # units
         1, # wheelCount (number of dimensions)
-        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10)) # vertical movement
+        clicks % 10 if clicks >= 0 else -1 * (-clicks % 10)) # vertical movement
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, scrollWheelEvent)
 
 
