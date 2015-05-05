@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='PyAutoGUI',
-    version='0.9.27',
+    version='0.9.28',
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
@@ -32,5 +32,6 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
 )

@@ -27,7 +27,7 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
-__version__ = '0.9.26'
+__version__ = '0.9.28'
 
 import sys
 import time
@@ -908,7 +908,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
             platformModule._keyDown(k)
             platformModule._keyUp(k)
         time.sleep(interval)
-        
+
     if pause is not None and _pause:
         time.sleep(pause)
     elif _pause and PAUSE != 0:
