@@ -295,7 +295,7 @@ def _position():
 
 
 def _size():
-    return Quartz.CGDisplayPixelsWide(0), Quartz.CGDisplayPixelsHigh(0)
+    return Quartz.CGDisplayPixelsWide(Quartz.CGMainDisplayID()), Quartz.CGDisplayPixelsHigh(Quartz.CGMainDisplayID())
 
 
 
