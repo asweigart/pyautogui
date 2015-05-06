@@ -10,6 +10,7 @@ Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
 David Siah https://github.com/dsiah
 Eric https://github.com/bleuetnoir
+https://github.com/bredmond
 https://github.com/danielboone
 https://github.com/hey-sancho
 https://github.com/lb1a
