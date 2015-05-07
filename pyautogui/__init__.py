@@ -27,7 +27,7 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
-__version__ = '0.9.28'
+__version__ = '0.9.30'
 
 import sys
 import time
