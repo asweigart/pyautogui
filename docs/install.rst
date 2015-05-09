@@ -22,10 +22,12 @@ On OS X, this is:
 
 On Linux, this is:
 
+    sudo pip3 install python3-xlib
+
+    sudo apt-get scrot
+
     sudo apt-get install python-tk
 
-    sudo pip3 install python3-Xlib
+    sudo apt-get install python3-dev
 
     sudo pip3 install pyautogui
-
-(python-tk is required only for Python 2.x, since it does not come with the tkinter module that the message box features use.)
