@@ -4,7 +4,7 @@
 Screenshot Functions
 ====================
 
-PyAutoGUI can take screenshots, save them to files, and locate images within the screen. This is useful if you have a small image of, say, a button that needs to be clicked and want to locate it on the screen.
+PyAutoGUI can take screenshots, save them to files, and locate images within the screen. This is useful if you have a small image of, say, a button that needs to be clicked and want to locate it on the screen. These features are provided by the PyScreeze module, which is installed with PyAutoGUI.
 
 Screenshot functionality requires the Pillow module. OS X uses the `screencapture` command, which comes with the operating system. Linux uses the `scrot` command, which can be installed by running `sudo apt-get install scrot`.
 
@@ -87,6 +87,11 @@ The "locate all" functions can be used in for loops or passed to `list()`:
     (1838, 676, 50, 50)
     >>> list(pyautogui.locateAllOnScreen('someButton.png'))
     [(1101, 252, 50, 50), (59, 481, 50, 50), (1395, 640, 50, 50), (1838, 676, 50, 50)]
+
+These "locate" functions are fairly expensive; they can take a full second to run. The best way to speed them up is to pass a `region` argument (a 4-integer tuple of (left, top, width, height)) to only search a smaller region of the screen instead of the full screen:
+
+    >>> import pyautogui
+    >>> pyautogui.locateOnScreen('someButton.png', region=(0,0, 300, 400))
 
 Grayscale Matching
 ------------------
