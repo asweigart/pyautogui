@@ -67,8 +67,8 @@ Positive scrolling will scroll up, negative scrolling will scroll down:
 
 Individual button down and up events can be called separately:
 
-    >>> mouseDown(x=moveToX, y=moveToY, button='left')
-    >>> mouseUp(x=moveToX, y=moveToY, button='left')
+    >>> pyautogui.mouseDown(x=moveToX, y=moveToY, button='left')
+    >>> pyautogui.mouseUp(x=moveToX, y=moveToY, button='left')
 
 Keyboard Functions
 ------------------
@@ -79,7 +79,7 @@ Key presses go to wherever the keyboard cursor is at function-calling time.
 
 A list of key names can be passed too:
 
-    >>> pyautogui.typewrite(['a', 'b', 'c', left', 'backspace', 'enter', 'f1'], interval=secs_between_keys)
+    >>> pyautogui.typewrite(['a', 'b', 'c', 'left', 'backspace', 'enter', 'f1'], interval=secs_between_keys)
 
 The full list of key names is in `pyautogui.KEYBOARD_KEYS`.
 
