@@ -85,8 +85,8 @@ The full list of key names is in `pyautogui.KEYBOARD_KEYS`.
 
 Keyboard hotkeys like Ctrl-S or Ctrl-Shift-1 can be done by passing a list of key names to `hotkey()`:
 
-    >>> pyautogui.hotkey(['ctrl', 'c'])  # ctrl-c to copy
-    >>> pyautogui.hotkey(['ctrl', 'v'])  # ctrl-v to paste
+    >>> pyautogui.hotkey('ctrl', 'c')  # ctrl-c to copy
+    >>> pyautogui.hotkey('ctrl', 'v')  # ctrl-v to paste
 
 Individual button down and up events can be called separately:
 
