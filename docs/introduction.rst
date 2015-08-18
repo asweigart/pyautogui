@@ -59,7 +59,7 @@ This example drags the mouse in a square spiral shape in MS Paint (or any graphi
 Dependencies
 ============
 
-On Windows, PyAutoGUI has no dependencies. It does **not** need the ``pywin32`` module installed since it uses Python's own ``ctypes`` module.
+On Windows, PyAutoGUI has no dependencies (other than Pillow and some other modules, which are installed by pip along with PyAutoGUI). It does **not** need the ``pywin32`` module installed since it uses Python's own ``ctypes`` module.
 
 On OS X, PyAutoGUI requires PyObjC_ installed for the AppKit and Quartz modules. The module names on PyPI to install are ``pyobjc-core`` and ``pyobjc`` (in that order).
 

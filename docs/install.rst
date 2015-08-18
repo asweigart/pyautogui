@@ -31,3 +31,5 @@ On Linux, this is:
     sudo apt-get install python3-dev
 
     sudo pip3 install pyautogui
+
+PyAutoGUI will try to install Pillow (for its screenshot capabilities). This happens when pip installs PyAutoGUI.
