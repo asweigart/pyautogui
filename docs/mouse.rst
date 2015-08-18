@@ -137,11 +137,11 @@ For example:
 
 .. code:: python
 
-    >>> pyautogui.moveTo(100, 100, 2, pyautogui.tweens.easeInQuad)     # start slow, end fast
-    >>> pyautogui.moveTo(100, 100, 2, pyautogui.tweens.easeOutQuad)    # start fast, end slow
-    >>> pyautogui.moveTo(100, 100, 2, pyautogui.tweens.easeInOutQuad)  # start and end fast, slow in middle
-    >>> pyautogui.moveTo(100, 100, 2, pyautogui.tweens.easeInBounce)   # bounce at the end
-    >>> pyautogui.moveTo(100, 100, 2, pyautogui.tweens.easeInElastic)  # rubber band at the end
+    >>> pyautogui.moveTo(100, 100, 2, pyautogui.easeInQuad)     # start slow, end fast
+    >>> pyautogui.moveTo(100, 100, 2, pyautogui.easeOutQuad)    # start fast, end slow
+    >>> pyautogui.moveTo(100, 100, 2, pyautogui.easeInOutQuad)  # start and end fast, slow in middle
+    >>> pyautogui.moveTo(100, 100, 2, pyautogui.easeInBounce)   # bounce at the end
+    >>> pyautogui.moveTo(100, 100, 2, pyautogui.easeInElastic)  # rubber band at the end
 
 These tweening functions are copied from Al Sweigart's PyTweening module: https://pypi.python.org/pypi/PyTweening https://github.com/asweigart/pytweening This module does not have to be installed to use the tweening functions.
 
