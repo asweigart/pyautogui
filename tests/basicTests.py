@@ -4,7 +4,8 @@ import os
 import time
 import threading
 from PIL import Image
-sys.path.insert(0, os.path.abspath('..'))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
