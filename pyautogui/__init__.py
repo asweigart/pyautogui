@@ -29,6 +29,7 @@ You will need PIL/Pillow to use the screenshot features.
 
 __version__ = '0.9.30'
 
+import collections
 import sys
 import time
 
@@ -556,10 +557,11 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Returns:
       None
     """
+    x, y = _unpackXY(x, y)
+
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    _mouseMoveDragTo('move', x, y, duration, tween)
+
+    _mouseMoveDragTo('move', x, y, 0, 0, duration, tween)
 
     if pause is not None and _pause:
         time.sleep(pause)
@@ -568,7 +570,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
 
 
 
-def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -593,23 +595,11 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause
       None
     """
 
-    # This may seem silly, but I wanted the user to be able to pass None for
-    # an argument just so that it is consistent with moveTo().
-    if xOffset is None:
-        xOffset = 0
-    if yOffset is None:
-        yOffset = 0
-
-    if type(xOffset) in (tuple, list):
-        xOffset, yOffset = xOffset[0], xOffset[1]
-
-    if xOffset == 0 and yOffset == 0:
-        return # no-op case
+    xOffset, yOffset = _unpackXY(xOffset, yOffset)
 
     _failSafeCheck()
 
-    mousex, mousey = platformModule._position()
-    moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
+    _mouseMoveDragTo('move', None, None, xOffset, yOffset, duration, tween)
 
     if pause is not None and _pause:
         time.sleep(pause)
@@ -648,7 +638,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', x, y, duration, tween, button)
+    _mouseMoveDragTo('drag', x, y, 0, 0, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
     if pause is not None and _pause:
@@ -708,7 +698,27 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         time.sleep(PAUSE)
 
 
-def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
+def _unpackXY(x, y):
+    """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
+
+    On functions that receive a pair of x,y coordinates, they can be passed as
+    separate arguments, or as a single two-element sequence.
+    """
+    if isinstance(x, collections.Sequence):
+        if len(x) == 2:
+            if y is None:
+                x, y = x
+            else:
+                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+        else:
+            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
+    else:
+        pass
+
+    return x, y
+
+
+def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
     """Handles the actual move or drag event, since different platforms
     implement them differently.
 
@@ -724,6 +734,10 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
       x (int, float, None, optional): How far left (for negative values) or
         right (for positive values) to move the cursor. 0 by default.
       y (int, float, None, optional): How far up (for negative values) or
+        down (for positive values) to move the cursor. 0 by default.
+      xOffset (int, float, None, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default.
+      yOffset (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
         cursor to the new xy coordinates. If 0, then the mouse cursor is moved
@@ -741,33 +755,31 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     # The move and drag code is similar, but OS X requires a special drag event instead of just a move event when dragging.
     # See https://stackoverflow.com/a/2696107/1893164
-
     assert moveOrDrag in ('move', 'drag'), "moveOrDrag must be in ('move', 'drag'), not %s" % (moveOrDrag)
 
     if sys.platform != 'darwin':
         moveOrDrag = 'move' # only OS X needs to use the drag
 
-    if x is None and y is None:
+    if x is None and y is None and xOffset == 0 and yOffset == 0:
         return # special case for no mouse movement at all
 
-    x, y = position(x, y)
+    startx, starty = position()
 
-    width, height = platformModule._size()
-    startx, starty = platformModule._position()
+    xOffset = int(xOffset) if xOffset is not None else 0
+    yOffset = int(yOffset) if yOffset is not None else 0
 
-    # None values means "use current position". Convert x and y to ints.
-    x = startx if x is None else int(x)
-    y = starty if y is None else int(y)
+    x = int(x) if x is not None else startx
+    y = int(y) if y is not None else starty
+
+    # x, y, xOffset, yOffset are now int.
+    x += xOffset
+    y += yOffset
+
+    width, height = size()
 
     # Make sure x and y are within the screen bounds.
-    if x < 0:
-        x = 0
-    elif x >= width:
-        x = width - 1
-    if y < 0:
-        y = 0
-    elif y >= height:
-        y = height - 1
+    x = max(0, min(x, width - 1))
+    y = max(0, min(y, height - 1))
 
     _failSafeCheck()
 
