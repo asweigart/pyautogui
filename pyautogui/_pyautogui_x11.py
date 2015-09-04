@@ -34,26 +34,26 @@ def _vscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     if clicks == 0:
         return
-
-    if clicks > 0:
+    elif clicks > 0:
         button = 4 # scroll up
     else:
         button = 5 # scroll down
 
-    _click(x, y, button=button, clicks=abs(clicks)) # TODO - broken
+    for i in range(abs(clicks)):
+        _click(x, y, button=button)
 
 
 def _hscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     if clicks == 0:
         return
-
-    if clicks > 0:
+    elif clicks > 0:
         button = 7 # scroll right
     else:
         button = 6 # scroll left
 
-    _click(x, y, button=button, clicks=abs(clicks)) # TODO - broken
+    for i in range(abs(clicks)):
+        _click(x, y, button=button)
 
 
 def _scroll(clicks, x=None, y=None):
