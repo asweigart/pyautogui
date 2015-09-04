@@ -27,6 +27,9 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
+from __future__ import division, print_function
+
+
 __version__ = '0.9.30'
 
 import collections
@@ -758,7 +761,7 @@ def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button
     assert moveOrDrag in ('move', 'drag'), "moveOrDrag must be in ('move', 'drag'), not %s" % (moveOrDrag)
 
     if sys.platform != 'darwin':
-        moveOrDrag = 'move' # only OS X needs to use the drag
+        moveOrDrag = 'move' # Only OS X needs the drag event specifically.
 
     if x is None and y is None and xOffset == 0 and yOffset == 0:
         return # special case for no mouse movement at all
@@ -781,41 +784,40 @@ def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button
     x = max(0, min(x, width - 1))
     y = max(0, min(y, height - 1))
 
-    _failSafeCheck()
-
     # If the duration is small enough, just move the cursor there instantly.
-    if duration <= MINIMUM_DURATION:
-        if moveOrDrag == 'move':
-            platformModule._moveTo(x, y)
-        else:
-            platformModule._dragTo(x, y, button)
-        return
+    steps = [(x, y)]
 
-    # Non-instant moving/dragging involves tweening:
-    segments = max(width, height)
-    timeSegment = float(duration) / segments
-    while timeSegment < 0.05: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
-        segments = int(segments * 0.9) # decrease segments by 90%.
-        timeSegment = float(duration) / segments
+    if duration > MINIMUM_DURATION:
+        # Non-instant moving/dragging involves tweening:
+        num_steps = max(width, height)
+        sleep_amount = duration / num_steps
+        # If sleep_amount is too short, time.sleep() will be a no-op and the mouse
+        # cursor moves there instantly.
+        if sleep_amount < 0.05:
+            num_steps = int(duration / 0.05)
+            sleep_amount = duration / num_steps
 
-    for n in range(segments):
-        time.sleep(timeSegment)
+        steps = [
+            getPointOnLine(startx, starty, x, y, tween(n / num_steps))
+            for n in range(num_steps)
+        ]
+        # Making sure the last position is the actual destination.
+        steps.append((x, y))
+
+    for tweenX, tweenY in steps:
+        if len(steps) > 1:
+            # A single step does not require tweening.
+            time.sleep(sleep_amount)
+
         _failSafeCheck()
-        pointOnLine = tween(float(n) / segments)
-        tweenX, tweenY = getPointOnLine(startx, starty, x, y, pointOnLine)
-        tweenX, tweenY = int(tweenX), int(tweenY)
+        tweenX = int(round(tweenX))
+        tweenY = int(round(tweenY))
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
-        else:
-            # only OS X needs the drag event specifically
+        elif moveOrDrag == 'drag':
             platformModule._dragTo(tweenX, tweenY, button)
-
-    # Ensure that no matter what the tween function returns, the mouse ends up
-    # at the final destination.
-    if moveOrDrag == 'move':
-        platformModule._moveTo(x, y)
-    else:
-        platformModule._dragTo(x, y, button)
+        else:
+            raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
     _failSafeCheck()
 
