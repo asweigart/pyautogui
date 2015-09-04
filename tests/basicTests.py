@@ -66,6 +66,7 @@ class P(namedtuple('P', ['x', 'y'])):
 
 
 class TestGeneral(unittest.TestCase):
+    # TODO: Rewrite this TWEENS thing. There is no need to test all tweening functions.
     TWEENS = {'linear': pyautogui.linear,
         'easeInQuad': pyautogui.easeInQuad,
         'easeOutQuad': pyautogui.easeOutQuad,
@@ -414,7 +415,7 @@ class TestMouse(unittest.TestCase):
     def test_moveRelWithTween(self):
         origin = self.center - P(100, 100)
         delta = P(200, 200)
-        destination = self.center + delta
+        destination = origin + delta
 
         def resetMouse():
             pyautogui.moveTo(*origin)
