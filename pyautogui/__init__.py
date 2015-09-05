@@ -120,7 +120,13 @@ else:
 # file will access this module vars? It will probably lead to a circular
 # import.
 
-MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
+# In seconds. Any duration less than this is rounded to 0.0 to instantly move
+# the mouse.
+MINIMUM_DURATION = 0.1
+# If sleep_amount is too short, time.sleep() will be a no-op and the mouse
+# cursor moves there instantly.
+# TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
+MINIMUM_SLEEP = 0.05
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = True
 
@@ -799,10 +805,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=N
         # Non-instant moving/dragging involves tweening:
         num_steps = max(width, height)
         sleep_amount = duration / num_steps
-        # If sleep_amount is too short, time.sleep() will be a no-op and the mouse
-        # cursor moves there instantly.
-        if sleep_amount < 0.05:
-            num_steps = int(duration / 0.05)
+        if sleep_amount < MINIMUM_SLEEP:
+            num_steps = int(duration / MINIMUM_SLEEP)
             sleep_amount = duration / num_steps
 
         steps = [
