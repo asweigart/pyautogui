@@ -582,7 +582,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
 
     _failSafeCheck()
 
-    _mouseMoveDragTo('move', x, y, 0, 0, duration, tween)
+    _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
     if pause is not None and _pause:
         time.sleep(pause)
@@ -620,7 +620,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
 
     _failSafeCheck()
 
-    _mouseMoveDragTo('move', None, None, xOffset, yOffset, duration, tween)
+    _mouseMoveDrag('move', None, None, xOffset, yOffset, duration, tween)
 
     if pause is not None and _pause:
         time.sleep(pause)
@@ -659,7 +659,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', x, y, 0, 0, duration, tween, button)
+    _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
     if pause is not None and _pause:
@@ -710,7 +710,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
 
     mousex, mousey = platformModule._position()
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
+    _mouseMoveDrag('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
     if pause is not None and _pause:
@@ -719,7 +719,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         time.sleep(PAUSE)
 
 
-def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
+def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
     """Handles the actual move or drag event, since different platforms
     implement them differently.
 
@@ -728,7 +728,7 @@ def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button
 
     The code for moving and dragging the mouse is similar, so this function
     handles both. Users should call the moveTo() or dragTo() functions instead
-    of calling _mouseMoveDragTo().
+    of calling _mouseMoveDrag().
 
     Args:
       moveOrDrag (str): Either 'move' or 'drag', for the type of action this is.
@@ -761,13 +761,13 @@ def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button
     if sys.platform != 'darwin':
         moveOrDrag = 'move' # Only OS X needs the drag event specifically.
 
-    if x is None and y is None and xOffset == 0 and yOffset == 0:
-        return # special case for no mouse movement at all
-
-    startx, starty = position()
-
     xOffset = int(xOffset) if xOffset is not None else 0
     yOffset = int(yOffset) if yOffset is not None else 0
+
+    if x is None and y is None and xOffset == 0 and yOffset == 0:
+        return  # Special case for no mouse movement at all.
+
+    startx, starty = position()
 
     x = int(x) if x is not None else startx
     y = int(y) if y is not None else starty
