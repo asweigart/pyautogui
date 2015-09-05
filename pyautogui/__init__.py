@@ -207,12 +207,11 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseDown(x, y, 'left')
@@ -249,12 +248,11 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+
     x, y = platformModule._position()
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseUp(x, y, 'left')
@@ -295,12 +293,10 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, duration=duration, tween=tween, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
     for i in range(clicks):
         _failSafeCheck()
@@ -338,8 +334,7 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=Tr
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 1, 0.0, 'right', _pause=False)
 
     _autoPause(pause, _pause)
@@ -365,8 +360,7 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 1, 0.0, 'middle', _pause=False)
 
     _autoPause(pause, _pause)
@@ -402,8 +396,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 2, interval, button, _pause=False)
 
     _autoPause(pause, _pause)
@@ -439,8 +432,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 3, interval, button, _pause=False)
 
     _autoPause(pause, _pause)
