@@ -349,6 +349,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     x, y = _unpackXY(x, y)
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
+    x, y = platformModule._position()
     for i in range(clicks):
         _failSafeCheck()
         if button == 1 or str(button).lower() == 'left':
