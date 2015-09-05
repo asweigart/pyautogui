@@ -94,6 +94,26 @@ FAILSAFE = True
 # General Functions
 # =================
 
+def _unpackXY(x, y):
+    """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
+
+    On functions that receive a pair of x,y coordinates, they can be passed as
+    separate arguments, or as a single two-element sequence.
+    """
+    if isinstance(x, collections.Sequence):
+        if len(x) == 2:
+            if y is None:
+                x, y = x
+            else:
+                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+        else:
+            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
+    else:
+        pass
+
+    return x, y
+
+
 def position(x=None, y=None):
     """Returns the current xy coordinates of the mouse cursor as a two-integer
     tuple.
@@ -126,7 +146,7 @@ def size():
     return platformModule._size()
 
 
-def onScreen(*args):
+def onScreen(x, y=None):
     """Returns whether the given xy coordinates are on the screen or not.
 
     Args:
@@ -139,19 +159,12 @@ def onScreen(*args):
       bool: True if the xy coordinates are on the screen at its current
         resolution, otherwise False.
     """
-    if len(args) == 2:
-        # args passed as onScreen(x, y)
-        x = int(args[0])
-        y = int(args[1])
-    else:
-        # args pass as onScreen([x, y])
-        x = int(args[0][0])
-        y = int(args[0][1])
+    x, y = _unpackXY(x, y)
+    x = int(x)
+    y = int(y)
 
     width, height = platformModule._size()
-    return x >= 0 and y >= 0 and x < width and y < height
-
-
+    return 0 <= x < width and 0 <= y < height
 
 
 # Mouse Functions
@@ -701,26 +714,6 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         time.sleep(PAUSE)
 
 
-def _unpackXY(x, y):
-    """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
-
-    On functions that receive a pair of x,y coordinates, they can be passed as
-    separate arguments, or as a single two-element sequence.
-    """
-    if isinstance(x, collections.Sequence):
-        if len(x) == 2:
-            if y is None:
-                x, y = x
-            else:
-                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
-        else:
-            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
-    else:
-        pass
-
-    return x, y
-
-
 def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
     """Handles the actual move or drag event, since different platforms
     implement them differently.
@@ -821,9 +814,9 @@ def _mouseMoveDragTo(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button
 
     _failSafeCheck()
 
+
 # Keyboard Functions
 # ==================
-
 
 def isValidKey(key):
     """Returns a Boolean value if the given key is a valid value to pass to

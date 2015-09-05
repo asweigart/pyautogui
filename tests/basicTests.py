@@ -224,34 +224,45 @@ class TestGeneral(unittest.TestCase):
 
 
     def test_onScreen(self):
-        width, height = pyautogui.size()
-        halfWidth = int(width / 2)
-        halfHeight = int(height / 2)
+        zero = P(0, 0)
+        xone = P(1, 0)
+        yone = P(0, 1)
+        size = P(*pyautogui.size())
+        half = size / 2
 
-        self.assertTrue(pyautogui.onScreen(0, 0))
-        self.assertTrue(pyautogui.onScreen([0, 0]))
+        on_screen = [
+            zero,
+            zero + xone,
+            zero + yone,
+            zero + xone + yone,
+            half,
+            size - xone - yone,
+        ]
+        off_screen = [
+            zero - xone,
+            zero - yone,
+            zero - xone - yone,
+            size - xone,
+            size - yone,
+            size,
+        ]
 
-        self.assertTrue(pyautogui.onScreen(halfWidth, 0))
-        self.assertTrue(pyautogui.onScreen([halfWidth, 0]))
-        self.assertTrue(pyautogui.onScreen(0, halfHeight))
-        self.assertTrue(pyautogui.onScreen([0, halfHeight]))
-        self.assertTrue(pyautogui.onScreen(halfWidth, halfHeight))
-        self.assertTrue(pyautogui.onScreen([halfWidth, halfHeight]))
+        for value, coords in [(True, on_screen), (False, off_screen)]:
+            for coord in coords:
+                self.assertEqual(value, pyautogui.onScreen(*coord), 'onScreen({0}, {1}) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(list(coord)), 'onScreen([{0}, {1}]) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(tuple(coord)), 'onScreen(({0}, {1})) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(coord), 'onScreen({0}) should be {1}'.format(repr(coord), value))
 
-        self.assertFalse(pyautogui.onScreen(-1, 0))
-        self.assertFalse(pyautogui.onScreen([-1, 0]))
-        self.assertFalse(pyautogui.onScreen(-1, -1))
-        self.assertFalse(pyautogui.onScreen([-1, -1]))
-        self.assertFalse(pyautogui.onScreen(0, -1))
-        self.assertFalse(pyautogui.onScreen([0, -1]))
-
-        self.assertFalse(pyautogui.onScreen(width, 0))
-        self.assertFalse(pyautogui.onScreen([width, 0]))
-        self.assertFalse(pyautogui.onScreen(0, height))
-        self.assertFalse(pyautogui.onScreen([0, height]))
-        self.assertFalse(pyautogui.onScreen(width, height))
-        self.assertFalse(pyautogui.onScreen([width, height]))
-
+        # These can raise either ValueError or TypeError.
+        with self.assertRaises(ValueError):
+            pyautogui.onScreen([0, 0], 0)
+        with self.assertRaises(ValueError):
+            pyautogui.onScreen((0, 0), 0)
+        with self.assertRaises(TypeError):
+            pyautogui.onScreen(0, 0, 0)
+        with self.assertRaises(TypeError):
+            pyautogui.onScreen(0)
 
     def test_pause(self):
         oldValue = pyautogui.PAUSE
