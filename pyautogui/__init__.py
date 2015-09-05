@@ -723,7 +723,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
 
     mousex, mousey = platformModule._position()
     mouseDown(button=button, _pause=False)
-    _mouseMoveDrag('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
+    _mouseMoveDrag('drag', mousex, mousey, xOffset, yOffset, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
     _autoPause(pause, _pause)
