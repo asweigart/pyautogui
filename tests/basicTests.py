@@ -66,40 +66,6 @@ class P(namedtuple('P', ['x', 'y'])):
 
 
 class TestGeneral(unittest.TestCase):
-    # TODO: Rewrite this TWEENS thing. There is no need to test all tweening functions.
-    TWEENS = {'linear': pyautogui.linear,
-        'easeInQuad': pyautogui.easeInQuad,
-        'easeOutQuad': pyautogui.easeOutQuad,
-        'easeInOutQuad': pyautogui.easeInOutQuad,
-        'easeInCubic': pyautogui.easeInCubic,
-        'easeOutCubic': pyautogui.easeOutCubic,
-        'easeInOutCubic': pyautogui.easeInOutCubic,
-        'easeInQuart': pyautogui.easeInQuart,
-        'easeOutQuart': pyautogui.easeOutQuart,
-        'easeInOutQuart': pyautogui.easeInOutQuart,
-        'easeInQuint': pyautogui.easeInQuint,
-        'easeOutQuint': pyautogui.easeOutQuint,
-        'easeInOutQuint': pyautogui.easeInOutQuint,
-        'easeInSine': pyautogui.easeInSine,
-        'easeOutSine': pyautogui.easeOutSine,
-        'easeInOutSine': pyautogui.easeInOutSine,
-        'easeInExpo': pyautogui.easeInExpo,
-        'easeOutExpo': pyautogui.easeOutExpo,
-        'easeInOutExpo': pyautogui.easeInOutExpo,
-        'easeInCirc': pyautogui.easeInCirc,
-        'easeOutCirc': pyautogui.easeOutCirc,
-        'easeInOutCirc': pyautogui.easeInOutCirc,
-        'easeInElastic': pyautogui.easeInElastic,
-        'easeOutElastic': pyautogui.easeOutElastic,
-        'easeInOutElastic': pyautogui.easeInOutElastic,
-        'easeInBack': pyautogui.easeInBack,
-        'easeOutBack': pyautogui.easeOutBack,
-        'easeInOutBack': pyautogui.easeInOutBack,
-        'easeInBounce': pyautogui.easeInBounce,
-        'easeOutBounce': pyautogui.easeOutBounce,
-        'easeInOutBounce': pyautogui.easeInOutBounce,}
-
-
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
@@ -156,8 +122,8 @@ class TestGeneral(unittest.TestCase):
         pyautogui.screenshot
         pyautogui.grab
 
+        # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
         # Tweening-related API
-        pyautogui.getLine
         pyautogui.getPointOnLine
         pyautogui.linear
         pyautogui.easeInQuad
@@ -282,6 +248,17 @@ class TestGeneral(unittest.TestCase):
 class TestMouse(unittest.TestCase):
     # NOTE - The user moving the mouse during many of these tests will cause them to fail.
 
+    # There is no need to test all tweening functions.
+    TWEENS = [
+        'linear',
+        'easeInElastic',
+        'easeOutElastic',
+        'easeInOutElastic',
+        'easeInBack',
+        'easeOutBack',
+        'easeInOutBack',
+    ]
+
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         self.center = P(*pyautogui.size()) // 2
@@ -356,7 +333,8 @@ class TestMouse(unittest.TestCase):
             mousepos = P(*pyautogui.position())
             self.assertEqual(mousepos, origin)
 
-        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+        for tweenName in self.TWEENS:
+            tweenFunc = getattr(pyautogui, tweenName)
             resetMouse()
             pyautogui.moveTo(destination.x, destination.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = P(*pyautogui.position())
@@ -433,7 +411,8 @@ class TestMouse(unittest.TestCase):
             mousepos = P(*pyautogui.position())
             self.assertEqual(mousepos, origin)
 
-        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+        for tweenName in self.TWEENS:
+            tweenFunc = getattr(pyautogui, tweenName)
             resetMouse()
             pyautogui.moveRel(delta.x, delta.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = P(*pyautogui.position())

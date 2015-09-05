@@ -36,13 +36,40 @@ import collections
 import sys
 import time
 
-# move these functions into this namespace
-from pyscreeze import *
-from pymsgbox import *
-from pytweening import *
 
-import pyscreeze # used so we can change the RAISE_IF_NOT_FOUND and GRAYSCALE_DEFAULT variables
+try:
+    import pytweening
+    from pytweening import (easeInQuad, easeOutQuad, easeInOutQuad,
+        easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart,
+        easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint, easeInSine,
+        easeOutSine, easeInOutSine, easeInExpo, easeOutExpo, easeInOutExpo,
+        easeInCirc, easeOutCirc, easeInOutCirc, easeInElastic, easeOutElastic,
+        easeInOutElastic, easeInBack, easeOutBack, easeInOutBack, easeInBounce,
+        easeOutBounce, easeInOutBounce)
+    # getLine is not needed.
+    # getPointOnLine has been redefined in this file, to avoid dependency on pytweening.
+    # linear has also been redefined in this file.
+except ImportError:
+    pass
 
+
+try:
+    import pymsgbox
+    from pymsgbox import alert, confirm, prompt, password
+except ImportError:
+    # If pymsgbox module is not found, those methods will not be available.
+    pass
+
+
+try:
+    import pyscreeze
+    from pyscreeze import (center, grab, locate, locateAll, locateAllOnScreen,
+        locateCenterOnScreen, locateOnScreen, pixel, pixelMatchesColor,
+        screenshot)
+except ImportError:
+    # If pyscreeze module is not found, screenshot-related features will simply
+    # not work.
+    pass
 
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
@@ -69,9 +96,11 @@ KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'command', 'option', 'optionleft', 'optionright']
 KEYBOARD_KEYS = KEY_NAMES   # keeping old KEYBOARD_KEYS for backwards compatibility
 
+
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
     return character.isupper() or character in '~!@#$%^&*()_+{}|:"<>?'
+
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
@@ -99,12 +128,34 @@ FAILSAFE = True
 # General Functions
 # =================
 
+def getPointOnLine(x1, y1, x2, y2, n):
+    """Returns the (x, y) tuple of the point that has progressed a proportion
+    n along the line defined by the two x, y coordinates.
+
+    Copied from pytweening module.
+    """
+    x = ((x2 - x1) * n) + x1
+    y = ((y2 - y1) * n) + y1
+    return (x, y)
+
+
+def linear(n):
+    """Trivial linear tweening function.
+
+    Copied from pytweening module.
+    """
+    if not 0.0 <= n <= 1.0:
+        raise ValueError('Argument must be between 0.0 and 1.0.')
+    return n
+
+
 def _autoPause(pause, _pause):
     if _pause:
         if pause is not None:
             time.sleep(pause)
         elif PAUSE != 0:
             time.sleep(PAUSE)
+
 
 def _unpackXY(x, y):
     """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
@@ -950,6 +1001,7 @@ def hotkey(*args, **kwargs):
 class FailSafeException(Exception):
     pass
 
+
 def _failSafeCheck():
     if FAILSAFE and position() == (0, 0):
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
@@ -970,7 +1022,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
             if (x - xOffset) < 0 or (y - yOffset) < 0 or (x - xOffset) >= resolution[0] or (y - yOffset) >= resolution[1]:
                 pixelColor = ('NaN', 'NaN', 'NaN')
             else:
-                pixelColor = screenshot().getpixel((x, y))
+                pixelColor = pyscreeze.screenshot().getpixel((x, y))
             positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
             positionStr += ', ' + str(pixelColor[1]).rjust(3)
             positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
@@ -979,3 +1031,4 @@ def displayMousePosition(xOffset=0, yOffset=0):
             sys.stdout.flush()
     except KeyboardInterrupt:
         sys.stdout.write('\n')
+        sys.stdout.flush()

@@ -34,9 +34,3 @@ easeInOutBack = pytweening.easeInOutBack
 easeInBounce = pytweening.easeInBounce
 easeOutBounce = pytweening.easeOutBounce
 easeInOutBounce = pytweening.easeInOutBounce
-
-
-
-
-
-
