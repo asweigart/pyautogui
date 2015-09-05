@@ -27,7 +27,7 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
-from __future__ import division, print_function
+from __future__ import absolute_import, division, print_function
 
 
 __version__ = '0.9.30'
@@ -75,18 +75,23 @@ def isShiftCharacter(character):
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
-    #import pyautogui._pyautogui_java as platformModule
+    #from . import _pyautogui_java as platformModule
     raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
-    import pyautogui._pyautogui_osx as platformModule
+    from . import _pyautogui_osx as platformModule
 elif sys.platform == 'win32':
-    import pyautogui._pyautogui_win as platformModule
+    from . import _pyautogui_win as platformModule
 else:
-    import pyautogui._pyautogui_x11 as platformModule
+    from . import _pyautogui_x11 as platformModule
 
+
+# TODO: Having module-wide user-writable global variables is bad. It makes
+# restructuring the code very difficult. For instance, what if we decide to
+# move the mouse-related functions to a separate file (a submodule)? How that
+# file will access this module vars? It will probably lead to a circular
+# import.
 
 MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
-
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = True
 
