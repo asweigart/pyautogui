@@ -1,10 +1,14 @@
+from __future__ import division, print_function
+
 import unittest
 import sys
 import os
 import time
 import threading
+from collections import namedtuple  # Added in Python 2.6.
 from PIL import Image
-sys.path.insert(0, os.path.abspath('..'))
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
@@ -16,40 +20,52 @@ else:
 
 # TODO - note that currently most of the click-related functionality is not tested.
 
+
+class P(namedtuple('P', ['x', 'y'])):
+    '''Simple, immutable, 2D point/vector class, including some basic
+    arithmetic functions.
+    '''
+    def __str__(self):
+        return '{0},{1}'.format(self.x, self.y)
+
+    def __repr__(self):
+        return 'P({0}, {1})'.format(self.x, self.y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __ne__(self, other):
+        return self.x != other.x and self.y != other.y
+
+    def __add__(self, other):
+        return P(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return P(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, other):
+        return P(self.x * other, self.y * other)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __floordiv__(self, other):
+        return P(self.x // other, self.y // other)
+
+    def __truediv__(self, other):
+        return P(self.x / other, self.y / other)
+
+    def __neg__(self):
+        return P(-self.x, -self.y)
+
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        return P(abs(self.x), abs(self.y))
+
+
 class TestGeneral(unittest.TestCase):
-    TWEENS = {'linear': pyautogui.linear,
-        'easeInQuad': pyautogui.easeInQuad,
-        'easeOutQuad': pyautogui.easeOutQuad,
-        'easeInOutQuad': pyautogui.easeInOutQuad,
-        'easeInCubic': pyautogui.easeInCubic,
-        'easeOutCubic': pyautogui.easeOutCubic,
-        'easeInOutCubic': pyautogui.easeInOutCubic,
-        'easeInQuart': pyautogui.easeInQuart,
-        'easeOutQuart': pyautogui.easeOutQuart,
-        'easeInOutQuart': pyautogui.easeInOutQuart,
-        'easeInQuint': pyautogui.easeInQuint,
-        'easeOutQuint': pyautogui.easeOutQuint,
-        'easeInOutQuint': pyautogui.easeInOutQuint,
-        'easeInSine': pyautogui.easeInSine,
-        'easeOutSine': pyautogui.easeOutSine,
-        'easeInOutSine': pyautogui.easeInOutSine,
-        'easeInExpo': pyautogui.easeInExpo,
-        'easeOutExpo': pyautogui.easeOutExpo,
-        'easeInOutExpo': pyautogui.easeInOutExpo,
-        'easeInCirc': pyautogui.easeInCirc,
-        'easeOutCirc': pyautogui.easeOutCirc,
-        'easeInOutCirc': pyautogui.easeInOutCirc,
-        'easeInElastic': pyautogui.easeInElastic,
-        'easeOutElastic': pyautogui.easeOutElastic,
-        'easeInOutElastic': pyautogui.easeInOutElastic,
-        'easeInBack': pyautogui.easeInBack,
-        'easeOutBack': pyautogui.easeOutBack,
-        'easeInOutBack': pyautogui.easeInOutBack,
-        'easeInBounce': pyautogui.easeInBounce,
-        'easeOutBounce': pyautogui.easeOutBounce,
-        'easeInOutBounce': pyautogui.easeInOutBounce,}
-
-
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
@@ -106,8 +122,8 @@ class TestGeneral(unittest.TestCase):
         pyautogui.screenshot
         pyautogui.grab
 
+        # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
         # Tweening-related API
-        pyautogui.getLine
         pyautogui.getPointOnLine
         pyautogui.linear
         pyautogui.easeInQuad
@@ -174,34 +190,45 @@ class TestGeneral(unittest.TestCase):
 
 
     def test_onScreen(self):
-        width, height = pyautogui.size()
-        halfWidth = int(width / 2)
-        halfHeight = int(height / 2)
+        zero = P(0, 0)
+        xone = P(1, 0)
+        yone = P(0, 1)
+        size = P(*pyautogui.size())
+        half = size / 2
 
-        self.assertTrue(pyautogui.onScreen(0, 0))
-        self.assertTrue(pyautogui.onScreen([0, 0]))
+        on_screen = [
+            zero,
+            zero + xone,
+            zero + yone,
+            zero + xone + yone,
+            half,
+            size - xone - yone,
+        ]
+        off_screen = [
+            zero - xone,
+            zero - yone,
+            zero - xone - yone,
+            size - xone,
+            size - yone,
+            size,
+        ]
 
-        self.assertTrue(pyautogui.onScreen(halfWidth, 0))
-        self.assertTrue(pyautogui.onScreen([halfWidth, 0]))
-        self.assertTrue(pyautogui.onScreen(0, halfHeight))
-        self.assertTrue(pyautogui.onScreen([0, halfHeight]))
-        self.assertTrue(pyautogui.onScreen(halfWidth, halfHeight))
-        self.assertTrue(pyautogui.onScreen([halfWidth, halfHeight]))
+        for value, coords in [(True, on_screen), (False, off_screen)]:
+            for coord in coords:
+                self.assertEqual(value, pyautogui.onScreen(*coord), 'onScreen({0}, {1}) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(list(coord)), 'onScreen([{0}, {1}]) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(tuple(coord)), 'onScreen(({0}, {1})) should be {2}'.format(coord.x, coord.y, value))
+                self.assertEqual(value, pyautogui.onScreen(coord), 'onScreen({0}) should be {1}'.format(repr(coord), value))
 
-        self.assertFalse(pyautogui.onScreen(-1, 0))
-        self.assertFalse(pyautogui.onScreen([-1, 0]))
-        self.assertFalse(pyautogui.onScreen(-1, -1))
-        self.assertFalse(pyautogui.onScreen([-1, -1]))
-        self.assertFalse(pyautogui.onScreen(0, -1))
-        self.assertFalse(pyautogui.onScreen([0, -1]))
-
-        self.assertFalse(pyautogui.onScreen(width, 0))
-        self.assertFalse(pyautogui.onScreen([width, 0]))
-        self.assertFalse(pyautogui.onScreen(0, height))
-        self.assertFalse(pyautogui.onScreen([0, height]))
-        self.assertFalse(pyautogui.onScreen(width, height))
-        self.assertFalse(pyautogui.onScreen([width, height]))
-
+        # These can raise either ValueError or TypeError.
+        with self.assertRaises(ValueError):
+            pyautogui.onScreen([0, 0], 0)
+        with self.assertRaises(ValueError):
+            pyautogui.onScreen((0, 0), 0)
+        with self.assertRaises(TypeError):
+            pyautogui.onScreen(0, 0, 0)
+        with self.assertRaises(TypeError):
+            pyautogui.onScreen(0)
 
     def test_pause(self):
         oldValue = pyautogui.PAUSE
@@ -219,124 +246,177 @@ class TestGeneral(unittest.TestCase):
 
 
 class TestMouse(unittest.TestCase):
+    # NOTE - The user moving the mouse during many of these tests will cause them to fail.
+
+    # There is no need to test all tweening functions.
+    TWEENS = [
+        'linear',
+        'easeInElastic',
+        'easeOutElastic',
+        'easeInOutElastic',
+        'easeInBack',
+        'easeOutBack',
+        'easeInOutBack',
+    ]
+
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
-        pyautogui.FAILSAFE = False
-        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
-        pyautogui.FAILSAFE = True
+        self.center = P(*pyautogui.size()) // 2
 
+        pyautogui.FAILSAFE = False
+        pyautogui.moveTo(*self.center) # make sure failsafe isn't triggered during this test
+        pyautogui.FAILSAFE = True
 
     def tearDown(self):
         pyautogui.FAILSAFE = self.oldFailsafeSetting
 
-
     def test_moveTo(self):
-        # NOTE - The user moving the mouse during this test will cause it to fail.
-
         # moving the mouse
-        pyautogui.moveTo(1, 1)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        desired = self.center
+        pyautogui.moveTo(*desired)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # no coordinate specified (should be a NO-OP)
         pyautogui.moveTo(None, None)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # moving the mouse to a new location
-        pyautogui.moveTo(2, 2)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (2, 2), 'mousepos set to %s' % (mousepos,))
+        desired += P(42, 42)
+        pyautogui.moveTo(*desired)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # moving the mouse over time (1/5 second)
-        pyautogui.moveTo(1, 1, 0.2)
-        mousepos = pyautogui.position()
-
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        desired -= P(42, 42)
+        pyautogui.moveTo(desired.x, desired.y, duration=0.2)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # moving the mouse with only x specified
-        pyautogui.moveTo(5, None)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 1), 'mousepos set to %s' % (mousepos,))
+        desired -= P(42, 0)
+        pyautogui.moveTo(desired.x, None)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # ...and only y specified
-        pyautogui.moveTo(None, 5)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
+        desired -= P(0, 42)
+        pyautogui.moveTo(None, desired.y)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
+        # Passing a list instead of separate x and y.
+        desired += P(42, 42)
+        pyautogui.moveTo(list(desired))
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
+
+        # Passing a tuple instead of separate x and y.
+        desired += P(42, 42)
+        pyautogui.moveTo(tuple(desired))
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
+
+        # Passing a sequence-like object instead of separate x and y.
+        desired -= P(42, 42)
+        pyautogui.moveTo(desired)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
     def test_moveToWithTween(self):
-        # NOTE - The user moving the mouse during this test will cause it to fail.
-        DEST = 200, 200
+        origin = self.center - P(100, 100)
+        destination = self.center + P(100, 100)
 
         def resetMouse():
-            # Set up mouse
-            pyautogui.moveTo(100, 100)
-            mousepos = pyautogui.position()
-            self.assertTrue(mousepos == (100, 100), 'Mouse could not be reset to (1, 1). mousepos set to %s' % (mousepos,))
+            pyautogui.moveTo(*origin)
+            mousepos = P(*pyautogui.position())
+            self.assertEqual(mousepos, origin)
 
-        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+        for tweenName in self.TWEENS:
+            tweenFunc = getattr(pyautogui, tweenName)
             resetMouse()
-            pyautogui.moveTo(DEST[0], DEST[1], duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
-            mousepos = pyautogui.position()
-            self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
-
+            pyautogui.moveTo(destination.x, destination.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
+            mousepos = P(*pyautogui.position())
+            self.assertEqual(mousepos, destination, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination))
 
     def test_moveRel(self):
-        # NOTE - The user moving the mouse during this test will cause it to fail.
-
-        # start at 1,1
-        pyautogui.moveTo(1, 1)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        # start at the center
+        desired = self.center
+        pyautogui.moveTo(*desired)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move down and right
-        pyautogui.moveRel(4, 4)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
+        desired += P(42, 42)
+        pyautogui.moveRel(42, 42)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move up and left
-        pyautogui.moveRel(-4, -4)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        desired -= P(42, 42)
+        pyautogui.moveRel(-42, -42)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move right
-        pyautogui.moveRel(4, None)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 1), 'mousepos set to %s' % (mousepos,))
+        desired += P(42, 0)
+        pyautogui.moveRel(42, None)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move down
-        pyautogui.moveRel(None, 4)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (5, 5), 'mousepos set to %s' % (mousepos,))
+        desired += P(0, 42)
+        pyautogui.moveRel(None, 42)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move left
-        pyautogui.moveRel(-4, None)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 5), 'mousepos set to %s' % (mousepos,))
+        desired += P(-42, 0)
+        pyautogui.moveRel(-42, None)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
         # move up
-        pyautogui.moveRel(None, -4)
-        mousepos = pyautogui.position()
-        self.assertTrue(mousepos == (1, 1), 'mousepos set to %s' % (mousepos,))
+        desired += P(0, -42)
+        pyautogui.moveRel(None, -42)
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
+        # Passing a list instead of separate x and y.
+        desired += P(42, 42)
+        pyautogui.moveRel([42, 42])
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
+
+        # Passing a tuple instead of separate x and y.
+        desired -= P(42, 42)
+        pyautogui.moveRel((-42, -42))
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
+
+        # Passing a sequence-like object instead of separate x and y.
+        desired += P(42, 42)
+        pyautogui.moveRel(P(42, 42))
+        mousepos = P(*pyautogui.position())
+        self.assertEqual(mousepos, desired)
 
     def test_moveRelWithTween(self):
-        # NOTE - The user moving the mouse during this test will cause it to fail.
-        DEST = 200, 200
+        origin = self.center - P(100, 100)
+        delta = P(200, 200)
+        destination = origin + delta
 
         def resetMouse():
-            # Set up mouse
-            pyautogui.moveTo(100, 100)
-            mousepos = pyautogui.position()
-            self.assertTrue(mousepos == (100, 100), 'Mouse could not be reset to (1, 1). mousepos set to %s' % (mousepos,))
+            pyautogui.moveTo(*origin)
+            mousepos = P(*pyautogui.position())
+            self.assertEqual(mousepos, origin)
 
-        for tweenName, tweenFunc in TestGeneral.TWEENS.items():
+        for tweenName in self.TWEENS:
+            tweenFunc = getattr(pyautogui, tweenName)
             resetMouse()
-            pyautogui.moveRel(100, 100, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
-            mousepos = pyautogui.position()
-            self.assertTrue(mousepos == DEST, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, DEST))
-
+            pyautogui.moveRel(delta.x, delta.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
+            mousepos = P(*pyautogui.position())
+            self.assertEqual(mousepos, destination, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination))
 
     def test_scroll(self):
         # TODO - currently this just checks that scrolling doesn't result in an error.

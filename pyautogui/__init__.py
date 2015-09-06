@@ -27,18 +27,49 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
+from __future__ import absolute_import, division, print_function
+
+
 __version__ = '0.9.30'
 
+import collections
 import sys
 import time
 
-# move these functions into this namespace
-from pyscreeze import *
-from pymsgbox import *
-from pytweening import *
 
-import pyscreeze # used so we can change the RAISE_IF_NOT_FOUND and GRAYSCALE_DEFAULT variables
+try:
+    import pytweening
+    from pytweening import (easeInQuad, easeOutQuad, easeInOutQuad,
+        easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart,
+        easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint, easeInSine,
+        easeOutSine, easeInOutSine, easeInExpo, easeOutExpo, easeInOutExpo,
+        easeInCirc, easeOutCirc, easeInOutCirc, easeInElastic, easeOutElastic,
+        easeInOutElastic, easeInBack, easeOutBack, easeInOutBack, easeInBounce,
+        easeOutBounce, easeInOutBounce)
+    # getLine is not needed.
+    # getPointOnLine has been redefined in this file, to avoid dependency on pytweening.
+    # linear has also been redefined in this file.
+except ImportError:
+    pass
 
+
+try:
+    import pymsgbox
+    from pymsgbox import alert, confirm, prompt, password
+except ImportError:
+    # If pymsgbox module is not found, those methods will not be available.
+    pass
+
+
+try:
+    import pyscreeze
+    from pyscreeze import (center, grab, locate, locateAll, locateAllOnScreen,
+        locateCenterOnScreen, locateOnScreen, pixel, pixelMatchesColor,
+        screenshot)
+except ImportError:
+    # If pyscreeze module is not found, screenshot-related features will simply
+    # not work.
+    pass
 
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
@@ -65,30 +96,92 @@ KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'command', 'option', 'optionleft', 'optionright']
 KEYBOARD_KEYS = KEY_NAMES   # keeping old KEYBOARD_KEYS for backwards compatibility
 
+
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
     return character.isupper() or character in '~!@#$%^&*()_+{}|:"<>?'
 
+
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
-    #import pyautogui._pyautogui_java as platformModule
+    #from . import _pyautogui_java as platformModule
     raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
-    import pyautogui._pyautogui_osx as platformModule
+    from . import _pyautogui_osx as platformModule
 elif sys.platform == 'win32':
-    import pyautogui._pyautogui_win as platformModule
+    from . import _pyautogui_win as platformModule
 else:
-    import pyautogui._pyautogui_x11 as platformModule
+    from . import _pyautogui_x11 as platformModule
 
 
-MINIMUM_DURATION = 0.1 # In seconds. Any duration less than this is rounded to 0.0 to instantly move the mouse.
+# TODO: Having module-wide user-writable global variables is bad. It makes
+# restructuring the code very difficult. For instance, what if we decide to
+# move the mouse-related functions to a separate file (a submodule)? How that
+# file will access this module vars? It will probably lead to a circular
+# import.
 
+# In seconds. Any duration less than this is rounded to 0.0 to instantly move
+# the mouse.
+MINIMUM_DURATION = 0.1
+# If sleep_amount is too short, time.sleep() will be a no-op and the mouse
+# cursor moves there instantly.
+# TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
+MINIMUM_SLEEP = 0.05
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = True
 
 
 # General Functions
 # =================
+
+def getPointOnLine(x1, y1, x2, y2, n):
+    """Returns the (x, y) tuple of the point that has progressed a proportion
+    n along the line defined by the two x, y coordinates.
+
+    Copied from pytweening module.
+    """
+    x = ((x2 - x1) * n) + x1
+    y = ((y2 - y1) * n) + y1
+    return (x, y)
+
+
+def linear(n):
+    """Trivial linear tweening function.
+
+    Copied from pytweening module.
+    """
+    if not 0.0 <= n <= 1.0:
+        raise ValueError('Argument must be between 0.0 and 1.0.')
+    return n
+
+
+def _autoPause(pause, _pause):
+    if _pause:
+        if pause is not None:
+            time.sleep(pause)
+        elif PAUSE != 0:
+            time.sleep(PAUSE)
+
+
+def _unpackXY(x, y):
+    """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
+
+    On functions that receive a pair of x,y coordinates, they can be passed as
+    separate arguments, or as a single two-element sequence.
+    """
+    if isinstance(x, collections.Sequence):
+        if len(x) == 2:
+            if y is None:
+                x, y = x
+            else:
+                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+        else:
+            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
+    else:
+        pass
+
+    return x, y
+
 
 def position(x=None, y=None):
     """Returns the current xy coordinates of the mouse cursor as a two-integer
@@ -122,7 +215,7 @@ def size():
     return platformModule._size()
 
 
-def onScreen(*args):
+def onScreen(x, y=None):
     """Returns whether the given xy coordinates are on the screen or not.
 
     Args:
@@ -135,19 +228,12 @@ def onScreen(*args):
       bool: True if the xy coordinates are on the screen at its current
         resolution, otherwise False.
     """
-    if len(args) == 2:
-        # args passed as onScreen(x, y)
-        x = int(args[0])
-        y = int(args[1])
-    else:
-        # args pass as onScreen([x, y])
-        x = int(args[0][0])
-        y = int(args[0][1])
+    x, y = _unpackXY(x, y)
+    x = int(x)
+    y = int(y)
 
     width, height = platformModule._size()
-    return x >= 0 and y >= 0 and x < width and y < height
-
-
+    return 0 <= x < width and 0 <= y < height
 
 
 # Mouse Functions
@@ -178,12 +264,11 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseDown(x, y, 'left')
@@ -192,10 +277,7 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     elif button == 3 or str(button).lower() == 'right':
         platformModule._mouseDown(x, y, 'right')
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
@@ -223,12 +305,11 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+
     x, y = platformModule._position()
     if button == 1 or str(button).lower() == 'left':
         platformModule._mouseUp(x, y, 'left')
@@ -237,10 +318,7 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     elif button == 3 or str(button).lower() == 'right':
         platformModule._mouseUp(x, y, 'right')
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
@@ -272,13 +350,12 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     """
     if button not in ('left', 'middle', 'right', 1, 2, 3):
         raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    x, y = position(x, y)
 
     _failSafeCheck()
-    moveTo(x, y, duration=duration, tween=tween, _pause=False)
+    x, y = _unpackXY(x, y)
+    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
+    x, y = platformModule._position()
     for i in range(clicks):
         _failSafeCheck()
         if button == 1 or str(button).lower() == 'left':
@@ -293,10 +370,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
 
         time.sleep(interval)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs a right mouse button click.
@@ -318,14 +392,10 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=Tr
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 1, 0.0, 'right', _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
@@ -348,14 +418,10 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 1, 0.0, 'middle', _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
@@ -388,14 +454,10 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 2, interval, button, _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
@@ -428,14 +490,11 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         5, 6, or 7
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+
     click(x, y, 3, interval, button, _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
+
 
 def scroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
@@ -465,10 +524,8 @@ def scroll(clicks, x=None, y=None, pause=None, _pause=True):
 
     platformModule._scroll(clicks, x, y)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
+
 
 def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
@@ -496,10 +553,8 @@ def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
 
     platformModule._hscroll(clicks, x, y)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
+
 
 def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
@@ -526,11 +581,7 @@ def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
     x, y = position(x, y)
     platformModule._vscroll(clicks, x, y)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
-
+    _autoPause(pause, _pause)
 
 
 def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
@@ -556,19 +607,16 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Returns:
       None
     """
+    x, y = _unpackXY(x, y)
+
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    _mouseMoveDragTo('move', x, y, duration, tween)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
+
+    _autoPause(pause, _pause)
 
 
-
-def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -593,28 +641,13 @@ def moveRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, pause=None, _pause
       None
     """
 
-    # This may seem silly, but I wanted the user to be able to pass None for
-    # an argument just so that it is consistent with moveTo().
-    if xOffset is None:
-        xOffset = 0
-    if yOffset is None:
-        yOffset = 0
-
-    if type(xOffset) in (tuple, list):
-        xOffset, yOffset = xOffset[0], xOffset[1]
-
-    if xOffset == 0 and yOffset == 0:
-        return # no-op case
+    xOffset, yOffset = _unpackXY(xOffset, yOffset)
 
     _failSafeCheck()
 
-    mousex, mousey = platformModule._position()
-    moveTo(mousex + xOffset, mousey + yOffset, duration, tween, _pause=False)
+    _mouseMoveDrag('move', None, None, xOffset, yOffset, duration, tween)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
@@ -648,13 +681,10 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', x, y, duration, tween, button)
+    _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
@@ -699,16 +729,13 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
 
     mousex, mousey = platformModule._position()
     mouseDown(button=button, _pause=False)
-    _mouseMoveDragTo('drag', mousex + xOffset, mousey + yOffset, duration, tween, button)
+    _mouseMoveDrag('drag', mousex, mousey, xOffset, yOffset, duration, tween, button)
     mouseUp(button=button, _pause=False)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
-def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
+def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
     """Handles the actual move or drag event, since different platforms
     implement them differently.
 
@@ -717,13 +744,17 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     The code for moving and dragging the mouse is similar, so this function
     handles both. Users should call the moveTo() or dragTo() functions instead
-    of calling _mouseMoveDragTo().
+    of calling _mouseMoveDrag().
 
     Args:
       moveOrDrag (str): Either 'move' or 'drag', for the type of action this is.
       x (int, float, None, optional): How far left (for negative values) or
         right (for positive values) to move the cursor. 0 by default.
       y (int, float, None, optional): How far up (for negative values) or
+        down (for positive values) to move the cursor. 0 by default.
+      xOffset (int, float, None, optional): How far left (for negative values) or
+        right (for positive values) to move the cursor. 0 by default.
+      yOffset (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
         cursor to the new xy coordinates. If 0, then the mouse cursor is moved
@@ -741,75 +772,70 @@ def _mouseMoveDragTo(moveOrDrag, x, y, duration, tween, button=None):
 
     # The move and drag code is similar, but OS X requires a special drag event instead of just a move event when dragging.
     # See https://stackoverflow.com/a/2696107/1893164
-
     assert moveOrDrag in ('move', 'drag'), "moveOrDrag must be in ('move', 'drag'), not %s" % (moveOrDrag)
 
     if sys.platform != 'darwin':
-        moveOrDrag = 'move' # only OS X needs to use the drag
+        moveOrDrag = 'move' # Only OS X needs the drag event specifically.
 
-    if x is None and y is None:
-        return # special case for no mouse movement at all
+    xOffset = int(xOffset) if xOffset is not None else 0
+    yOffset = int(yOffset) if yOffset is not None else 0
 
-    x, y = position(x, y)
+    if x is None and y is None and xOffset == 0 and yOffset == 0:
+        return  # Special case for no mouse movement at all.
 
-    width, height = platformModule._size()
-    startx, starty = platformModule._position()
+    startx, starty = position()
 
-    # None values means "use current position". Convert x and y to ints.
-    x = startx if x is None else int(x)
-    y = starty if y is None else int(y)
+    x = int(x) if x is not None else startx
+    y = int(y) if y is not None else starty
+
+    # x, y, xOffset, yOffset are now int.
+    x += xOffset
+    y += yOffset
+
+    width, height = size()
 
     # Make sure x and y are within the screen bounds.
-    if x < 0:
-        x = 0
-    elif x >= width:
-        x = width - 1
-    if y < 0:
-        y = 0
-    elif y >= height:
-        y = height - 1
-
-    _failSafeCheck()
+    x = max(0, min(x, width - 1))
+    y = max(0, min(y, height - 1))
 
     # If the duration is small enough, just move the cursor there instantly.
-    if duration <= MINIMUM_DURATION:
-        if moveOrDrag == 'move':
-            platformModule._moveTo(x, y)
-        else:
-            platformModule._dragTo(x, y, button)
-        return
+    steps = [(x, y)]
 
-    # Non-instant moving/dragging involves tweening:
-    segments = max(width, height)
-    timeSegment = float(duration) / segments
-    while timeSegment < 0.05: # if timeSegment is too short, let's decrease the amount we divide it by. Otherwise the time.sleep() will be a no-op and the mouse cursor moves there instantly.
-        segments = int(segments * 0.9) # decrease segments by 90%.
-        timeSegment = float(duration) / segments
+    if duration > MINIMUM_DURATION:
+        # Non-instant moving/dragging involves tweening:
+        num_steps = max(width, height)
+        sleep_amount = duration / num_steps
+        if sleep_amount < MINIMUM_SLEEP:
+            num_steps = int(duration / MINIMUM_SLEEP)
+            sleep_amount = duration / num_steps
 
-    for n in range(segments):
-        time.sleep(timeSegment)
+        steps = [
+            getPointOnLine(startx, starty, x, y, tween(n / num_steps))
+            for n in range(num_steps)
+        ]
+        # Making sure the last position is the actual destination.
+        steps.append((x, y))
+
+    for tweenX, tweenY in steps:
+        if len(steps) > 1:
+            # A single step does not require tweening.
+            time.sleep(sleep_amount)
+
         _failSafeCheck()
-        pointOnLine = tween(float(n) / segments)
-        tweenX, tweenY = getPointOnLine(startx, starty, x, y, pointOnLine)
-        tweenX, tweenY = int(tweenX), int(tweenY)
+        tweenX = int(round(tweenX))
+        tweenY = int(round(tweenY))
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
-        else:
-            # only OS X needs the drag event specifically
+        elif moveOrDrag == 'drag':
             platformModule._dragTo(tweenX, tweenY, button)
-
-    # Ensure that no matter what the tween function returns, the mouse ends up
-    # at the final destination.
-    if moveOrDrag == 'move':
-        platformModule._moveTo(x, y)
-    else:
-        platformModule._dragTo(x, y, button)
+        else:
+            raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
     _failSafeCheck()
+
 
 # Keyboard Functions
 # ==================
-
 
 def isValidKey(key):
     """Returns a Boolean value if the given key is a valid value to pass to
@@ -851,10 +877,7 @@ def keyDown(key, pause=None, _pause=True):
     _failSafeCheck()
     platformModule._keyDown(key)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 def keyUp(key, pause=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
@@ -872,10 +895,7 @@ def keyUp(key, pause=None, _pause=True):
     _failSafeCheck()
     platformModule._keyUp(key)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
@@ -909,10 +929,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
             platformModule._keyUp(k)
         time.sleep(interval)
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 def typewrite(message, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
@@ -946,10 +963,7 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
         time.sleep(interval)
         _failSafeCheck()
 
-    if pause is not None and _pause:
-        time.sleep(pause)
-    elif _pause and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(pause, _pause)
 
 
 def hotkey(*args, **kwargs):
@@ -992,6 +1006,7 @@ def hotkey(*args, **kwargs):
 class FailSafeException(Exception):
     pass
 
+
 def _failSafeCheck():
     if FAILSAFE and position() == (0, 0):
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
@@ -1012,7 +1027,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
             if (x - xOffset) < 0 or (y - yOffset) < 0 or (x - xOffset) >= resolution[0] or (y - yOffset) >= resolution[1]:
                 pixelColor = ('NaN', 'NaN', 'NaN')
             else:
-                pixelColor = screenshot().getpixel((x, y))
+                pixelColor = pyscreeze.screenshot().getpixel((x, y))
             positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
             positionStr += ', ' + str(pixelColor[1]).rjust(3)
             positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
@@ -1021,3 +1036,4 @@ def displayMousePosition(xOffset=0, yOffset=0):
             sys.stdout.flush()
     except KeyboardInterrupt:
         sys.stdout.write('\n')
+        sys.stdout.flush()
