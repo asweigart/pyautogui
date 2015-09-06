@@ -571,7 +571,6 @@ class TestFailSafe(unittest.TestCase):
         pyautogui.moveTo(42, 42) # make sure mouse is not in failsafe position to begin with
 
         pyautogui.FAILSAFE = True
-        pyautogui.moveTo(0, 0) # move mouse to 0, 0, since the fail safe check happens at the START of the moveTo()
         self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, 0, 0)
 
         pyautogui.FAILSAFE = False
