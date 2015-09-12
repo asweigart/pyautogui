@@ -23,14 +23,14 @@ Displays a message box with OK and Cancel buttons. Number and text of buttons ca
 The prompt() Function
 =====================
 
-    >>> prompt(text='', title='' , defaultValue='')
+    >>> prompt(text='', title='' , default='')
 
 Displays a message box with text input, and OK & Cancel buttons. Returns the text entered, or None if Cancel was clicked.
 
 The password() Function
 =======================
 
-    >>> password(text='', title='', defaultValue='', mask='*')
+    >>> password(text='', title='', default='', mask='*')
 
 Displays a message box with text input, and OK & Cancel buttons. Typed characters appear as *. Returns the text entered, or None if Cancel was clicked.
 

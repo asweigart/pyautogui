@@ -35,7 +35,7 @@ Example Usage
 
 Keyboard and Mouse Control
 --------------------------
-
+```python
     >>> import pyautogui
     >>> screenWidth, screenHeight = pyautogui.size()
     >>> currentMouseX, currentMouseY = pyautogui.position()
@@ -50,10 +50,11 @@ Keyboard and Mouse Control
     >>> pyautogui.typewrite(['left', 'left', 'left', 'left', 'left', 'left'])
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.hotkey('ctrl', 'c')
+```
 
 Display Message Boxes
 ---------------------
-
+```python
     >>> import pyautogui
     >>> pyautogui.alert('This is an alert box.')
     'OK'
@@ -65,19 +66,19 @@ Display Message Boxes
     'Al'
     >>> pyautogui.password('Enter password (text will be hidden)')
     'swordfish'
-
+```
 Screenshot Functions
 --------------------
 
 (PyAutoGUI uses Pillow for image-related features.)
-
+```python
     >>> import pyautogui
     >>> im1 = pyautogui.screenshot()
     >>> im1.save('my_screenshot.png')
     >>> im2 = pyautogui.screenshot('my_screenshot2.png')
-
+```
 You can also locate where an image is on the screen:
-
+```python
     >>> import pyautogui
     >>> button7location = pyautogui.locateOnScreen('button.png') # returns (left, top, width, height) of matching region
     >>> button7location
@@ -86,11 +87,12 @@ You can also locate where an image is on the screen:
     >>> buttonx, buttony
     (1441, 582)
     >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
-
+```
 The locateCenterOnScreen() function returns the center of this match region:
-
+```python
     >>> import pyautogui
     >>> buttonx, buttony = pyautogui.locateCenterOnScreen('button.png') # returns (x, y) of matching region
     >>> buttonx, buttony
     (1441, 582)
     >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
+```
