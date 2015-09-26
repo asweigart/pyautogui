@@ -228,6 +228,7 @@ def _setEnglishLayout():
           None
     """
     global enableFrenchLayout
+    global keyboardMapping
     keyboardMapping.update({
         'a': 0x00, # kVK_ANSI_A
         's': 0x01, # kVK_ANSI_S
@@ -380,6 +381,7 @@ def _setFrenchLayout():
           None
     """
     global enableFrenchLayout
+    global keyboardMapping
     keyboardMapping.update({
         'a': 0x0c, # kVK_ANSI_A |
         's': 0x01, # kVK_ANSI_S |
