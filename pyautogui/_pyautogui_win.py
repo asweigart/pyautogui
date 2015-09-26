@@ -321,6 +321,9 @@ def _keyDown(key):
             needsShift = True
         else:
             needsShift = False
+        
+        if (key >= 'A' and key <= 'Z'):
+            needsShift = True
     else:
         needsShift = pyautogui.isShiftCharacter(key)
 
