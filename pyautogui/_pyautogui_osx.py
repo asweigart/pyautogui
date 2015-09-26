@@ -545,7 +545,7 @@ def _normalKeyEvent(key, upDown):
     try:
 
         if (enableFrenchLayout):
-            if key in keysShiftFR:
+            if key in keysShiftFR or (key >= 'A' and key <= 'Z'):
                 key_code = keyboardMapping[key.lower()]
 
                 event = Quartz.CGEventCreateKeyboardEvent(None,
