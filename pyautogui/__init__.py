@@ -867,14 +867,17 @@ def setKeyboardLayout(target = 'qwerty'):
     Returns:
       None
     """
-    target = target.lower()
-    if (target == 'qwerty'):
-        platformModule._setEnglishLayout()
-    elif(target == 'azerty'):
-        platformModule._setFrenchLayout()
+    if (sys.platform == 'darwin' or sys.platform == 'win32'):
+        target = target.lower()
+        if (target == 'qwerty'):
+            platformModule._setEnglishLayout()
+        elif(target == 'azerty'):
+            platformModule._setFrenchLayout()
+        else:
+            print('Does not recognize <'+target+'> layout. Setting <QWERTY> instead.')
+            platformModule._setEnglishLayout()
     else:
-        print('Does not recognize <'+target+'> layout. Setting <QWERTY> instead.')
-        platformModule._setEnglishLayout()
+        print('Your operating system does not need to change keyboard layout')
 
 def keyDown(key, pause=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
