@@ -214,6 +214,7 @@ special_key_translate_table = {
 }
 
 keysShiftFR = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_', '*', '?', '.', '/', '+', '#', '£', '°', '>']
+keysAltFR = ['{', '}', '[', ']']
 enableFrenchLayout = False
 
 def _setEnglishLayout():
@@ -228,7 +229,6 @@ def _setEnglishLayout():
           None
     """
     global enableFrenchLayout
-    global keyboardMapping
     keyboardMapping.update({
         'a': 0x00, # kVK_ANSI_A
         's': 0x01, # kVK_ANSI_S
@@ -381,7 +381,6 @@ def _setFrenchLayout():
           None
     """
     global enableFrenchLayout
-    global keyboardMapping
     keyboardMapping.update({
         'a': 0x0c, # kVK_ANSI_A |
         's': 0x01, # kVK_ANSI_S |
@@ -419,10 +418,10 @@ def _setFrenchLayout():
         ')': 0x1b, # kVK_ANSI_9 |
         '7': 0x1a, # kVK_ANSI_7
         #'&': 0x12, # kVK_ANSI_7
-        '-': 0x1b, # kVK_ANSI_Minus |
-        '_': 0x1b, # kVK_ANSI_Minus |
+        '-': 0x18, # kVK_ANSI_Minus |
+        '_': 0x18, # kVK_ANSI_Minus |
         '8': 0x1c, # kVK_ANSI_8
-        '*': 0x1c, # kVK_ANSI_8
+        '*': 0x1e, # kVK_ANSI_8
         '0': 0x1d, # kVK_ANSI_0
         #')': 0x1d, # kVK_ANSI_0
         ']': 0x1b, # kVK_ANSI_RightBracket |
@@ -435,8 +434,8 @@ def _setFrenchLayout():
         'p': 0x23, # kVK_ANSI_P |
         'l': 0x25, # kVK_ANSI_L |
         'j': 0x26, # kVK_ANSI_J |
-        "'": 0x27, # kVK_ANSI_Quote
-        '"': 0x27, # kVK_ANSI_Quote
+        "'": 0x15, # kVK_ANSI_Quote
+        '"': 0x14, # kVK_ANSI_Quote
         'k': 0x28, # kVK_ANSI_K |
         ';': 0x2b, # kVK_ANSI_Semicolon |
         ':': 0x2f, # kVK_ANSI_Semicolon |
@@ -547,6 +546,14 @@ def _normalKeyEvent(key, upDown):
     try:
 
         if (enableFrenchLayout):
+            
+            if key in keysAltFR:
+                event = Quartz.CGEventCreateKeyboardEvent(None,
+                        keyboardMapping['alt'], upDown == 'down')
+                Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
+                # Tiny sleep to let OS X catch up on us pressing alt
+                time.sleep(0.01)
+            
             if key in keysShiftFR or (key >= 'A' and key <= 'Z'):
                 key_code = keyboardMapping[key.lower()]
 
@@ -558,17 +565,20 @@ def _normalKeyEvent(key, upDown):
             else:
                 key_code = keyboardMapping[key]
 
-        if enableFrenchLayout == False and pyautogui.isShiftCharacter(key):
-            key_code = keyboardMapping[key.lower()]
-
-            event = Quartz.CGEventCreateKeyboardEvent(None,
-                        keyboardMapping['shift'], upDown == 'down')
-            Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
-            # Tiny sleep to let OS X catch up on us pressing shift
-            time.sleep(0.01)
-
         else:
-            key_code = keyboardMapping[key]
+            if pyautogui.isShiftCharacter(key):
+                key_code = keyboardMapping[key.lower()]
+            
+                event = Quartz.CGEventCreateKeyboardEvent(None,
+                        keyboardMapping['shift'], upDown == 'down')
+                Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
+                # Tiny sleep to let OS X catch up on us pressing shift
+                time.sleep(0.01)
+        
+            else:
+                key_code = keyboardMapping[key]
+
+
 
         event = Quartz.CGEventCreateKeyboardEvent(None, key_code, upDown == 'down')
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
