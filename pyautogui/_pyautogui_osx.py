@@ -213,6 +213,9 @@ special_key_translate_table = {
     'KEYTYPE_ILLUMINATION_TOGGLE': 23
 }
 
+keysShiftFR = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_', '*', '?', '.', '/', '+', '#', '£', '°', '>']
+enableFrenchLayout = False
+
 def _setEnglishLayout():
     """
         Use win32api in order to load and set english layout keyboard for current thread only.
@@ -224,7 +227,7 @@ def _setEnglishLayout():
         Returns:
           None
     """
-
+    global enableFrenchLayout
     keyboardMapping.update({
         'a': 0x00, # kVK_ANSI_A
         's': 0x01, # kVK_ANSI_S
@@ -362,6 +365,8 @@ def _setEnglishLayout():
         'eisu': 0x66, # kVK_JIS_Eisu
         'kana': 0x68, # kVK_JIS_Kana
     })
+    
+    enableFrenchLayout = False
 
 def _setFrenchLayout():
     """
@@ -374,7 +379,7 @@ def _setFrenchLayout():
         Returns:
           None
     """
-    
+    global enableFrenchLayout
     keyboardMapping.update({
         'a': 0x0c, # kVK_ANSI_A |
         's': 0x01, # kVK_ANSI_S |
@@ -513,6 +518,7 @@ def _setFrenchLayout():
         'eisu': 0x66, # kVK_JIS_Eisu
         'kana': 0x68, # kVK_JIS_Kana
     })
+    enableFrenchLayout = True
 
 def _keyDown(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
@@ -537,7 +543,20 @@ def _normalKeyEvent(key, upDown):
     assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
 
     try:
-        if pyautogui.isShiftCharacter(key):
+
+        if (enableFrenchLayout):
+            if key in keysShiftFR:
+                key_code = keyboardMapping[key.lower()]
+
+                event = Quartz.CGEventCreateKeyboardEvent(None,
+                            keyboardMapping['shift'], upDown == 'down')
+                Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
+                # Tiny sleep to let OS X catch up on us pressing shift
+                time.sleep(0.01)
+            else:
+                key_code = keyboardMapping[key]
+
+        if enableFrenchLayout == False and pyautogui.isShiftCharacter(key):
             key_code = keyboardMapping[key.lower()]
 
             event = Quartz.CGEventCreateKeyboardEvent(None,
@@ -581,14 +600,6 @@ def _specialKeyEvent(key, upDown):
         )
 
     Quartz.CGEventPost(0, ev.CGEvent())
-
-
-
-
-
-
-
-
 
 def _position():
     loc = AppKit.NSEvent.mouseLocation()
