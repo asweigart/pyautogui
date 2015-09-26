@@ -256,7 +256,6 @@ enableFrenchLayout = False
 keysAltFR = ['\\', '#', '~', '{', '[', '|', '`', '^', '@', ']', '}']
 keysShiftFR = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '?', '°', '+', '£', '.', '>']
 
-
 # Populate the basic printable ascii characters.
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
@@ -272,6 +271,7 @@ def _setFrenchLayout():
         Returns:
           None
     """
+    global enableFrenchLayout
     win32api.LoadKeyboardLayout('67896332', 1)
     ctypes.windll.user32.ActivateKeyboardLayout(1, 8)
     for c in range(32, 128):
@@ -289,6 +289,7 @@ def _setEnglishLayout():
         Returns:
           None
     """
+    global enableFrenchLayout
     win32api.LoadKeyboardLayout('00000409', 1)
     ctypes.windll.user32.ActivateKeyboardLayout(1, 8)
     for c in range(32, 128):
@@ -312,6 +313,9 @@ def _keyDown(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
+    needsLeftAlt = False
+    needsShift = False
+
     if enableFrenchLayout:
         if key in keysAltFR:
             needsLeftAlt = True
@@ -321,7 +325,7 @@ def _keyDown(key):
             needsShift = True
         else:
             needsShift = False
-        
+
         if (key >= 'A' and key <= 'Z'):
             needsShift = True
     else:
