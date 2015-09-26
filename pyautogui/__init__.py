@@ -856,6 +856,25 @@ def isValidKey(key):
     """
     return platformModule.keyboardMapping.get(key, None) != None
 
+def setKeyboardLayout(target = 'qwerty'):
+    """Change keyboard layout, needed for OSX and Windows operating system.
+
+    NOTE: Support for QWERTY and AZERTY only
+
+    Args:
+      target (str): Keyboard layout target, set qwerty for US keyboard or azerty for FR keyboard.
+
+    Returns:
+      None
+    """
+    target = target.lower()
+    if (target == 'qwerty'):
+        platformModule._setEnglishLayout()
+    elif(target == 'azerty'):
+        platformModule._setFrenchLayout()
+    else:
+        print('Does not recognize <'+target+'> layout. Setting <QWERTY> instead.')
+        platformModule._setEnglishLayout()
 
 def keyDown(key, pause=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
