@@ -1,3 +1,4 @@
+v0.9.32, 2015/10/28 -- Updated setup.py to pull info from source
 v0.9.31, 2015/09/06 -- Incorporated many fixes and changes from Denilson Figueiredo de Sá. Thanks!
 v0.9.30, 2015/05/06 -- Fixed issue #12 (size() on Mac Retina displays)
 v0.9.29, 2015/05/05 -- Fixed issue #29 (press('enter') doesn't work on Linux)

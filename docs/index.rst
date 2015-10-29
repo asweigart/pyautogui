@@ -30,6 +30,7 @@ Contents:
    tests.rst
    roadmap.rst
    cookbook.rst
+   faq.rst
 
 This documentation is still a work in progress.
 
