@@ -32,5 +32,5 @@ The password() Function
 
     >>> password(text='', title='', default='', mask='*')
 
-Displays a message box with text input, and OK & Cancel buttons. Typed characters appear as *. Returns the text entered, or None if Cancel was clicked.
+Displays a message box with text input, and OK & Cancel buttons. Typed characters appear as ``*``. Returns the text entered, or None if Cancel was clicked.
 
