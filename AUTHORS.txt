@@ -10,6 +10,7 @@ Christopher Valles https://github.com/christophervalles
 Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
 David Siah https://github.com/dsiah
+Daniel D. Beck https://github.com/ddbeck
 Denilson Figueiredo de Sá https://github.com/denilsonsa
 Eric https://github.com/bleuetnoir
 https://github.com/bredmond
