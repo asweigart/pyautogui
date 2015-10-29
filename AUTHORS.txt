@@ -13,6 +13,7 @@ David Siah https://github.com/dsiah
 Daniel D. Beck https://github.com/ddbeck
 Denilson Figueiredo de Sá https://github.com/denilsonsa
 Eric https://github.com/bleuetnoir
+Harrison https://github.com/Sentdex
 https://github.com/bredmond
 https://github.com/danielboone
 https://github.com/hey-sancho
