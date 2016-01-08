@@ -997,10 +997,7 @@ def hotkey(*args, **kwargs):
         platformModule._keyUp(c)
         time.sleep(interval)
 
-    if kwargs.get('pause', None) is not None and _pause:
-        time.sleep(pause)
-    elif kwargs.get('_pause', True) and PAUSE != 0:
-        time.sleep(PAUSE)
+    _autoPause(kwargs.get('pause', None), kwargs.get('_pause', True))
 
 
 class FailSafeException(Exception):
