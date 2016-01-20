@@ -110,6 +110,7 @@ elif sys.platform == 'darwin':
     from . import _pyautogui_osx as platformModule
 elif sys.platform == 'win32':
     from . import _pyautogui_win as platformModule
+    from ._window_win import Window, getWindows, getWindow
 else:
     from . import _pyautogui_x11 as platformModule
 
