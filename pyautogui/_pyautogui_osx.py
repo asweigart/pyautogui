@@ -384,7 +384,7 @@ def _click(x, y, button):
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
-def _multiclick(x, y, button, num):
+def _multiClick(x, y, button, num):
     btn    = None
     down   = None
     up     = None

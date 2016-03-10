@@ -461,7 +461,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         x, y = _unpackXY(x, y)
         _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
-        platformModule._multiclick(x, y, button, 2)
+        platformModule._multiClick(x, y, button, 2)
     else:
         click(x, y, 2, interval, button, _pause=False)
 
@@ -504,7 +504,7 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
         x, y = _unpackXY(x, y)
         _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
-        platformModule._multiclick(x, y, button, 3)
+        platformModule._multiClick(x, y, button, 3)
     else:
         click(x, y, 2, interval, button, _pause=False)
     _autoPause(pause, _pause)
