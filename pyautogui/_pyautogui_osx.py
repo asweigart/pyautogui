@@ -399,7 +399,7 @@ def _dragTo(x, y, button):
         _sendMouseEvent(Quartz.kCGEventRightMouseDragged , x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
-
+    time.sleep(0.01) # needed to allow OS time to catch up.
 
 def _moveTo(x, y):
     _sendMouseEvent(Quartz.kCGEventMouseMoved, x, y, 0)
