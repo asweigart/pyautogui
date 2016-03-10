@@ -384,6 +384,38 @@ def _click(x, y, button):
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
+def _multiclick(x, y, button, num):
+    btn    = None
+    down   = None
+    up     = None
+    
+    if button == 'left':
+        btn  = Quartz.kCGMouseButtonLeft
+        down = Quartz.kCGEventLeftMouseDown
+        up   = Quartz.kCGEventLeftMouseUp
+    elif button == 'middle':
+        btn  = Quartz.kCGMouseButtonCenter
+        down = Quartz.kCGEventOtherMouseDown
+        up   = Quartz.kCGEventOtherMouseUp        
+    elif button == 'right':
+        btn  = Quartz.kCGMouseButtonRight
+        down = Quartz.kCGEventRightMouseDown
+        up   = Quartz.kCGEventRightMouseUp     
+    else:
+        assert False, "button argument not in ('left', 'middle', 'right')"
+        return
+    
+    mouseEvent = Quartz.CGEventCreateMouseEvent(None, down, (x, y), btn)
+    Quartz.CGEventSetIntegerValueField(mouseEvent, Quartz.kCGMouseEventClickState, num)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
+    Quartz.CGEventSetType(mouseEvent, up)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
+    for i in range(0, num-1):
+        Quartz.CGEventSetType(mouseEvent, down)
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
+        Quartz.CGEventSetType(mouseEvent, up) 
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
+
 
 def _sendMouseEvent(ev, x, y, button):
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, ev, (x, y), button)
@@ -404,3 +436,4 @@ def _dragTo(x, y, button):
 def _moveTo(x, y):
     _sendMouseEvent(Quartz.kCGEventMouseMoved, x, y, 0)
     time.sleep(0.01) # needed to allow OS time to catch up.
+
