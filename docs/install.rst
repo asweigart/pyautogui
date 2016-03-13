@@ -24,9 +24,9 @@ On Linux, this is:
 
     ``sudo pip3 install python3-xlib``
 
-    ``sudo apt-get scrot``
+    ``sudo apt-get install scrot``
 
-    ``sudo apt-get install python-tk``
+    ``sudo apt-get install python3-tk``
 
     ``sudo apt-get install python3-dev``
 
