@@ -3,9 +3,11 @@ people who have submitted patches, reported bugs, added translations, helped
 answer newbie questions, and generally made PyAutoGUI that much better:
 
 Al Sweigart https://github.com/asweigart/
+Alexandr Orlov https://github.com/hey-sancho
 Anwar A. Ruff https://github.com/aaruff
 Ari Lacenski https://github.com/tensory
 Ashok Fernandez https://github.com/ashokfernandez/
+Brian Redmond https://github.com/bredmond
 Christopher Valles https://github.com/christophervalles
 Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
@@ -14,13 +16,12 @@ Daniel D. Beck https://github.com/ddbeck
 Denilson Figueiredo de Sá https://github.com/denilsonsa
 Eric https://github.com/bleuetnoir
 Harrison https://github.com/Sentdex
-https://github.com/bredmond
 https://github.com/danielboone
-https://github.com/hey-sancho
 https://github.com/lb1a
 https://github.com/liberme
 https://github.com/pgkos
 Hugo Salvador https://github.com/hugoesb
 Jeremy R. Gray https://github.com/jeremygray
+Korons https://github.com/Korons
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
