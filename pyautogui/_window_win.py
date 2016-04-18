@@ -1,6 +1,7 @@
 # Window-handling features of PyAutoGUI for win_32
 import ctypes
 import ctypes.wintypes
+import win32con
 
 import sys
 if sys.platform != 'win32':
@@ -19,15 +20,13 @@ SW_RESTORE = 9
 
 SwitchToThisWindow = ctypes.windll.user32.SwitchToThisWindow
 SetForegroundWindow = ctypes.windll.user32.SetForegroundWindow
-CloseWindow = ctypes.windll.user32.CloseWindow
+PostMessage = ctypes.windll.user32.PostMessageA
 GetWindowRect = ctypes.windll.user32.GetWindowRect
-
 EnumWindows = ctypes.windll.user32.EnumWindows
 EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
 GetWindowText = ctypes.windll.user32.GetWindowTextW
 GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
 IsWindowVisible = ctypes.windll.user32.IsWindowVisible
-
 
 class _Rect(ctypes.Structure):
     _fields_ = [('left', ctypes.c_long),
@@ -35,12 +34,11 @@ class _Rect(ctypes.Structure):
                 ('right', ctypes.c_long),
                 ('bottom', ctypes.c_long)]
 
-
 class Window(object):
 
     def __init__(self, hwnd):
         self._hwnd = hwnd         # Window handle
-
+        
     def set_position(self, x, y, width, height):
         """Set window top-left corner position and size"""
         SetWindowPos(self._hwnd, None, x, y, width, height, ctypes.c_uint(0))
@@ -58,7 +56,7 @@ class Window(object):
 
     def set_foreground(self):
         SetForegroundWindow(self._hwnd)
-
+        
     def minimize(self):
         ShowWindow(self._hwnd, SW_MINIMIZE)
 
@@ -66,8 +64,11 @@ class Window(object):
         ShowWindow(self._hwnd, SW_RESTORE)
 
     def close(self):
-        CloseWindow(self._hwnd)
+        PostMessage(self._hwnd, win32con.WM_CLOSE,0,0)
 
+    def closeNow(self):
+        PostMessage(self._hwnd, win32con.WM_DESTROY,0,0)
+        
     def get_position(self):
         """Returns tuple of 4 numbers: (x, y)s of top-left and bottom-right corners"""
         rect = _Rect()
@@ -79,7 +80,6 @@ class Window(object):
     # def clickRel(self, x=0, y=0, clicks=1, interval=0.0, button='left'):
         #  click relative to the x, y of top-left corner of the window
     #     pass
-
 
 def getWindows():    #https://sjohannes.wordpress.com/2012/03/23/win32-python-getting-all-window-titles/
     """Return dict: {'window title' : window handle} for all visible windows"""
@@ -98,7 +98,6 @@ def getWindows():    #https://sjohannes.wordpress.com/2012/03/23/win32-python-ge
 
 def getWindow(title, exact=False):
     """Return Window object if 'title' or its part found in visible windows titles, else return None
-
     Return only 1 window found first
     Args:
         title: unicode string
