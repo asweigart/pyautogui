@@ -19,7 +19,7 @@ RUNNING_PYTHON_2 = sys.version_info[0] == 2
 scrotExists = False
 try:
     if sys.platform not in ('java', 'darwin', 'win32'):
-        whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        whichProc = subprocess.Popen(['which scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         scrotExists = whichProc.wait() == 0
 except:
     # if there is no "which" program to find scrot, then assume there is no scrot.
