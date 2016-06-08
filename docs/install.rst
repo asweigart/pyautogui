@@ -14,15 +14,19 @@ On Windows, this is:
 
 On OS X, this is:
 
-    ``sudo pip3 install pyobjc-core``
+    ``pip3 install pyobjc-core``
 
-    ``sudo pip3 install pyobjc``
+    ``pip3 install pyobjc``
 
-    ``sudo pip3 install pyautogui``
+    ``pip3 install pyautogui``
+
+If you are running El Capitan and have problems installing pyobjc try:
+
+    ``MACOSX_DEPLOYMENT_TARGET=10.11 pip install pyobjc``
 
 On Linux, this is:
 
-    ``sudo pip3 install python3-xlib``
+    ``pip3 install python3-xlib``
 
     ``sudo apt-get install scrot``
 
@@ -30,6 +34,6 @@ On Linux, this is:
 
     ``sudo apt-get install python3-dev``
 
-    ``sudo pip3 install pyautogui``
+    ``pip3 install pyautogui``
 
 PyAutoGUI will try to install Pillow (for its screenshot capabilities). This happens when pip installs PyAutoGUI.
