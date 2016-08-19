@@ -117,8 +117,8 @@ def locateAllOnScreen(image, grayscale=False, limit=None, region=None):
     return retVal
 
 
-def locateCenterOnScreen(image, grayscale=False):
-    return center(locateOnScreen(image, grayscale))
+def locateCenterOnScreen(image, grayscale=False, region=None):
+    return center(locateOnScreen(image, grayscale, region))
 
 
 def _screenshot_win32(imageFilename=None):
