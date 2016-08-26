@@ -90,8 +90,8 @@ Keyboard hotkeys like Ctrl-S or Ctrl-Shift-1 can be done by passing a list of ke
 
 Individual button down and up events can be called separately:
 
-    >>> keyDown(key_name)
-    >>> keyUp(key_name)
+    >>> pyautogui.keyDown(key_name)
+    >>> pyautogui.keyUp(key_name)
 
 
 Message Box Functions
