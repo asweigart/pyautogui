@@ -5,6 +5,7 @@
 import ctypes
 import ctypes.wintypes
 import pyautogui
+import win32api
 
 import sys
 if sys.platform !=  'win32':
@@ -251,10 +252,49 @@ keyboardMapping.update({
     #'': 0xfe, # VK_OEM_CLEAR
 })
 
+enableFrenchLayout = False
+keysAltFR = ['\\', '#', '~', '{', '[', '|', '`', '^', '@', ']', '}']
+keysShiftFR = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '/', '?', '°', '+', '£', '.', '>']
+
 # Populate the basic printable ascii characters.
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
+def _setFrenchLayout():
+    """
+        Use win32api in order to load and set french layout keyboard for current thread only.
+        Reload keymapping after loading new key layout. (AZERTY)
+
+        Args:
+          No argument are needed.
+
+        Returns:
+          None
+    """
+    global enableFrenchLayout
+    win32api.LoadKeyboardLayout('67896332', 1)
+    ctypes.windll.user32.ActivateKeyboardLayout(1, 8)
+    for c in range(32, 128):
+        keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
+    enableFrenchLayout = True
+
+def _setEnglishLayout():
+    """
+        Use win32api in order to load and set english layout keyboard for current thread only.
+        Reload keymapping after loading new key layout. (QWERTY)
+
+        Args:
+          No argument are needed.
+
+        Returns:
+          None
+    """
+    global enableFrenchLayout
+    win32api.LoadKeyboardLayout('00000409', 1)
+    ctypes.windll.user32.ActivateKeyboardLayout(1, 8)
+    for c in range(32, 128):
+        keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
+    enableFrenchLayout = False
 
 def _keyDown(key):
     """Performs a keyboard key press without the release. This will put that
@@ -273,7 +313,23 @@ def _keyDown(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    needsShift = pyautogui.isShiftCharacter(key)
+    needsLeftAlt = False
+    needsShift = False
+
+    if enableFrenchLayout:
+        if key in keysAltFR:
+            needsLeftAlt = True
+        else:
+            needsLeftAlt = False
+        if key in keysShiftFR:
+            needsShift = True
+        else:
+            needsShift = False
+
+        if (key >= 'A' and key <= 'Z'):
+            needsShift = True
+    else:
+        needsShift = pyautogui.isShiftCharacter(key)
 
     """
     # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
@@ -290,15 +346,22 @@ def _keyDown(key):
     """
 
     vkCode = keyboardMapping[key]
-    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
-        vkCode -= 0x100
-        needsShift = True
+    #Only needed by english layout keyboard
+    if enableFrenchLayout == False:
+        if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
+            vkCode -= 0x100
+            needsShift = True
 
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
+    if needsLeftAlt:
+        ctypes.windll.user32.keybd_event(0xa5, 0, 0, 0) #0xa5 is VK_RMENU
+
     ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
     if needsShift:
         ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+    if needsLeftAlt:
+        ctypes.windll.user32.keybd_event(0xa5, 0, KEYEVENTF_KEYUP, 0) #0xa5 is VK_RMENU
 
 
 def _keyUp(key):
@@ -314,7 +377,7 @@ def _keyUp(key):
     if key not in keyboardMapping or keyboardMapping[key] is None:
         return
 
-    needsShift = pyautogui.isShiftCharacter(key)
+    #needsShift = pyautogui.isShiftCharacter(key)
     """
     # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
     if key in keyboardMapping.keys():
@@ -329,15 +392,19 @@ def _keyUp(key):
             needsShift = True
     """
     vkCode = keyboardMapping[key]
-    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
-        vkCode -= 0x100
-        needsShift = True
 
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
+    if enableFrenchLayout == False and vkCode > 0x100:
+        vkCode -= 0x100
+
+    #if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
+        #vkCode -= 0x100
+        #needsShift = True
+
+    #if needsShift:
+        #ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
     ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+    #if needsShift:
+        #ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
 
 def _position():
