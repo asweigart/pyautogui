@@ -295,10 +295,15 @@ def _keyDown(key):
         needsShift = True
 
     if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
-    ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
+        shift_down = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=0x10)) # 0x10 is VK_SHIFT
+        ctypes.windll.user32.SendInput(1, ctypes.byref(shift_down), ctypes.sizeof(shift_down))
+
+    key_press = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=vkCode))
+    ctypes.windll.user32.SendInput(1, ctypes.byref(key_press), ctypes.sizeof(key_press))
+
     if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+        shift_up = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=0x10, dwFlags=KEYEVENTF_KEYUP)) # 0x10 is VK_SHIFT
+        ctypes.windll.user32.SendInput(1, ctypes.byref(shift_up), ctypes.sizeof(shift_up))
 
 
 def _keyUp(key):
@@ -333,11 +338,15 @@ def _keyUp(key):
         vkCode -= 0x100
         needsShift = True
 
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
-    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+    # Not sure why shift is being pressed on a key *release*. Commenting these sections out.
+    #if needsShift:
+    #    ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
+
+    key_up = INPUT(type=INPUT_KEYBOARD, ki=KEYBDINPUT(wVk=vkCode, dwFlags=KEYEVENTF_KEYUP))
+    ctypes.windll.user32.SendInput(1, ctypes.byref(key_up), ctypes.sizeof(key_up))
+    
+    #if needsShift:
+    #    ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
 
 
 def _position():
@@ -459,22 +468,12 @@ def _sendMouseEvent(ev, x, y, dwData=0):
       None
     """
     assert x != None and y != None, 'x and y cannot be set to None'
-    # TODO: ARG! For some reason, SendInput isn't working for mouse events. I'm switching to using the older mouse_event win32 function.
-    #mouseStruct = MOUSEINPUT()
-    #mouseStruct.dx = x
-    #mouseStruct.dy = y
-    #mouseStruct.mouseData = ev
-    #mouseStruct.time = 0
-    #mouseStruct.dwExtraInfo = ctypes.pointer(ctypes.c_ulong(0)) # according to https://stackoverflow.com/questions/13564851/generate-keyboard-events I can just set this. I don't really care about this value.
-    #inputStruct = INPUT()
-    #inputStruct.mi = mouseStruct
-    #inputStruct.type = INPUT_MOUSE
-    #ctypes.windll.user32.SendInput(1, ctypes.pointer(inputStruct), ctypes.sizeof(inputStruct))
 
     width, height = _size()
     convertedX = 65536 * x // width + 1
     convertedY = 65536 * y // height + 1
-    ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
+    x = INPUT(type=INPUT_MOUSE, mi=MOUSEINPUT(dwFlags=ev))
+    ctypes.windll.user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
     if ctypes.windll.kernel32.GetLastError() != 0:
         raise ctypes.WinError()
