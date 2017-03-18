@@ -390,11 +390,20 @@ def _mouseDown(x, y, button):
       None
     """
     if button == 'left':
-        _sendMouseEvent(MOUSEEVENTF_LEFTDOWN, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_LEFTDOWN, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'middle':
-        _sendMouseEvent(MOUSEEVENTF_MIDDLEDOWN, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_MIDDLEDOWN, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'right':
-        _sendMouseEvent(MOUSEEVENTF_RIGHTDOWN, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_RIGHTDOWN, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
@@ -412,11 +421,20 @@ def _mouseUp(x, y, button):
       None
     """
     if button == 'left':
-        _sendMouseEvent(MOUSEEVENTF_LEFTUP, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_LEFTUP, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'middle':
-        _sendMouseEvent(MOUSEEVENTF_MIDDLEUP, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_MIDDLEUP, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'right':
-        _sendMouseEvent(MOUSEEVENTF_RIGHTUP, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_RIGHTUP, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
@@ -434,11 +452,20 @@ def _click(x, y, button):
       None
     """
     if button == 'left':
-        _sendMouseEvent(MOUSEEVENTF_LEFTCLICK, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_LEFTCLICK, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'middle':
-        _sendMouseEvent(MOUSEEVENTF_MIDDLECLICK, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_MIDDLECLICK, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     elif button == 'right':
-        _sendMouseEvent(MOUSEEVENTF_RIGHTCLICK, x, y)
+        try:
+            _sendMouseEvent(MOUSEEVENTF_RIGHTCLICK, x, y)
+        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
@@ -511,7 +538,10 @@ def _scroll(clicks, x=None, y=None):
         elif y >= height:
             y = height - 1
 
-    _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
+    try:
+        _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
+    except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+            pass
 
 
 def _hscroll(clicks, x, y):
