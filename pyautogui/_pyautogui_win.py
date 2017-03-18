@@ -288,17 +288,17 @@ def _keyDown(key):
             vkCode -= 0x100
             needsShift = True
     """
+    mods, vkCode = divmod(keyboardMapping[key], 0x100)
 
-    vkCode = keyboardMapping[key]
-    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
-        vkCode -= 0x100
-        needsShift = True
-
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
+    for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
+        (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
+        if apply_mod:
+            ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
     ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+    for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
+        (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
+        if apply_mod:
+            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
 
 def _keyUp(key):
@@ -328,16 +328,17 @@ def _keyUp(key):
             vkCode -= 0x100
             needsShift = True
     """
-    vkCode = keyboardMapping[key]
-    if vkCode > 0x100: # the vk code will be > 0x100 if it needs shift
-        vkCode -= 0x100
-        needsShift = True
+    mods, vkCode = divmod(keyboardMapping[key], 0x100)
 
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, 0, 0) # 0x10 is VK_SHIFT
+    for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
+        (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
+        if apply_mod:
+            ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
     ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
-    if needsShift:
-        ctypes.windll.user32.keybd_event(0x10, 0, KEYEVENTF_KEYUP, 0) # 0x10 is VK_SHIFT
+    for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
+        (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
+        if apply_mod:
+            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
 
 def _position():

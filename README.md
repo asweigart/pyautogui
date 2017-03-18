@@ -18,7 +18,7 @@ Windows has no dependencies. The Win32 extensions do not need to be installed.
 
 OS X needs the pyobjc-core and pyobjc module installed (in that order).
 
-Linux needs the python3-Xlib (or python-Xlib for Python 2) module installed.
+Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
 
 Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
 
