@@ -11,17 +11,24 @@ Brian Redmond https://github.com/bredmond
 Christopher Valles https://github.com/christophervalles
 Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
-David Siah https://github.com/dsiah
 Daniel D. Beck https://github.com/ddbeck
+danielboone https://github.com/danielboone
+David Siah https://github.com/dsiah
 Denilson Figueiredo de Sá https://github.com/denilsonsa
+dragon778 https://github.com/dragon788
 Eric https://github.com/bleuetnoir
 Harrison https://github.com/Sentdex
-https://github.com/danielboone
-https://github.com/lb1a
-https://github.com/liberme
-https://github.com/pgkos
 Hugo Salvador https://github.com/hugoesb
+jakibaki https://github.com/
 Jeremy R. Gray https://github.com/jeremygray
+Jose Riha https://github.com/jose1711
 Korons https://github.com/Korons
+lb1a https://github.com/lb1a
+Lesmana Zimmer https://github.com/lesmana
+liberme https://github.com/liberme
+Matt Olsen https://github.com/digwanderlust
+pgkos https://github.com/pgkos
+qiujieqiong https://github.com/qiujieqiong
+Ricardo Amendoeira https://github.com/ric2b
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
