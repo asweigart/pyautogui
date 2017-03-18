@@ -21,6 +21,12 @@ Much of this code is based on information gleaned from Paul Barton's PyKeyboard 
 """
 
 def _position():
+    """Returns the current xy coordinates of the mouse cursor as a two-integer
+    tuple.
+
+    Returns:
+      (x, y) tuple of the current xy coordinates of the mouse cursor.
+    """
     coord = _display.screen().root.query_pointer()._data
     return coord["root_x"], coord["root_y"]
 
