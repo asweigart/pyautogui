@@ -9,6 +9,8 @@ For now, the primary aim for PyAutoGUI is cross-platform mouse and keyboard cont
 
 Future features planned (specific versions not planned yet):
 
+- "Wave" function, which is used just to see where the mouse is by shaking the mouse cursor a bit. A small helper function.
+- locateNear() function, which is like the other locate-related screen reading functions except it finds the first instance near an xy point on the screen.
 - Find a list of all windows and their captions.
 - Click coordinates relative to a window, instead of the entire screen.
 - Make it easier to work on systems with multiple monitors.
