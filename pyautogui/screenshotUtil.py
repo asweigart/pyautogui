@@ -17,12 +17,21 @@ from PIL import ImageOps
 RUNNING_PYTHON_2 = sys.version_info[0] == 2
 
 scrotExists = False
+maimExists = False
 try:
     if sys.platform not in ('java', 'darwin', 'win32'):
-        whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        whichProc = subprocess.Popen(['which', 'scrot'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         scrotExists = whichProc.wait() == 0
 except:
     # if there is no "which" program to find scrot, then assume there is no scrot.
+    pass
+
+try:
+    if sys.platform not in ('java', 'darwin', 'win32'):
+        whichProc = subprocess.Popen(['which', 'maim'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        maimExists = whichProc.wait() == 0
+except:
+    # if there is no "which" program to find maim, then assume there is no maim.
     pass
 
 def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
@@ -92,24 +101,24 @@ def locate(needleImage, haystackImage, grayscale=False):
         return None
 
 
-def locateOnScreen(image, grayscale=False):
-    screenshotIm = screenshot()
+def locateOnScreen(image, grayscale=False,region=None):
+    screenshotIm = screenshot(region=region)
     retVal = locate(image, screenshotIm, grayscale)
-    if 'fp' in dir(screenshotIm):
+    if 'fp' in dir(screenshotIm) and screenshotIm.fp is not None:
         screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 
-def locateAllOnScreen(image, grayscale=False, limit=None):
-    screenshotIm = screenshot()
+def locateAllOnScreen(image, grayscale=False, limit=None, region=None):
+    screenshotIm = screenshot(region=region)
     retVal = locateAll(image, screenshotIm, grayscale, limit)
-    if 'fp' in dir(screenshotIm):
+    if 'fp' in dir(screenshotIm) and screenshotIm.fp is not None:
         screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 
-def locateCenterOnScreen(image, grayscale=False):
-    return center(locateOnScreen(image, grayscale))
+def locateCenterOnScreen(image, grayscale=False, region=None):
+    return center(locateOnScreen(image, grayscale, region))
 
 
 def _screenshot_win32(imageFilename=None):
@@ -131,7 +140,7 @@ def _screenshot_osx(imageFilename=None):
     return im
 
 
-def _screenshot_linux(imageFilename=None):
+def _screenshot_linux(imageFilename=None, region=None):
     if not scrotExists:
         raise NotImplementedError('"scrot" must be installed to use screenshot functions in Linux. Run: sudo apt-get install scrot')
     if imageFilename is None:
@@ -139,11 +148,18 @@ def _screenshot_linux(imageFilename=None):
     else:
         tmpFilename = imageFilename
     if scrotExists:
-        subprocess.call(['scrot', tmpFilename])
+        if not region:
+            subprocess.call(['scrot', tmpFilename])
+        else:
+            if not maimExists:
+                raise NotImplementedError('"maim" must be installed to use screenshot functions with region in Linux. Run: sudo apt-get install maim')
+            left,top,width,height = [str(x) for x in region]
+            subprocess.call(['maim','-x',left,'-y',top,'-w',width,'-h',height, tmpFilename])
         im = Image.open(tmpFilename)
         if imageFilename is None:
             os.unlink(tmpFilename)
         return im
+
     else:
         raise Exception('The scrot program must be installed to take a screenshot with PyAutoGUI on Linux. Run: sudo apt-get install scrot')
 
