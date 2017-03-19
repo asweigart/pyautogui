@@ -1,7 +1,10 @@
 import time
 import sys
 
-import Quartz
+try:
+    import Quartz
+except:
+    assert False, "You must first install pyobjc-core and pyobjc: https://pyautogui.readthedocs.io/en/latest/install.html"
 import AppKit
 
 import pyautogui
