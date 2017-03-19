@@ -354,7 +354,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
 
     _failSafeCheck()
     x, y = _unpackXY(x, y)
-    _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+    _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
     x, y = platformModule._position()
     for i in range(clicks):
@@ -736,7 +736,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
     _autoPause(pause, _pause)
 
 
-def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween, button=None):
+def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, button=None):
     """Handles the actual move or drag event, since different platforms
     implement them differently.
 

@@ -18,6 +18,12 @@ if runningOnPython2:
 else:
     INPUT_FUNC = input
 
+
+try:
+    import pytweening
+except:
+    assert False, 'The pytweening module must be installed to complete the tests: pip install pytweening'
+
 # TODO - note that currently most of the click-related functionality is not tested.
 
 
