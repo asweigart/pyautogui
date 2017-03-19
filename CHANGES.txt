@@ -1,3 +1,5 @@
+v0.9.35, 2017/03/19 -- Fixed Windows DPI scaling issue.
+v0.9.34, 2017/03/18 -- Fixed several bugs after the Sentry OSS sprint, including Windows permission errors.
 v0.9.33, 2016/01/08 -- Fixed bug with missing keyword arg in hotkey(). Thanks jmcduffie!
 v0.9.32, 2015/10/28 -- Updated setup.py to pull info from source
 v0.9.31, 2015/09/06 -- Incorporated many fixes and changes from Denilson Figueiredo de Sá. Thanks!

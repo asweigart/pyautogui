@@ -10,6 +10,11 @@ import sys
 if sys.platform !=  'win32':
     raise Exception('The pyautogui_win module should only be loaded on a Windows system.')
 
+
+# Fixes the scaling issues where PyAutoGUI was reporting the wrong resolution:
+ctypes.windll.user32.SetProcessDPIAware()
+
+
 """
 A lot of this code is probably repeated from win32 extensions module, but I didn't want to have that dependency.
 
