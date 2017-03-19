@@ -9,6 +9,7 @@ Ari Lacenski https://github.com/tensory
 Ashok Fernandez https://github.com/ashokfernandez/
 Brian Redmond https://github.com/bredmond
 Christopher Valles https://github.com/christophervalles
+clach04 https://github.com/clach04
 Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
 Daniel D. Beck https://github.com/ddbeck
@@ -27,6 +28,7 @@ lb1a https://github.com/lb1a
 Lesmana Zimmer https://github.com/lesmana
 liberme https://github.com/liberme
 Matt Olsen https://github.com/digwanderlust
+mvbentes https://github.com/mvbentes
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
