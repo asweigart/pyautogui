@@ -131,7 +131,7 @@ Tweening is an extra feature to make the mouse movements fancy. You can probably
 
 A tween or easing function dictates the progress of the mouse as it moves to its destination. Normally when moving the mouse over a duration of time, the mouse moves directly towards the destination in a straight line at a constant speed. This is known as a *linear tween* or *linear easing* function.
 
-PyAutoGUI has other tweening functions available in the ``pyautogui.tweens`` module. The ``pyautogui.tweens.easeInQuad`` function can be passed for the 4th argument to ``moveTo()``, ``moveRel()``, ``dragTo()``, and ``dragRel()`` functions to have the mouse cursor start off moving slowly and then speeding up towards the destination. The total duration is still the same as the argument passed to the function. The ``pyautogui.tweens.easeOutQuad`` is the reverse: the mouse cursor starts moving fast but slows down as it approaches the destination. The ``pyautogui.tweens.easeOutElastic`` will overshoot the destination and "rubber band" back and forth until it settles at the destination.
+PyAutoGUI has other tweening functions available in the ``pyautogui`` module. The ``pyautogui.easeInQuad`` function can be passed for the 4th argument to ``moveTo()``, ``moveRel()``, ``dragTo()``, and ``dragRel()`` functions to have the mouse cursor start off moving slowly and then speeding up towards the destination. The total duration is still the same as the argument passed to the function. The ``pyautogui.easeOutQuad`` is the reverse: the mouse cursor starts moving fast but slows down as it approaches the destination. The ``pyautogui.easeOutElastic`` will overshoot the destination and "rubber band" back and forth until it settles at the destination.
 
 For example:
 
