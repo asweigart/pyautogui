@@ -71,6 +71,12 @@ except ImportError:
     # not work.
     pass
 
+try:
+    from pygame import mixer
+except ImportError:
+    # If pygame module is not found, sound-related features will not work.
+    pass
+
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
@@ -205,6 +211,91 @@ def position(x=None, y=None):
     if y is not None:
         posy = int(y)
     return posx, posy
+
+
+def recordMousePositions(amount=None, interval=2, debug=False):
+    """
+    Records the mouse's positions with the intervals(entered by the user.)
+    If amount is not given, an infite loop will be executed which can be
+    stopped by the FAILSAFE. Otherwise, a loop will run for the amount
+    specified and will record those many position tuples.
+
+    Recommended for command prompt/terminal usage.
+
+    Args:
+        amount (int, None, ) - If not given, an infinite loop is
+        executed which can be stopped with the FAILSAFE.
+
+        interval (int, 2, optional) - If not given, the loop will pause
+        for 2 secs after each position is printed.
+
+        debug (boolean, False, optional) - If not given(if False),
+        nothing is printed to the console after each mouse position.
+
+    Returns:
+        [(x, y), ...] List of all the cursor position tuples recorded.
+    """
+
+    # Initializing the pygame.mixer module.
+    mixer.init()
+
+    # Loading the "ding" sound effect.
+    ding = mixer.Sound('resources/ding.wav')
+
+    # Creating the list to be stored.
+    positions_list = []
+
+    # Function can be replaced by individual if statements.
+    # Function prints the text if debug = True.
+    def _debugging(text):
+        if debug:
+            print(text)
+
+    # Function can be replaced with individual statements.
+    # Function uinitializes the mixer module and returns the positions list.
+    def _end_function():
+        mixer.quit()
+        return positions_list
+
+    # Handling any possible exceptions.
+    try:
+        # Creating an infinite loop if amount = None.
+        if amount == None:
+            while True:
+                pos = position()
+
+                _failSafeCheck() # Raising a FailSafeException if necessary.
+
+                ding.play() # Playing the audio.
+                _debugging(pos) # Printing info if debug = True.
+                positions_list.append(pos) # Appending the position of the mouse to the list.
+
+                time.sleep(interval) # Waiting for the user to move the cursor.
+                ding.stop() # Stopping the audio.
+        else:
+            # If the user gives an amount.
+            for _ in range(amount):
+                pos = position()
+
+                _failSafeCheck() # Raising a FailSafeException if necessary.
+
+                ding.play() # Playing the audio.
+                _debugging(pos) # Printing info if debug = True.
+                positions_list.append(pos) # Appending the position of the mouse to the list.
+
+                time.sleep(interval) # Waiting for the user to move the cursor.
+                ding.stop() # Stopping the audio.
+            _debugging('Recorded ' + str(amount) + ' mouse positions.')
+        mixer.quit()
+        return positions_list
+    except KeyboardInterrupt:
+        _debugging(
+            'Recorded mouse positions, handled KeyboardInterrupt exception, returned' +
+            ' recorded positions.'
+        )
+        mixer.quit()
+        return positions_list
+    mixer.quit() # Uninitializing the mixer module.
 
 
 def size():
