@@ -12,7 +12,10 @@ if sys.platform !=  'win32':
 
 
 # Fixes the scaling issues where PyAutoGUI was reporting the wrong resolution:
-ctypes.windll.user32.SetProcessDPIAware()
+try:
+   ctypes.windll.user32.SetProcessDPIAware()
+except AttributeError:
+    pass
 
 
 """
