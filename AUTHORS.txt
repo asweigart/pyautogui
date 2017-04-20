@@ -30,6 +30,7 @@ Lesmana Zimmer https://github.com/lesmana
 liberme https://github.com/liberme
 Matt Olsen https://github.com/digwanderlust
 mvbentes https://github.com/mvbentes
+nexcvon https://github.com/nexcvon
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
