@@ -15,7 +15,7 @@ if sys.platform !=  'win32':
 try:
    ctypes.windll.user32.SetProcessDPIAware()
 except AttributeError:
-    pass
+    pass # Windows XP doesn't support this, so just do nothing.
 
 
 """
