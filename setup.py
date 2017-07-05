@@ -1,9 +1,17 @@
+import os
 from setuptools import setup
 
 
+__version__ = ""
+version_file = os.path.join(os.path.split(__file__)[0], "pyautogui", "_version.py")
+with open(version_file) as module:
+    # execute the code in version.py to populate __version__ variable
+    # this way, a race condition on sdist or install is avoided
+    exec(compile(module.read(), version_file, 'exec'))
+
 setup(
     name='PyAutoGUI',
-    version=__import__('pyautogui').__version__,
+    version=__version__,
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
