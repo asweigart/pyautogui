@@ -33,4 +33,8 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4'
     ],
+    extras_require={
+        ':sys_platform == "darwin"': ['pyobjc', 'pyobjc-core'],
+        ':"linux" in sys_platform': ['python3-xlib'],
+    },
 )
