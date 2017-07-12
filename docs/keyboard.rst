@@ -47,6 +47,14 @@ To press multiple keys similar to what ``typewrite()`` does, pass a list of stri
 
     >>> pyautogui.press(['left', 'left', 'left'])
 
+Or you can set how many presses `left`:
+
+.. code:: python
+
+    >>> pyautogui.press('left', presses=3)
+
+
+
 
 The hotkey() Function
 =====================
