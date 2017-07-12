@@ -8,7 +8,11 @@ To install PyAutoGUI, install the `pyautogui` package from PyPI and dependencies
 
 On Windows, this is:
 
-    ``C:\Python34\pip.exe install pyautogui``
+    ``pip install pyautogui``
+    
+If Windows can't recognize the `pip`, you can try find out the location of `pip.exe` file and put the full path in command, like this: 
+    
+    ``C:\Python34\Scripts\pip.exe install pyautogui``
 
 (Though you may have a different version of Python installed other than 3.4)
 
