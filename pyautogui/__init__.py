@@ -498,12 +498,8 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
 
 
 def clickImage(path_to_img, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
-    try:
-        x, y = locateCenterOnScreen(path_to_img)
-    except TypeError:
-        return False
+    x, y = locateCenterOnScreen(path_to_img)
     click(x, y, clicks, interval, button, duration, tween, pause, _pause)
-    return True
 
 
 def scroll(clicks, x=None, y=None, pause=None, _pause=True):
