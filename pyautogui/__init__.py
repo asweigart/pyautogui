@@ -880,6 +880,7 @@ def keyDown(key, pause=None, _pause=True):
 
     _autoPause(pause, _pause)
 
+
 def keyUp(key, pause=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
@@ -932,6 +933,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
 
     _autoPause(pause, _pause)
 
+
 def typewrite(message, interval=0.0, pause=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
@@ -947,13 +949,16 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
       message (str, list): If a string, then the characters to be pressed. If a
         list, then the key names of the keys to press in order. The valid names
         are listed in KEYBOARD_KEYS.
-      interval (float, optional): The number of seconds in between each press.
-        0.0 by default, for no pause in between presses.
+      interval ((float, callable), optional): The number of seconds in between
+      each press. 0.0 by default, for no pause in between presses, OR a
+      callable with method(key=None) signature to be called each time the key
+      is entered. Method returns a float.
 
     Returns:
       None
     """
-    interval = float(interval)
+    if not callable(interval):
+        interval = float(interval)
 
     _failSafeCheck()
 
@@ -961,7 +966,10 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
         if len(c) > 1:
             c = c.lower()
         press(c, _pause=False)
-        time.sleep(interval)
+        if callable(interval):
+            time.sleep(interval(c))
+        else:
+            time.sleep(interval)
         _failSafeCheck()
 
     _autoPause(pause, _pause)
