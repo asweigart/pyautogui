@@ -793,18 +793,12 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     x += xOffset
     y += yOffset
 
-    width, height = size()
-
-    # Make sure x and y are within the screen bounds.
-    x = max(0, min(x, width - 1))
-    y = max(0, min(y, height - 1))
-
     # If the duration is small enough, just move the cursor there instantly.
     steps = [(x, y)]
 
     if duration > MINIMUM_DURATION:
         # Non-instant moving/dragging involves tweening:
-        num_steps = max(width, height)
+        num_steps = max(size())
         sleep_amount = duration / num_steps
         if sleep_amount < MINIMUM_SLEEP:
             num_steps = int(duration / MINIMUM_SLEEP)
