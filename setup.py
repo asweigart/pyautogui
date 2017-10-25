@@ -1,9 +1,13 @@
 from setuptools import setup
 
+with open('pyautogui/_version.py') as fid:
+     for line in fid:
+         if line.startswith('__version__'):
+             version = line.strip().split()[-1][1:-1]
 
 setup(
     name='PyAutoGUI',
-    version=__import__('pyautogui').__version__,
+    version=version,
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
