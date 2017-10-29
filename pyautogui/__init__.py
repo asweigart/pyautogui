@@ -113,6 +113,7 @@ elif sys.platform == 'win32':
     from ._window_win import Window, getWindows, getWindow
 else:
     from . import _pyautogui_x11 as platformModule
+    from ._window_x11 import Window, getWindows, getWindow
 
 
 # TODO: Having module-wide user-writable global variables is bad. It makes
