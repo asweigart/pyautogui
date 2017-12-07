@@ -245,7 +245,7 @@ def recordMousePositions(amount=None, interval=2, debug=False):
         mixer.init()
 
         file_path = os.path.dirname(os.path.realpath(__file__))
-        file_location = os.path.join(file_path, 'ding.wav')
+        file_location = os.path.join(file_path, 'resources', 'ding.wav')
 
         # Loading the "ding" sound effect.
         ding = mixer.Sound(file_location)
@@ -293,7 +293,7 @@ def recordMousePositions(amount=None, interval=2, debug=False):
 
     except Exception as e:
         print(e)
-    
+
     finally:
         _debugging('Recorded {} mouse positions.'.format(len(positions_list)))
 
