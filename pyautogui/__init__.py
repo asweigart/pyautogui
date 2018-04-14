@@ -835,6 +835,20 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     _failSafeCheck()
 
 
+    
+def getMouseEvent():
+    if sys.platform.startswith('java') or sys.platform == 'darwin' or sys.platform == 'win32':
+        raise NotImplementedError('PyAutoGUI catch mouse events only for UNIX that supports X11.')
+    
+    return platformModule._getMouseEvent()
+
+def waitForMouseEvent(e):
+    if sys.platform.startswith('java') or sys.platform == 'darwin' or sys.platform == 'win32':
+        raise NotImplementedError('PyAutoGUI catch mouse events only supported for X11.')
+    
+    return platformModule._waitForMouseEvent(e)
+
+
 # Keyboard Functions
 # ==================
 
