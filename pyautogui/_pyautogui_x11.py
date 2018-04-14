@@ -103,7 +103,6 @@ def _getMouseEvent():
     window.grab_pointer(1, X.PointerMotionMask|X.ButtonReleaseMask|X.ButtonPressMask, X.GrabModeAsync, X.GrabModeAsync, X.NONE, X.NONE, X.CurrentTime)
     e = _display.next_event()
     _display.ungrab_pointer(X.CurrentTime)
-    _display.flush()
     
     if e.type == X.ButtonPress:
         e = MOUSE_EVENT[e.detail] + '_down'
