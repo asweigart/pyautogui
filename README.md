@@ -42,12 +42,10 @@ If you want to do development and contribute to PyAutoGUI, you will need to inst
 Requires [PipEnv](https://github.com/pypa/pipenv/) to be installed.
 
 ###### General Usage
-pipenv install
-pipenv shell
+`pipenv install`
 
 ###### Development Environment
-pipenv install --dev
-pipenv shell
+`pipenv install --dev`
 
 Example Usage
 =============
