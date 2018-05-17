@@ -1,11 +1,13 @@
 PyAutoGUI
 =========
 
-PyAutoGUI is a  cross-platform GUI automation Python module for human beings. Used to programmatically control the mouse & keyboard.
+PyAutoGUI is a cross-platform GUI automation Python module for human beings.
+Used to programmatically control the mouse & keyboard.
 
 Full documentation available at https://pyautogui.readthedocs.org
 
-Simplified Chinese documentation（简体中文版文档） available at https://muxuezi.github.io/posts/doc-pyautogui.html
+Simplified Chinese documentation（简体中文版文档）available at
+https://muxuezi.github.io/posts/doc-pyautogui.html
 
 Source code available at https://github.com/asweigart/pyautogui
 
@@ -16,17 +18,19 @@ If you are installing PyAutoGUI from PyPI using pip:
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
-OS X needs the pyobjc-core and pyobjc module installed (in that order).
+macOS needs the rubicon-objc module installed.
 
-Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
+Linux needs the python3-xlib module installed.
 
-Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
+Pillow needs to be installed, and on Linux you may need to install additional
+libraries to make sure Pillow's PNG/JPEG works correctly. See:
 
     https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
 
     http://ubuntuforums.org/showthread.php?t=1751455
 
-If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
+If you want to do development and contribute to PyAutoGUI, you will need to
+install these modules from PyPI:
 
 * pyscreeze
 * pymsgbox
