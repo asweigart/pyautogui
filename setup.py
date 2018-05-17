@@ -13,6 +13,11 @@ setup(
     packages=['pyautogui'],
     test_suite='tests',
     install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze'],
+    extras_require={
+        ':sys_platform=="linux"': ['python3-Xlib'],
+        ':sys_platform=="darwin"': ['rubicon-objc'],
+    },
+    python_requires='>3.4',
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 4 - Beta',
