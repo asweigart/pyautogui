@@ -1,5 +1,6 @@
 import time
 import sys
+from enum import Enum
 from ctypes import *
 from ctypes import util
 
@@ -62,25 +63,36 @@ core_graphics.CGEventPost.restype = None
 core_graphics.CGMainDisplayID.argtypes = []
 core_graphics.CGMainDisplayID.restype = CGDirectDisplayID
 
-kCGEventLeftMouseDown = 1
-kCGEventLeftMouseUp = 2
-kCGEventRightMouseDown = 3
-kCGEventRightMouseUp = 4
-kCGEventMouseMoved = 5
-kCGEventLeftMouseDragged = 6
-kCGEventRightMouseDragged = 7
 
-kCGEventOtherMouseDown = 25
-kCGEventOtherMouseUp = 26
-kCGEventOtherMouseDragged = 27
+class kCGEvent(Enum):
+    LeftMouseDown = 1
+    LeftMouseUp = 2
+    RightMouseDown = 3
+    RightMouseUp = 4
+    MouseMoved = 5
+    LeftMouseDragged = 6
+    RightMouseDragged = 7
 
-kCGMouseButtonLeft = 0
-kCGMouseButtonRight = 1
-kCGMouseButtonCenter = 2
+    OtherMouseDown = 25
+    OtherMouseUp = 26
+    OtherMouseDragged = 27
 
-kCGHIDEventTap = 0
 
-kCGScrollEventUnitLine = 1
+class kCGMouseButton(Enum):
+    Left = 0
+    Right = 1
+    Center = 2
+
+
+class kCGEventTap(Enum):
+    HID = 0  # kCGHIDEventTap
+    Session = 1  # kCGSessionEventTap
+    AnnotatedSession = 2  # kCGAnnotatedSessionEventTap
+
+
+class kCGScrollEventUnit(Enum):
+    Pixel = 0
+    Line = 1
 
 
 #####################################################################
@@ -320,7 +332,7 @@ def _normalKeyEvent(key, upDown):
 
             event = core_graphics.CGEventCreateKeyboardEvent(None,
                         keyboardMapping['shift'], upDown == 'down')
-            core_graphics.CGEventPost(kCGHIDEventTap, event)
+            core_graphics.CGEventPost(kCGEventTap.HID.value, event)
             # Tiny sleep to let OS X catch up on us pressing shift
             time.sleep(0.01)
 
@@ -328,7 +340,7 @@ def _normalKeyEvent(key, upDown):
             key_code = keyboardMapping[key]
 
         event = core_graphics.CGEventCreateKeyboardEvent(None, key_code, upDown == 'down')
-        core_graphics.CGEventPost(kCGHIDEventTap, event)
+        core_graphics.CGEventPost(kCGEventTap.HID.value, event)
         time.sleep(0.01)
 
     # TODO - wait, is the shift key's keyup not done?
@@ -394,17 +406,17 @@ def _vscroll(clicks, x=None, y=None):
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = core_graphics.CGEventCreateScrollWheelEvent(
             None, # no source
-            kCGScrollEventUnitLine, # units
+            kCGScrollEventUnit.Line.value, # units
             1, # wheelCount (number of dimensions)
             10 if clicks >= 0 else -10) # vertical movement
-        core_graphics.CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+        core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
     scrollWheelEvent = core_graphics.CGEventCreateScrollWheelEvent(
         None, # no source
-        kCGScrollEventUnitLine, # units
+        kCGScrollEventUnit.Line.value, # units
         1, # wheelCount (number of dimensions)
         clicks % 10 if clicks >= 0 else -1 * (-clicks % 10)) # vertical movement
-    core_graphics.CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+    core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
 
 def _hscroll(clicks, x=None, y=None):
@@ -413,73 +425,73 @@ def _hscroll(clicks, x=None, y=None):
     for _ in range(abs(clicks) // 10):
         scrollWheelEvent = core_graphics.CGEventCreateScrollWheelEvent(
             None, # no source
-            kCGScrollEventUnitLine, # units
+            kCGScrollEventUnit.Line.value, # units
             2, # wheelCount (number of dimensions)
             0, # vertical movement
             10 if clicks >= 0 else -10) # horizontal movement
-        core_graphics.CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+        core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
     scrollWheelEvent = core_graphics.CGEventCreateScrollWheelEvent(
         None, # no source
-        kCGScrollEventUnitLine, # units
+        kCGScrollEventUnit.Line.value, # units
         2, # wheelCount (number of dimensions)
         0, # vertical movement
         (clicks % 10) if clicks >= 0 else (-1 * clicks % 10)) # horizontal movement
-    core_graphics.CGEventPost(kCGHIDEventTap, scrollWheelEvent)
+    core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
 
 def _mouseDown(x, y, button):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDown, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(kCGEvent.LeftMouseDown, x, y, kCGMouseButton.Left)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDown, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(kCGEvent.OtherMouseDown, x, y, kCGMouseButton.Center)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDown, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(kCGEvent.RightMouseDown, x, y, kCGMouseButton.Right)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _mouseUp(x, y, button):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseUp, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(kCGEvent.LeftMouseUp, x, y, kCGMouseButton.Left)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseUp, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(kCGEvent.OtherMouseUp, x, y, kCGMouseButton.Center)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseUp, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(kCGEvent.RightMouseUp, x, y, kCGMouseButton.Right)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _click(x, y, button):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDown, x, y, kCGMouseButtonLeft)
-        _sendMouseEvent(kCGEventLeftMouseUp, x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(kCGEvent.LeftMouseDown, x, y, kCGMouseButton.Left)
+        _sendMouseEvent(kCGEvent.LeftMouseUp, x, y, kCGMouseButton.Left)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDown, x, y, kCGMouseButtonCenter)
-        _sendMouseEvent(kCGEventOtherMouseUp, x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(kCGEvent.OtherMouseDown, x, y, kCGMouseButton.Center)
+        _sendMouseEvent(kCGEvent.OtherMouseUp, x, y, kCGMouseButton.Center)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDown, x, y, kCGMouseButtonRight)
-        _sendMouseEvent(kCGEventRightMouseUp, x, y, kCGMouseButtonRight)
+        _sendMouseEvent(kCGEvent.RightMouseDown, x, y, kCGMouseButton.Right)
+        _sendMouseEvent(kCGEvent.RightMouseUp, x, y, kCGMouseButton.Right)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _sendMouseEvent(ev, x, y, button):
-    mouseEvent = core_graphics.CGEventCreateMouseEvent(None, ev, CGPoint(x, y), button)
-    core_graphics.CGEventPost(kCGHIDEventTap, mouseEvent)
+    mouseEvent = core_graphics.CGEventCreateMouseEvent(None, ev.value, CGPoint(x, y), button)
+    core_graphics.CGEventPost(kCGEventTap.HID.value, mouseEvent)
 
 
 def _dragTo(x, y, button):
     if button == 'left':
-        _sendMouseEvent(kCGEventLeftMouseDragged , x, y, kCGMouseButtonLeft)
+        _sendMouseEvent(kCGEvent.LeftMouseDragged , x, y, kCGMouseButton.Left)
     elif button == 'middle':
-        _sendMouseEvent(kCGEventOtherMouseDragged , x, y, kCGMouseButtonCenter)
+        _sendMouseEvent(kCGEvent.OtherMouseDragged , x, y, kCGMouseButton.Center)
     elif button == 'right':
-        _sendMouseEvent(kCGEventRightMouseDragged , x, y, kCGMouseButtonRight)
+        _sendMouseEvent(kCGEvent.RightMouseDragged , x, y, kCGMouseButton.Right)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _moveTo(x, y):
-    _sendMouseEvent(kCGEventMouseMoved, x, y, 0)
+    _sendMouseEvent(kCGEvent.MouseMoved, x, y, 0)
     time.sleep(0.01) # needed to allow OS time to catch up.
