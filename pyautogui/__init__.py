@@ -5,15 +5,9 @@
 """
 IMPORTANT NOTE!
 
-To use this module on Mac OS X, you need the PyObjC module installed.
+To use this module on macOS, you need the Rubicon-ObjC module installed.
 For Python 3, run:
-    sudo pip3 install pyobjc-core
-    sudo pip3 install pyobjc
-For Python 2, run:
-    sudo pip install pyobjc-core
-    sudo pip install pyobjc
-(There's some bug with their installer, so install pyobjc-core first or else
-the install takes forever.)
+    sudo pip3 install rubicon-objc
 
 To use this module on Linux, you need Xlib module installed.
 For Python 3, run:

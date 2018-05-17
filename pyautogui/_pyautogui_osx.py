@@ -395,7 +395,7 @@ def _scroll(clicks, x=None, y=None):
 
 
 """
-According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/core_graphics.CGEventCreateScrollWheelEvent
+According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/Quartz.CGEventCreateScrollWheelEvent
 "Scrolling movement is generally represented by small signed integer values, typically in a range from -10 to +10. Large values may have unexpected results, depending on the application that processes the event."
 The scrolling functions will create multiple events that scroll 10 each, and then scroll the remainder.
 """
@@ -477,7 +477,7 @@ def _click(x, y, button):
 
 
 def _sendMouseEvent(ev, x, y, button):
-    mouseEvent = core_graphics.CGEventCreateMouseEvent(None, ev.value, CGPoint(x, y), button)
+    mouseEvent = core_graphics.CGEventCreateMouseEvent(None, ev.value, CGPoint(x, y), button.value)
     core_graphics.CGEventPost(kCGEventTap.HID.value, mouseEvent)
 
 
@@ -493,5 +493,5 @@ def _dragTo(x, y, button):
 
 
 def _moveTo(x, y):
-    _sendMouseEvent(kCGEvent.MouseMoved, x, y, 0)
+    _sendMouseEvent(kCGEvent.MouseMoved, x, y, kCGMouseButton.Left)
     time.sleep(0.01) # needed to allow OS time to catch up.
