@@ -55,6 +55,13 @@ You can't call the `moveTo()` and `click()` functions if you don't know the exac
     (1441, 582)
     >>> pyautogui.click(button7x, button7y)  # clicks the center of where the 7 button was found
 
+The optional `confidence` keyword argument specifies the accuracy with which the function should locate the image on screen. This is helpful in case the function is not able to locate an image due to negligible pixel differences:
+
+    >>> import pyautogui
+    >>> button7location = pyautogui.locateOnScreen('calc7key.png', confidence=0.9)
+    >>> button7location
+    (1416, 562, 50, 41)
+
 The `locateCenterOnScreen()` function is probably the one you want to use most often:
 
     >>> import pyautogui
