@@ -456,7 +456,14 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     """
     _failSafeCheck()
 
-    click(x, y, 2, interval, button, _pause=False)
+    # Multiple clicks work different in OSX
+    if sys.platform == 'darwin':
+        x, y = _unpackXY(x, y)
+        _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+        x, y = platformModule._position()
+        platformModule._multiClick(x, y, button, 2)
+    else:
+        click(x, y, 2, interval, button, _pause=False)
 
     _autoPause(pause, _pause)
 
@@ -492,8 +499,14 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     """
     _failSafeCheck()
 
-    click(x, y, 3, interval, button, _pause=False)
-
+    # Multiple clicks work different in OSX
+    if sys.platform == 'darwin':
+        x, y = _unpackXY(x, y)
+        _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+        x, y = platformModule._position()
+        platformModule._multiClick(x, y, button, 3)
+    else:
+        click(x, y, 2, interval, button, _pause=False)
     _autoPause(pause, _pause)
 
 
@@ -651,7 +664,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
     _autoPause(pause, _pause)
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -674,6 +687,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
       button (str, int, optional): The mouse button clicked. Must be one of
         'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
         default.
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+        Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
       None
@@ -681,14 +696,16 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     _failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
-    mouseDown(button=button, _pause=False)
+    if mouseDownUp:
+        mouseDown(button=button, _pause=False)
     _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
-    mouseUp(button=button, _pause=False)
+    if mouseDownUp:
+        mouseUp(button=button, _pause=False)
 
     _autoPause(pause, _pause)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -711,7 +728,9 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
       button (str, int, optional): The mouse button clicked. Must be one of
         'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
         default.
-
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+        Which allows dragging over multiple (small) actions. 'True' by default.
+        
     Returns:
       None
     """
@@ -729,9 +748,11 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
     _failSafeCheck()
 
     mousex, mousey = platformModule._position()
-    mouseDown(button=button, _pause=False)
+    if mouseDownUp:
+        mouseDown(button=button, _pause=False)
     _mouseMoveDrag('drag', mousex, mousey, xOffset, yOffset, duration, tween, button)
-    mouseUp(button=button, _pause=False)
+    if mouseDownUp:
+        mouseUp(button=button, _pause=False)
 
     _autoPause(pause, _pause)
 
