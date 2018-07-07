@@ -56,8 +56,8 @@ INPUT_KEYBOARD = 1
 # which is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/dd162805(v=vs.85).aspx
 # The POINT structure is used by GetCursorPos().
 class POINT(ctypes.Structure):
-    _fields_ = [("x", ctypes.c_ulong),
-                ("y", ctypes.c_ulong)]
+    _fields_ = [("x", ctypes.c_long),
+                ("y", ctypes.c_long)]
 
 # These ctypes structures are for Win32 INPUT, MOUSEINPUT, KEYBDINPUT, and HARDWAREINPUT structures,
 # used by SendInput and documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
