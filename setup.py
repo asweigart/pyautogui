@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='PyAutoGUI',
-    version=__import__('pyautogui').__version__,
+    version='0.9.36',
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
@@ -12,7 +12,12 @@ setup(
     license='BSD',
     packages=['pyautogui'],
     test_suite='tests',
-    install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze'],
+    install_requires=(['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze']
+                      + ['python3-xlib;sys_platform=="linux"']
+                      + ['python-xlib;sys_platform=="linux2"']
+                      + ['pyobjc-core;sys_platform=="darwin"']
+                      + ['pyobjc;sys_platform=="darwin"']
+                      ),
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -31,6 +36,7 @@ setup(
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5'
     ],
 )

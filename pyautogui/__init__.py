@@ -730,7 +730,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         default.
       mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
         Which allows dragging over multiple (small) actions. 'True' by default.
-        
+
     Returns:
       None
     """
