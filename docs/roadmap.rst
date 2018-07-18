@@ -9,6 +9,7 @@ For now, the primary aim for PyAutoGUI is cross-platform mouse and keyboard cont
 
 Future features planned (specific versions not planned yet):
 
+- A tool for determining why an image can't be found in a particular screenshot. (This is a common source of questions for users.)
 - Full compatibility on Raspberry Pis.
 - "Wave" function, which is used just to see where the mouse is by shaking the mouse cursor a bit. A small helper function.
 - locateNear() function, which is like the other locate-related screen reading functions except it finds the first instance near an xy point on the screen.

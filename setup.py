@@ -1,5 +1,7 @@
 from setuptools import setup
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name='PyAutoGUI',
@@ -9,6 +11,8 @@ setup(
     author_email='al@inventwithpython.com',
     description=('A cross-platform module for GUI automation for human beings. '
                  'Control the keyboard and mouse from a Python script.'),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license='BSD',
     packages=['pyautogui'],
     test_suite='tests',
