@@ -1,3 +1,4 @@
+import re
 from setuptools import setup
 
 # Load version from module (without loading the whole module)
