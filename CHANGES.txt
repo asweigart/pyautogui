@@ -1,3 +1,4 @@
+v0.9.37, 2018/07/18 -- Updating setup.py
 v0.9.36, 2017/04/20 -- Fixed Windows XP problem with the DPI scaling API call.
 v0.9.35, 2017/03/19 -- Fixed Windows DPI scaling issue.
 v0.9.34, 2017/03/18 -- Fixed several bugs after the Sentry OSS sprint, including Windows permission errors.
