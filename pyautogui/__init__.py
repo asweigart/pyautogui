@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.36'
+__version__ = '0.9.37'
 
 import collections
 import sys
@@ -730,7 +730,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         default.
       mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
         Which allows dragging over multiple (small) actions. 'True' by default.
-        
+
     Returns:
       None
     """

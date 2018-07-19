@@ -1,11 +1,17 @@
 from setuptools import setup
 
+# Load version from module (without loading the whole module)
+with open('pyscreeze/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+# Read in the README.md for the long description.
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='PyAutoGUI',
-    version=__import__('pyautogui').__version__,
+    version=version,
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
