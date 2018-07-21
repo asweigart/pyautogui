@@ -14,12 +14,20 @@ Source code available at https://github.com/asweigart/pyautogui
 Dependencies
 ============
 
+Python 2 and 3 are both supported by PyAutoGUI, however on Linux you need version specific packages which are noted
+in the Linux section below.
+
+### With Pip
+
 If you are installing PyAutoGUI from PyPI using pip:
 
+###### Windows
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
+###### OS X
 OS X needs the pyobjc-core and pyobjc module installed (in that order).
 
+###### Linux
 Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
 
 Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
@@ -28,6 +36,7 @@ Pillow needs to be installed, and on Linux you may need to install additional li
 
     http://ubuntuforums.org/showthread.php?t=1751455
 
+###### Development Environment
 If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
 
 * pyscreeze
