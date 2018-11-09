@@ -7,7 +7,7 @@ with open('pyautogui/__init__.py', 'r') as fd:
                         fd.read(), re.MULTILINE).group(1)
 
 # Read in the README.md for the long description.
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(

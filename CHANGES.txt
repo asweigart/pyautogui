@@ -1,3 +1,5 @@
+v0.9.38, 2018/09/05 -- Added tox and fixed setup.py for Python 2 compatibility.
+v0.9.38, 2018/07/21 -- Removing non-ascii characters from readme because it causes failures when displaying on Windows.
 v0.9.37, 2018/07/18 -- Updating setup.py
 v0.9.36, 2017/04/20 -- Fixed Windows XP problem with the DPI scaling API call.
 v0.9.35, 2017/03/19 -- Fixed Windows DPI scaling issue.

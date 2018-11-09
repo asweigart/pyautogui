@@ -7,14 +7,14 @@ PyAutoGUI is a  cross-platform GUI automation Python module for human beings. Us
 
 Full documentation available at https://pyautogui.readthedocs.org
 
-Simplified Chinese documentation（简体中文版文档） available at https://muxuezi.github.io/posts/doc-pyautogui.html
+Simplified Chinese documentation available at https://muxuezi.github.io/posts/doc-pyautogui.html
 
 Source code available at https://github.com/asweigart/pyautogui
 
 Dependencies
 ============
 
-If you are installing PyAutoGUI from PyPI using pip:
+PyAutoGUI supports Python 2 and 3. If you are installing PyAutoGUI from PyPI using pip:
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
