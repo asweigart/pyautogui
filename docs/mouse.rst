@@ -217,3 +217,45 @@ On OS X and Linux platforms, PyAutoGUI can also perform horizontal scrolling by 
     >>> pyautogui.hscroll(-10)   # scroll left 10 "clicks"
 
 The ``scroll()`` function is a wrapper for ``vscroll()``, which performs vertical scrolling.
+
+
+Recording Mouse Positions
+=========================
+You can record your mouse's positions by calling the ``recordMousePositions()`` function and passing an integer "amount," which is the amount of positions you will be recording. Optionally, you can pass an integer "interval," the time between each position being recorded and a boolean "debug" to ``print`` each recorded position to the console. The function leverages a game library known as ``pygame`` to load a "ding" sound effect which occurs after each position is recorded. For example:
+
+.. code:: python
+
+    >>> pyautogui.recordMousePositions(amount=5, debug=True) # Recording 5 positions
+    (889, 189)
+    (611, 185)
+    (611, 185)
+    (706, 381)
+    (655, 371)
+    Recorded mouse positions with given amount.
+    [(889, 189), (611, 185), (611, 185), (706, 381), (655, 371)]
+
+When using this function in a project, it is recommended that you pass a value as the amount or an infinite loop will be executed. Upon an infinite loop execution, you can move your mouse to the top-left of your screen to raise a "FailSafeException" which will kill the program.
+
+However, when/if using this function in the command prompt/terminal, you can omit the "amount" argument while calling the function. This creates an infinite loop which can be stopped by raising a FailSafeException or just pressing ``Ctrl + C``(which raises a KeyboardInterrupt Exception.)
+
+NOTE: Terminals in IDEs recognize the ``Ctrl + C`` hotkey as the "copy" command which will prevent a KeyboardInterrupt Exception from being raised.
+
+We can again write the example shown above in a terminal/command prompt window while omitting the "amount" argument:
+
+.. code:: python
+
+    >>> pyautogui.recordMousePositions(debug=True) # Creating an infinite loop
+    (682, 603)
+    (657, 389)
+    (495, 433)
+    (615, 232)
+    (615, 232)
+    (371, 211)
+    (633, 419)
+    (288, 230)
+    (162, 559)
+    (500, 437)
+    Recorded mouse positions, handled KeyboardInterrupt exception, returned recorded positions.
+    [(682, 603), (657, 389), (495, 433), (615, 232), (615, 232), (371, 211), (633, 419), (288, 230), (162, 559), (500, 437)]
+
+In this example, an infinite loop is executed which is haulted by pressing ``Ctrl + C``(raising a KeyboardInterrupt Exception.)
