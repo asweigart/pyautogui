@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.39'
+__version__ = '0.9.40'
 
 import collections
 import sys
@@ -130,7 +130,7 @@ MINIMUM_DURATION = 0.1
 MINIMUM_SLEEP = 0.05
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = True
-
+FAILSAFE_POINT = (0, 0) # If the mouse is here and FAILSAFE is True, the FailSafeException is raised.
 
 # General Functions
 # =================
@@ -170,7 +170,11 @@ def _unpackXY(x, y):
     On functions that receive a pair of x,y coordinates, they can be passed as
     separate arguments, or as a single two-element sequence.
     """
-    if isinstance(x, collections.Sequence):
+    if isinstance(x, str):
+        # x parameter is the string of an image filename to find and click on:
+        x, y = center(locateOnScreen(x))
+
+    elif isinstance(x, collections.Sequence):
         if len(x) == 2:
             if y is None:
                 x, y = x
@@ -179,7 +183,7 @@ def _unpackXY(x, y):
         else:
             raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
     else:
-        pass
+        pass # x and y are just number values
 
     return x, y
 
@@ -200,9 +204,9 @@ def position(x=None, y=None):
     posx, posy = platformModule._position()
     posx = int(posx)
     posy = int(posy)
-    if x is not None:
+    if x is not None: # If set, the x parameter overrides the return value.
         posx = int(x)
-    if y is not None:
+    if y is not None: # If set, the y parameter overrides the return value.
         posy = int(y)
     return posx, posy
 
@@ -251,6 +255,8 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         mouse down happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         mouse down happens. None by default.
       button (str, int, optional): The mouse button pressed down. Must be one of
@@ -268,6 +274,7 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
 
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
     x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
@@ -292,6 +299,8 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         mouse up happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         mouse up happens. None by default.
       button (str, int, optional): The mouse button released. Must be one of
@@ -309,6 +318,7 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
 
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
     x, y = platformModule._position()
@@ -330,8 +340,10 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     screen.
 
     Args:
-      x (int, float, None, tuple, optional): The x position on the screen where
+      x (int, float, None, tuple, str, optional): The x position on the screen where
         the click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       clicks (int, optional): The number of clicks to perform. 1 by default.
@@ -354,6 +366,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
 
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
     x, y = platformModule._position()
@@ -386,6 +399,8 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=Tr
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -412,6 +427,8 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -438,6 +455,8 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
@@ -481,6 +500,8 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
@@ -609,6 +630,8 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -621,9 +644,8 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Returns:
       None
     """
-    x, y = _unpackXY(x, y)
-
     _failSafeCheck()
+    x, y = _unpackXY(x, y)
 
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
@@ -655,9 +677,9 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
       None
     """
 
-    xOffset, yOffset = _unpackXY(xOffset, yOffset)
-
     _failSafeCheck()
+
+    xOffset, yOffset = _unpackXY(xOffset, yOffset)
 
     _mouseMoveDrag('move', None, None, xOffset, yOffset, duration, tween)
 
@@ -676,6 +698,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     Args:
       x (int, float, None, tuple, optional): How far left (for negative values) or
         right (for positive values) to move the cursor. 0 by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -694,8 +718,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
+    x, y = _unpackXY(x, y)
+
     if mouseDownUp:
         mouseDown(button=button, _pause=False)
     _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
@@ -988,6 +1012,7 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
     _autoPause(pause, _pause)
 
 
+
 def hotkey(*args, **kwargs):
     """Performs key down presses on the arguments passed in order, then performs
     key releases in reverse order.
@@ -1027,7 +1052,22 @@ class FailSafeException(Exception):
 
 
 def _failSafeCheck():
-    if FAILSAFE and position() == (0, 0):
+    global FAILSAFE_POINT
+
+    if isinstance(FAILSAFE_POINT, str):
+        if FAILSAFE_POINT.lower() == 'topleft':
+            FAILSAFE_POINT = (0, 0)
+        elif FAILSAFE_POINT.lower() == 'topright':
+            FAILSAFE_POINT = (size()[0] - 1, 0)
+        elif FAILSAFE_POINT.lower() == 'bottomleft':
+            FAILSAFE_POINT = (0, size()[1] - 1)
+        elif FAILSAFE_POINT.lower() == 'bottomright':
+            screenSize = size()
+            FAILSAFE_POINT = (screenSize[0] - 1, screenSize[1] - 1)
+        else:
+            raise
+
+    if FAILSAFE and position() == FAILSAFE_POINT:
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
 
 
