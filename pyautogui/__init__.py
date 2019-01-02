@@ -50,7 +50,15 @@ try:
     # getPointOnLine has been redefined in this file, to avoid dependency on pytweening.
     # linear has also been redefined in this file.
 except ImportError:
-    pass
+    def couldNotImportPyTweening():
+        raise Exception('PyAutoGUI was unable to import pytweening. Please install this module.')
+        easeInQuad = easeOutQuad = easeInOutQuad = \
+        easeInCubic = easeOutCubic = easeInOutCubic = easeInQuart = easeOutQuart = \
+        easeInOutQuart = easeInQuint = easeOutQuint = easeInOutQuint = easeInSine = \
+        easeOutSine = easeInOutSine = easeInExpo = easeOutExpo = easeInOutExpo = \
+        easeInCirc = easeOutCirc = easeInOutCirc = easeInElastic = easeOutElastic = \
+        easeInOutElastic = easeInBack = easeOutBack = easeInOutBack = easeInBounce = \
+        easeOutBounce = easeInOutBounce = couldNotImportPyTweening
 
 
 try:
@@ -58,7 +66,9 @@ try:
     from pymsgbox import alert, confirm, prompt, password
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
-    pass
+    def couldNotImportPyMsgBox():
+        raise Exception('PyAutoGUI was unable to import pymsgbox. Please install this module.')
+    alert = confirm = prompt = password = couldNotImportPyMsgBox
 
 
 try:
@@ -67,10 +77,19 @@ try:
         locateCenterOnScreen, locateOnScreen, pixel, pixelMatchesColor,
         screenshot)
 except ImportError:
-    # If pyscreeze module is not found, screenshot-related features will simply
-    # not work.
-    pass
+    # If pyscreeze module is not found, screenshot-related features will simply not work.
+    def couldNotImportPyScreeze():
+        raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
+    center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
 
+try:
+    import pygetwindow
+    from pygetwindow import Window, getFocusedWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+except ImportError:
+    # If pygetwindow module is not found, those methods will not be available.
+    def couldNotImportPyGetWindow():
+        raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
+    Window = getFocusedWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
