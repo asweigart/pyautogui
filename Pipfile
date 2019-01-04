@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+pyscreeze = "*"
+pymsgbox = "*"
+pytweening = "*"
+
+[packages]
+pyobjc-core = {version = "*", sys_platform = "== 'Darwin'"}
+pyobjc = {version = "*", sys_platform = "== 'Darwin'"}
+
+[requires]
+python_version = "2.7"

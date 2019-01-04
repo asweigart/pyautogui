@@ -14,12 +14,17 @@ Source code available at https://github.com/asweigart/pyautogui
 Dependencies
 ============
 
+### With Pip
+
 If you are installing PyAutoGUI from PyPI using pip:
 
+###### Windows
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
+###### OS X
 OS X needs the pyobjc-core and pyobjc module installed (in that order).
 
+###### Linux
 Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
 
 Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
@@ -28,11 +33,21 @@ Pillow needs to be installed, and on Linux you may need to install additional li
 
     http://ubuntuforums.org/showthread.php?t=1751455
 
+###### Development Environment
 If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
 
 * pyscreeze
 * pymsgbox
 * pytweening
+
+### With PipEnv (Only Windows and OS X)
+Requires [PipEnv](https://github.com/pypa/pipenv/) to be installed.
+
+###### General Usage
+`pipenv install`
+
+###### Development Environment
+`pipenv install --dev`
 
 Example Usage
 =============
