@@ -49,20 +49,30 @@ You can't call the `moveTo()` and `click()` functions if you don't know the exac
     >>> import pyautogui
     >>> button7location = pyautogui.locateOnScreen('calc7key.png')
     >>> button7location
-    (1416, 562, 50, 41)
-    >>> button7x, button7y = pyautogui.center(button7location)
-    >>> button7x, button7y
-    (1441, 582)
+    Box(left=1416, top=562, width=50, height=41)
+    >>> button7location[0]
+    1416
+    >>> button7location.left
+    1416
+    >>> button7point = pyautogui.center(button7location)
+    >>> button7point
+    Point(x=1441, y=582)
+    >>> button7point[0]
+    1441
+    >>> button7point.x
+    1441
+    >>> button7x, button7y = button7point
     >>> pyautogui.click(button7x, button7y)  # clicks the center of where the 7 button was found
+    >>> pyautogui.click('calc7key.png') # a shortcut version to click on the center of where the 7 button was found
 
 The optional `confidence` keyword argument specifies the accuracy with which the function should locate the image on screen. This is helpful in case the function is not able to locate an image due to negligible pixel differences:
 
     >>> import pyautogui
     >>> button7location = pyautogui.locateOnScreen('calc7key.png', confidence=0.9)
     >>> button7location
-    (1416, 562, 50, 41)
+    Box(left=1416, top=562, width=50, height=41)
 
-The `locateCenterOnScreen()` function is probably the one you want to use most often:
+The `locateCenterOnScreen()` function combines `locateOnScreen()` and `center()`:
 
     >>> import pyautogui
     >>> x, y = pyautogui.locateCenterOnScreen('calc7key.png')
@@ -123,8 +133,13 @@ To obtain the RGB color of a pixel in a screenshot, use the Image object's `getp
 Or as a single function, call the `pixel()` PyAutoGUI function, which is a wrapper for the previous calls:
 
     >>> import pyautogui
-    >>> pyautogui.pixel(100, 200)
-    (130, 135, 144)
+    >>> pix = pyautogui.pixel(100, 200)
+    >>> pix
+    RGB(red=130, green=135, blue=144)
+    >>> pix[0]
+    130
+    >>> pix.red
+    130
 
 If you just need to verify that a single pixel matches a given pixel, call the `pixelMatchesColor()` function, passing it the X coordinate, Y coordinate, and RGB tuple of the color it represents:
 

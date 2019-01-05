@@ -1,4 +1,5 @@
-v0.9.38, 2018/09/05 -- Added tox and fixed setup.py for Python 2 compatibility.
+v0.9.40, 2018/12/26 -- Created FAILSAFE_POINT constant instead of hard coding (0, 0), add move(), drag(), write() names. Adding PyGetWindow.
+v0.9.39, 2018/09/05 -- Added tox and fixed setup.py for Python 2 compatibility.
 v0.9.38, 2018/07/21 -- Removing non-ascii characters from readme because it causes failures when displaying on Windows.
 v0.9.37, 2018/07/18 -- Updating setup.py
 v0.9.36, 2017/04/20 -- Fixed Windows XP problem with the DPI scaling API call.
