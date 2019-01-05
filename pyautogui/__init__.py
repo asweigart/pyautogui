@@ -32,9 +32,18 @@ from __future__ import absolute_import, division, print_function
 
 __version__ = '0.9.40'
 
-import collections
 import sys
 import time
+
+
+if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3,2)):
+    # Python 2 and 3.1 and 3.2 uses collections.Sequence
+    import collections
+    collectionsSequence = collections.Sequence
+else:
+    # Python 3.3+ uses collections.abc.Sequence
+    import collections.abc
+    collectionsSequence = collections.abc.Sequence
 
 
 try:
@@ -142,13 +151,17 @@ else:
 # In seconds. Any duration less than this is rounded to 0.0 to instantly move
 # the mouse.
 MINIMUM_DURATION = 0.1
-# If sleep_amount is too short, time.sleep() will be a no-op and the mouse
-# cursor moves there instantly.
+# If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
 FAILSAFE = True
 FAILSAFE_POINT = (0, 0) # If the mouse is here and FAILSAFE is True, the FailSafeException is raised.
+
+
+Point = collections.namedtuple('Point', 'x y')
+Size = collections.namedtuple('Size', 'width height')
+
 
 # General Functions
 # =================
@@ -169,6 +182,8 @@ def linear(n):
 
     Copied from pytweening module.
     """
+
+    # We use this function instead of pytweening.linear for the default tween function just in case pytweening couldn't be imported.
     if not 0.0 <= n <= 1.0:
         raise ValueError('Argument must be between 0.0 and 1.0.')
     return n
@@ -192,7 +207,7 @@ def _unpackXY(x, y):
         # x parameter is the string of an image filename to find and click on:
         x, y = center(locateOnScreen(x))
 
-    elif isinstance(x, collections.Sequence):
+    elif isinstance(x, collectionsSequence):
         if len(x) == 2:
             if y is None:
                 x, y = x
@@ -226,7 +241,7 @@ def position(x=None, y=None):
         posx = int(x)
     if y is not None: # If set, the y parameter overrides the return value.
         posy = int(y)
-    return posx, posy
+    return Point(posx, posy)
 
 
 def size():
@@ -235,7 +250,7 @@ def size():
     Returns:
       (width, height) tuple of the screen size, in pixels.
     """
-    return platformModule._size()
+    return Size(*platformModule._size())
 
 
 def onScreen(x, y=None):
@@ -704,6 +719,9 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
     _autoPause(pause, _pause)
 
 
+move = moveRel # For PyAutoGUI 1.0, move() replaces moveRel().
+
+
 def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
@@ -797,6 +815,9 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
         mouseUp(button=button, _pause=False)
 
     _autoPause(pause, _pause)
+
+
+drag = dragRel # For PyAutoGUI 1.0, we want drag() to replace dragRel().
 
 
 def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, button=None):
@@ -1029,6 +1050,8 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
 
     _autoPause(pause, _pause)
 
+
+write = typewrite # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
 def hotkey(*args, **kwargs):
