@@ -36,6 +36,8 @@ There is also an optional `region` keyword argument, if you do not want a screen
 The Locate Functions
 ====================
 
+NOTE: As of version 0.9.41, if the locate functions can't find the provided image, they'll raise `ImageNotFoundException` instead of returning `None`.
+
 You can visually locate something on the screen if you have an image file of it. For example, say the calculator app was running on your computer and looked like this:
 
 .. image:: calculator.png
@@ -44,7 +46,7 @@ You can't call the `moveTo()` and `click()` functions if you don't know the exac
 
 .. image:: calc7key.png
 
-. . . you can call the `locateOnScreen('calc7key.png')` function to get the screen coordinates. The return value is a 4-integer tuple: (left, top, width, height). This tuple can be passed to `center()` to get the X and Y coordinates at the center of this region. If the image can't be found on the screen, `locateOnScreen()` returns `None`.
+. . . you can call the `locateOnScreen('calc7key.png')` function to get the screen coordinates. The return value is a 4-integer tuple: (left, top, width, height). This tuple can be passed to `center()` to get the X and Y coordinates at the center of this region. If the image can't be found on the screen, `locateOnScreen()` raises `ImageNotFoundException`.
 
     >>> import pyautogui
     >>> button7location = pyautogui.locateOnScreen('calc7key.png')
@@ -82,13 +84,13 @@ On a 1920 x 1080 screen, the locate function calls take about 1 or 2 seconds. Th
 
 There are several "locate" functions. They all start looking at the top-left corner of the screen (or image) and look to the right and then down. The arguments can either be a
 
-- `locateOnScreen(image, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Returns None if not found on the screen.
+- `locateOnScreen(image, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of the `image` on the screen. Raises `ImageNotFoundException` if not found on the screen.
 
-- `locateCenterOnScreen(image, grayscale=False)` - Returns (x, y) coordinates of the center of the first found instance of the `image` on the screen. Returns None if not found on the screen.
+- `locateCenterOnScreen(image, grayscale=False)` - Returns (x, y) coordinates of the center of the first found instance of the `image` on the screen. Raises `ImageNotFoundException` if not found on the screen.
 
 - `locateAllOnScreen(image, grayscale=False)` - Returns a generator that yields (left, top, width, height) tuples for where the image is found on the screen.
 
-- `locate(needleImage, haystackImage, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of `needleImage` in `haystackImage`. Returns None if not found on the screen.
+- `locate(needleImage, haystackImage, grayscale=False)` - Returns (left, top, width, height) coordinate of first found instance of `needleImage` in `haystackImage`. Raises `ImageNotFoundException` if not found on the screen.
 
 - `locateAll(needleImage, haystackImage, grayscale=False)` - Returns a generator that yields (left, top, width, height) tuples for where `needleImage` is found in `haystackImage`.
 
