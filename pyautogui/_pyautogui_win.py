@@ -31,6 +31,7 @@ UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mou
 
 # Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+KEYEVENTF_EXTENDEDKEY = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 MOUSEEVENTF_LEFTCLICK = MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP
@@ -51,6 +52,7 @@ KEYEVENTF_KEYUP = 0x0002
 INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
 
+MapVirtualKey = ctypes.windll.user32.MapVirtualKeyW
 
 # This ctypes structure is for a Win32 POINT structure,
 # which is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/dd162805(v=vs.85).aspx
@@ -298,11 +300,16 @@ def _keyDown(key):
     """
     mods, vkCode = divmod(keyboardMapping[key], 0x100)
 
+    if 33 <= vkCode <= 46 or 91 <= vkCode <= 93:
+        flags = KEYEVENTF_EXTENDEDKEY
+    else:
+        flags = 0
+
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
+    ctypes.windll.user32.keybd_event(vkCode, MapVirtualKey(vkCode, 0), flags, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
         if apply_mod:
@@ -342,7 +349,7 @@ def _keyUp(key):
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
+    ctypes.windll.user32.keybd_event(vkCode, MapVirtualKey(vkCode, 0), KEYEVENTF_KEYUP, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
         if apply_mod:
