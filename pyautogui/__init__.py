@@ -901,6 +901,13 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         # Making sure the last position is the actual destination.
         steps.append((x, y))
 
+    width, height = size()
+    # Calculate dx, dy value for user32.mouse_event
+    # with MOUSEEVENTF_ABSOLUTE specified
+    # refers to: https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mouse_event
+    # section "Remarks"
+    steps = [(x / width * 65535.0, y / height * 65535.0) for x, y in steps]
+
     for tweenX, tweenY in steps:
         if len(steps) > 1:
             # A single step does not require tweening.

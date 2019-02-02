@@ -31,6 +31,7 @@ UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mou
 
 # Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 MOUSEEVENTF_LEFTCLICK = MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP
@@ -43,6 +44,7 @@ MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
+MOUSEEVENTF_ABSOLUTE = 0x8000
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
 KEYEVENTF_KEYUP = 0x0002
@@ -372,18 +374,19 @@ def _size():
 
 
 def _moveTo(x, y):
-    """Send the mouse move event to Windows by calling SetCursorPos() win32
+    """Send the mouse move event to Windows by calling mouse_event() win32
     function.
 
     Args:
       button (str): The mouse button, either 'left', 'middle', or 'right'
-      x (int): The x position of the mouse event.
-      y (int): The y position of the mouse event.
+      x (int): The dx position of the mouse event.
+      y (int): The dy position of the mouse event.
 
     Returns:
       None
     """
-    ctypes.windll.user32.SetCursorPos(x, y)
+    ctypes.windll.user32.mouse_event(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE,
+                                     x, y, 0, 0)
 
 
 def _mouseDown(x, y, button):
