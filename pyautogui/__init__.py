@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.40'
+__version__ = '0.9.41'
 
 import sys
 import time
@@ -91,14 +91,16 @@ except ImportError:
         raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
     center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
 
-try:
-    import pygetwindow
-    from pygetwindow import Window, getFocusedWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
-except ImportError:
-    # If pygetwindow module is not found, those methods will not be available.
-    def couldNotImportPyGetWindow():
-        raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
-    Window = getFocusedWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
+if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
+    try:
+        import pygetwindow
+        from pygetwindow import Window, getFocusedWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+    except ImportError:
+        # If pygetwindow module is not found, those methods will not be available.
+        def couldNotImportPyGetWindow():
+            raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
+        Window = getFocusedWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
+
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',

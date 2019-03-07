@@ -21,6 +21,8 @@ Future features planned (specific versions not planned yet):
 - Optional nonblocking pyautogui calls.
 - "strict" mode for keyboard - passing an invalid keyboard key causes an exception instead of silently skipping it.
 - rename keyboardMapping to KEYBOARD_MAPPING
+- Ability to convert png and other image files into a string that can be copy/pasted directly in the source code, so that they don't have to be shared separately with people's pyautogui scripts.
+- Test to make sure pyautogui works in Windows/mac/linux VMs.
 
 Window handling features:
  - pyautogui.getWindows()      # returns a dict of window titles mapped to window IDs
