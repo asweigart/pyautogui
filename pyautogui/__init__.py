@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.41'
+__version__ = '0.9.42'
 
 import sys
 import time
@@ -90,6 +90,14 @@ except ImportError:
     def couldNotImportPyScreeze():
         raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
     center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
+
+
+def useImageNotFoundException(value=None):
+    if value is None:
+        value = True
+    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
+
+
 
 if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
     try:
