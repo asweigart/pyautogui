@@ -47,6 +47,7 @@ To press multiple keys similar to what ``typewrite()`` does, pass a list of stri
 
     >>> pyautogui.press(['left', 'left', 'left'])
 
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 The hotkey() Function
 =====================
@@ -68,6 +69,7 @@ To make pressing hotkeys or keyboard shortcuts convenient, the ``hotkey()`` can 
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.keyUp('ctrl')
 
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 KEYBOARD_KEYS
 =============
