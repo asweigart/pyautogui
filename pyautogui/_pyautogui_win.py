@@ -495,22 +495,24 @@ def _sendMouseEvent(ev, x, y, dwData=0):
       None
     """
     assert x != None and y != None, 'x and y cannot be set to None'
-    # TODO: ARG! For some reason, SendInput isn't working for mouse events. I'm switching to using the older mouse_event win32 function.
-    #mouseStruct = MOUSEINPUT()
-    #mouseStruct.dx = x
-    #mouseStruct.dy = y
-    #mouseStruct.mouseData = ev
-    #mouseStruct.time = 0
-    #mouseStruct.dwExtraInfo = ctypes.pointer(ctypes.c_ulong(0)) # according to https://stackoverflow.com/questions/13564851/generate-keyboard-events I can just set this. I don't really care about this value.
-    #inputStruct = INPUT()
-    #inputStruct.mi = mouseStruct
-    #inputStruct.type = INPUT_MOUSE
-    #ctypes.windll.user32.SendInput(1, ctypes.pointer(inputStruct), ctypes.sizeof(inputStruct))
+    
+    mouseStruct = MOUSEINPUT()
+    mouseStruct.dx = x
+    mouseStruct.dy = y
+    mouseStruct.mouseData = 0
+    mouseStruct.dwFlags = ev
+    mouseStruct.time = 0
+    mouseStruct.dwExtraInfo = ctypes.pointer(ctypes.c_ulong(0)) # according to https://stackoverflow.com/questions/13564851/generate-keyboard-events I can just set this. I don't really care about this value.
+    inputStruct = INPUT()
+    inputStruct.mi = mouseStruct
+    inputStruct.type = INPUT_MOUSE
+    ctypes.windll.user32.SendInput(1, ctypes.pointer(inputStruct), ctypes.sizeof(inputStruct))
 
-    width, height = _size()
-    convertedX = 65536 * x // width + 1
-    convertedY = 65536 * y // height + 1
-    ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
+    ## Deprecated mouse_event function call (replaced by SendInput() above)
+    # width, height = _size()
+    # convertedX = 65536 * x // width + 1
+    # convertedY = 65536 * y // height + 1
+    # ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
 
     # TODO: Too many false positives with this code: See: https://github.com/asweigart/pyautogui/issues/108
     #if ctypes.windll.kernel32.GetLastError() != 0:
