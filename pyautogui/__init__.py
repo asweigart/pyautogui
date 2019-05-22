@@ -102,7 +102,8 @@ def useImageNotFoundException(value=None):
 if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
     try:
         import pygetwindow
-        from pygetwindow import Window, getFocusedWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+        from pygetwindow import Window, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+        from pygetwindow import getActiveWindow as getFocusedWindow
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
         def couldNotImportPyGetWindow():
