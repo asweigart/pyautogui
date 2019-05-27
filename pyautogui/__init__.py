@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.42'
+__version__ = '0.9.43'
 
 import sys
 import time
@@ -102,12 +102,12 @@ def useImageNotFoundException(value=None):
 if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
     try:
         import pygetwindow
-        from pygetwindow import Window, getFocusedWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+        from pygetwindow import Window, getActiveWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
         def couldNotImportPyGetWindow():
             raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
-        Window = getFocusedWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
+        Window = getActiveWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
 
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
