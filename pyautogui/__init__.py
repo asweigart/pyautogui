@@ -30,7 +30,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.43'
+__version__ = '0.9.44'
 
 import sys
 import time
@@ -219,12 +219,19 @@ def _unpackXY(x, y):
 
     elif isinstance(x, collectionsSequence):
         if len(x) == 2:
+            # x is a two-integer tuple: (x, y)
             if y is None:
                 x, y = x
             else:
-                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+                raise ValueError('When passing a sequence as the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+        elif len(x) == 4:
+            # x is a four-integer tuple: (left, top, width, height)
+            if y is None:
+                x, y = center(x)
+            else:
+                raise ValueError('When passing a sequence as the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
         else:
-            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
+            raise ValueError('The supplied sequence must have exactly 2 or exactly 4 elements ({0} were received).'.format(len(x)))
     else:
         pass # x and y are just number values
 

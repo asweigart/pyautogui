@@ -23,7 +23,7 @@ setup(
     license='BSD',
     packages=['pyautogui'],
     test_suite='tests',
-    install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze>=0.1.20', 'pygetwindow>=0.0.5'],
+    install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze>=0.1.21', 'pygetwindow>=0.0.5'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 4 - Beta',
