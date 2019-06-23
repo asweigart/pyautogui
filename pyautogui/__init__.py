@@ -119,6 +119,12 @@ KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'command', 'option', 'optionleft', 'optionright']
 KEYBOARD_KEYS = KEY_NAMES   # keeping old KEYBOARD_KEYS for backwards compatibility
 
+# Constants for the mouse button names:
+LEFT      = 'left'
+MIDDLE    = 'middle'
+RIGHT     = 'right'
+PRIMARY   = 'primary'
+SECONDARY = 'secondary'
 
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
@@ -343,33 +349,33 @@ def _translateButton(button):
     button = button.lower()
     if platform.system() == 'Linux':
         # Check for valid button arg on Linux:
-        if button not in ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7):
+        if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3, 4, 5, 6, 7):
             raise ValueError("button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7)")
     else:
         # Check for valid button arg on Windows and macOS:
-        if button not in ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3):
+        if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3):
             raise ValueError("button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3)")
 
     # TODO - Check if the primary/secondary mouse buttons have been swapped:
-    if button in ('primary', 'secondary'):
+    if button in (PRIMARY, SECONDARY):
         swapped = False # TODO - Add the operating system-specific code to detect mouse swap later.
         if swapped:
-            if button == 'primary':
-                return 'right'
-            elif button == 'secondary':
-                return 'left'
+            if button == PRIMARY:
+                return RIGHT
+            elif button == SECONDARY:
+                return LEFT
         else:
-            if button == 'primary':
-                return 'left'
-            elif button == 'secondary':
-                return 'right'
+            if button == PRIMARY:
+                return LEFT
+            elif button == SECONDARY:
+                return RIGHT
 
     # Return a mouse button integer value, not a string like 'left':
-    return {'left': 'left', 'middle': 'middle', 'right': 'right',
-            1: 'left', 2: 'middle', 3:'right', 4:4, 5:5, 6:6, 7:7}[button]
+    return {LEFT: LEFT, MIDDLE: MIDDLE, RIGHT: RIGHT,
+            1: LEFT, 2: MIDDLE, 3:RIGHT, 4:4, 5:5, 6:6, 7:7}[button]
 
 
-def mouseDown(x=None, y=None, button='primary', duration=0.0, tween=linear, pause=None, _pause=True):
+def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -404,7 +410,7 @@ def mouseDown(x=None, y=None, button='primary', duration=0.0, tween=linear, paus
     _autoPause(pause, _pause)
 
 
-def mouseUp(x=None, y=None, button='primary', duration=0.0, tween=linear, pause=None, _pause=True):
+def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -439,7 +445,7 @@ def mouseUp(x=None, y=None, button='primary', duration=0.0, tween=linear, pause=
     _autoPause(pause, _pause)
 
 
-def click(x=None, y=None, clicks=1, interval=0.0, button='primary', duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -482,7 +488,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='primary', duration=0.0
     else:
         for i in range(clicks):
             _failSafeCheck()
-            if button in ('left', 'middle', 'right'):
+            if button in (LEFT, MIDDLE, RIGHT):
                 platformModule._click(x, y, button)
 
             time.sleep(interval)
@@ -514,7 +520,7 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, 'left', duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, LEFT, duration, tween, pause, _pause, _log)
     _autoPause(pause, _pause)
 
 
@@ -543,7 +549,7 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, 'right', duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, RIGHT, duration, tween, pause, _pause, _log)
     _autoPause(pause, _pause)
 
 
@@ -569,11 +575,11 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, 'middle', duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, MIDDLE, duration, tween, pause, _pause, _log)
     _autoPause(pause, _pause)
 
 
-def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -617,7 +623,7 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     _autoPause(pause, _pause)
 
 
-def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
     """Performs a triple click..
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -818,7 +824,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
 move = moveRel # For PyAutoGUI 1.0, move() replaces moveRel().
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True, mouseDownUp=True):
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -859,7 +865,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     _autoPause(pause, _pause)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True, mouseDownUp=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pause=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 

@@ -3,13 +3,14 @@
 import pyautogui
 import sys
 import os
+from pyautogui import LEFT, MIDDLE, RIGHT
 
 from Xlib.display import Display
 from Xlib import X
 from Xlib.ext.xtest import fake_input
 import Xlib.XK
 
-BUTTON_NAME_MAPPING = {'left': 1, 'middle': 2, 'right': 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
+BUTTON_NAME_MAPPING = {LEFT: 1, MIDDLE: 2, RIGHT: 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
 
 
 if sys.platform in ('java', 'darwin', 'win32'):

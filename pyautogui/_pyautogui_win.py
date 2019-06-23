@@ -5,6 +5,7 @@
 import ctypes
 import ctypes.wintypes
 import pyautogui
+from pyautogui import LEFT, MIDDLE, RIGHT
 
 import sys
 if sys.platform !=  'win32':
@@ -398,14 +399,14 @@ def _mouseDown(x, y, button):
     Returns:
       None
     """
-    if button not in ('left', 'middle', 'right'):
+    if button not in (LEFT, MIDDLE, RIGHT):
         raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
 
-    if button == 'left':
+    if button == LEFT:
         EV = MOUSEEVENTF_LEFTDOWN
-    elif button == 'middle':
+    elif button == MIDDLE:
         EV = MOUSEEVENTF_MIDDLEDOWN
-    elif button == 'right':
+    elif button == RIGHT:
         EV = MOUSEEVENTF_RIGHTDOWN
 
     try:
@@ -427,14 +428,14 @@ def _mouseUp(x, y, button):
     Returns:
       None
     """
-    if button not in ('left', 'middle', 'right'):
+    if button not in (LEFT, MIDDLE, RIGHT):
         raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
 
-    if button == 'left':
+    if button == LEFT:
         EV = MOUSEEVENTF_LEFTUP
-    elif button == 'middle':
+    elif button == MIDDLE:
         EV = MOUSEEVENTF_MIDDLEUP
-    elif button == 'right':
+    elif button == RIGHT:
         EV = MOUSEEVENTF_RIGHTUP
 
     try:
@@ -455,14 +456,14 @@ def _click(x, y, button):
     Returns:
       None
     """
-    if button not in ('left', 'middle', 'right'):
+    if button not in (LEFT, MIDDLE, RIGHT):
         raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
 
-    if button == 'left':
+    if button == LEFT:
         EV = MOUSEEVENTF_LEFTCLICK
-    elif button == 'middle':
+    elif button == MIDDLE:
         EV = MOUSEEVENTF_MIDDLECLICK
-    elif button =='right':
+    elif button ==RIGHT:
         EV = MOUSEEVENTF_RIGHTCLICK
 
     try:
