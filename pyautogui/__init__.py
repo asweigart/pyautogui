@@ -252,6 +252,10 @@ def _logScreenshot(logScreenshot, action, specifics, folder='.'):
     if logScreenshot is None and LOG_SCREENSHOTS == False:
         return # Don't take a screenshot.
 
+    # Ensure that the "specifics" string isn't too long for the filename:
+    if len(specifics) > 12:
+        specifics = specifics[:12] + '...'
+
     now = datetime.datetime.now()
     filename = '%s-%s-%s_%s-%s-%s-%s_%s_%s.png' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
                                                       now.hour, now.minute, now.second, str(now.microsecond)[:3],
