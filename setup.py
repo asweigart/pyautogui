@@ -23,7 +23,9 @@ setup(
     license='BSD',
     packages=['pyautogui'],
     test_suite='tests',
-    install_requires=['pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze>=0.1.21', 'pygetwindow>=0.0.5'],
+    install_requires=['pyobjc-core;platform_system=="Darwin"', 'pyobjc;platform_system=="Darwin"',
+                      'python3-Xlib;platform_system=="Linux" and python_version>="3.0"', 'Xlib;platform_system=="Linux" and python_version<"3.0"',
+                      'pymsgbox', 'PyTweening>=1.0.1', 'Pillow', 'pyscreeze>=0.1.21', 'pygetwindow>=0.0.5'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -35,13 +37,15 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.5',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8'
     ],
 )

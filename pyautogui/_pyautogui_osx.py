@@ -391,7 +391,7 @@ def _multiClick(x, y, button, num):
     btn    = None
     down   = None
     up     = None
-    
+
     if button == 'left':
         btn  = Quartz.kCGMouseButtonLeft
         down = Quartz.kCGEventLeftMouseDown
@@ -399,15 +399,15 @@ def _multiClick(x, y, button, num):
     elif button == 'middle':
         btn  = Quartz.kCGMouseButtonCenter
         down = Quartz.kCGEventOtherMouseDown
-        up   = Quartz.kCGEventOtherMouseUp        
+        up   = Quartz.kCGEventOtherMouseUp
     elif button == 'right':
         btn  = Quartz.kCGMouseButtonRight
         down = Quartz.kCGEventRightMouseDown
-        up   = Quartz.kCGEventRightMouseUp     
+        up   = Quartz.kCGEventRightMouseUp
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
         return
-    
+
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, down, (x, y), btn)
     Quartz.CGEventSetIntegerValueField(mouseEvent, Quartz.kCGMouseEventClickState, num)
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
@@ -416,7 +416,7 @@ def _multiClick(x, y, button, num):
     for i in range(0, num-1):
         Quartz.CGEventSetType(mouseEvent, down)
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
-        Quartz.CGEventSetType(mouseEvent, up) 
+        Quartz.CGEventSetType(mouseEvent, up)
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
 
 
