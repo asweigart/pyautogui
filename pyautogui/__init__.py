@@ -165,10 +165,9 @@ PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. U
 FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 
-# The "run code" is randomly chosen each time the module is loaded and used for logging purposes.
-RUN_CODE_FOR_LOGGING = ''.join([random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(3)])
 LOG_SCREENSHOTS = False # If True, save screenshots for clicks and key presses.
-
+LOG_SCREENSHOTS_LIMIT = 10 # If not None, PyAutoGUI deletes old screenshots when this limit has been reached.
+G_LOG_SCREENSHOTS_FILENAMES = [] # TODO - make this a deque
 
 Point = collections.namedtuple('Point', 'x y')
 Size = collections.namedtuple('Size', 'width height')
@@ -248,15 +247,24 @@ def _unpackXY(x, y):
 
 
 def _logScreenshot(logScreenshot, action, specifics, folder='.'):
-    if logScreenshot == False or LOG_SCREENSHOTS == False:
+    if logScreenshot == False:
+        return # Don't take a screenshot.
+    if logScreenshot is None and LOG_SCREENSHOTS == False:
         return # Don't take a screenshot.
 
     now = datetime.datetime.now()
-    filename = '%s-%s-%s_%s:%s:%s,%s_%s_%s_%s' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
-                                                  now.hour, now.minute, now.second, str(now.microsecond)[:3],
-                                                  RUN_CODE_FOR_LOGGING, action, specifics)
+    filename = '%s-%s-%s_%s-%s-%s-%s_%s_%s.png' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
+                                                      now.hour, now.minute, now.second, str(now.microsecond)[:3],
+                                                      action, specifics)
     filepath = os.path.join(folder, filename)
+
+    # Delete the oldest screenshot if we've reached the maximum:
+    if (LOG_SCREENSHOTS_LIMIT is not None) and (len(G_LOG_SCREENSHOTS_FILENAMES) >= LOG_SCREENSHOTS_LIMIT):
+        os.unlink(os.path.join(folder, G_LOG_SCREENSHOTS_FILENAMES[0]))
+        del G_LOG_SCREENSHOTS_FILENAMES[0]
+
     screenshot(filepath)
+    G_LOG_SCREENSHOTS_FILENAMES.append(filename)
 
 
 def position(x=None, y=None):
@@ -375,7 +383,7 @@ def _translateButton(button):
             1: LEFT, 2: MIDDLE, 3:RIGHT, 4:4, 5:5, 6:6, 7:7}[button]
 
 
-def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True):
+def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -405,12 +413,13 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
     x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
+    _logScreenshot(logScreenshot, 'mouseDown', '%s,%s' % (x, y), folder='.')
     platformModule._mouseDown(x, y, button)
 
     _autoPause(pause, _pause)
 
 
-def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True):
+def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -440,12 +449,13 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
     x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
+    _logScreenshot(logScreenshot, 'mouseUp', '%s,%s' % (x, y), folder='.')
     platformModule._mouseUp(x, y, button)
 
     _autoPause(pause, _pause)
 
 
-def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -481,7 +491,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
 
     x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
 
-    # TODO LEFT OFF _logScreenshot(_log, 'click%s', 'button' + str(button))
+    _logScreenshot(logScreenshot, 'click', '%s,%s,%s,%s' % (button, clicks, x, y), folder='.')
 
     if sys.platform == 'darwin':
         platformModule._multiClick(x, y, button, 3)
@@ -495,7 +505,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
 
     _autoPause(pause, _pause)
 
-def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -520,11 +530,11 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, LEFT, duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
 
-def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -549,11 +559,11 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, RIGHT, duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
 
-def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -575,11 +585,11 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
       None
     """
     _failSafeCheck()
-    click(x, y, 1, interval, MIDDLE, duration, tween, pause, _pause, _log)
+    click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
 
-def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -615,15 +625,16 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         x, y = _unpackXY(x, y)
         _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
+        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
         platformModule._multiClick(x, y, button, 2)
     else:
 		# Click for Windows or Linux:
-        click(x, y, 2, interval, button, duration, tween, pause, _pause=False, _log=_log)
+        click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
 
 
-def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, _pause=True, _log=None):
+def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a triple click..
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -659,14 +670,15 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         x, y = _unpackXY(x, y)
         _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
+        _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
         platformModule._multiClick(x, y, button, 3)
     else:
 		# Click for Windows or Linux:
-        click(x, y, 2, interval, button, duration, tween, pause, _pause=False, _log=_log)
+        click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
 
-def scroll(clicks, x=None, y=None, pause=None, _pause=True):
+def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -692,12 +704,13 @@ def scroll(clicks, x=None, y=None, pause=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
+    _logScreenshot(logScreenshot, 'scroll', '%s,%s,%s' % (clicks,x, y), folder='.')
     platformModule._scroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
+def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -721,12 +734,13 @@ def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
+    _logScreenshot(logScreenshot, 'hscroll', '%s,%s,%s' % (clicks, x, y), folder='.')
     platformModule._hscroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
+def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -749,12 +763,14 @@ def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
+
+    _logScreenshot(logScreenshot, 'vscroll', '%s,%s,%s' % (clicks, x, y), folder='.')
     platformModule._vscroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -782,12 +798,13 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     _failSafeCheck()
     x, y = _unpackXY(x, y)
 
+    _logScreenshot(logScreenshot, 'moveTo', '%s,%s' % (x, y), folder='.')
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
     _autoPause(pause, _pause)
 
 
-def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -816,6 +833,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
 
     xOffset, yOffset = _unpackXY(xOffset, yOffset)
 
+    _logScreenshot(logScreenshot, 'moveRel', '%s,%s' % (xOffset, yOffset), folder='.')
     _mouseMoveDrag('move', None, None, xOffset, yOffset, duration, tween)
 
     _autoPause(pause, _pause)
@@ -824,7 +842,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
 move = moveRel # For PyAutoGUI 1.0, move() replaces moveRel().
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=None, _pause=True, mouseDownUp=True):
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=None, logScreenshot=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -856,16 +874,17 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=Non
     _failSafeCheck()
     x, y = _unpackXY(x, y)
 
+    _logScreenshot(logScreenshot, 'dragTo', '%s,%s' % (x, y), folder='.')
     if mouseDownUp:
-        mouseDown(button=button, _pause=False)
+        mouseDown(button=button, logScreenshot=False, _pause=False)
     _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
     if mouseDownUp:
-        mouseUp(button=button, _pause=False)
+        mouseUp(button=button, logScreenshot=False, _pause=False)
 
     _autoPause(pause, _pause)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pause=None, _pause=True, mouseDownUp=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pause=None, logScreenshot=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -906,11 +925,12 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pa
     _failSafeCheck()
 
     mousex, mousey = platformModule._position()
+    _logScreenshot(logScreenshot, 'dragRel', '%s,%s' % (xOffset, yOffset), folder='.')
     if mouseDownUp:
-        mouseDown(button=button, _pause=False)
+        mouseDown(button=button, logScreenshot=False, _pause=False)
     _mouseMoveDrag('drag', mousex, mousey, xOffset, yOffset, duration, tween, button)
     if mouseDownUp:
-        mouseUp(button=button, _pause=False)
+        mouseUp(button=button, logScreenshot=False, _pause=False)
 
     _autoPause(pause, _pause)
 
@@ -1038,7 +1058,7 @@ def isValidKey(key):
     return platformModule.keyboardMapping.get(key, None) != None
 
 
-def keyDown(key, pause=None, _pause=True):
+def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -1056,11 +1076,12 @@ def keyDown(key, pause=None, _pause=True):
         key = key.lower()
 
     _failSafeCheck()
+    _logScreenshot(logScreenshot, 'keyDown', key, folder='.')
     platformModule._keyDown(key)
 
     _autoPause(pause, _pause)
 
-def keyUp(key, pause=None, _pause=True):
+def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
     Args:
@@ -1074,11 +1095,12 @@ def keyUp(key, pause=None, _pause=True):
         key = key.lower()
 
     _failSafeCheck()
+    _logScreenshot(logScreenshot, 'keyUp', key, folder='.')
     platformModule._keyUp(key)
 
     _autoPause(pause, _pause)
 
-def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
+def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -1094,7 +1116,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
       None
     """
     if type(keys) == str:
-        keys = [keys] # put string in a list
+        keys = [keys] # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1103,6 +1125,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
             else:
                 lowerKeys.append(s)
     interval = float(interval)
+    _logScreenshot(logScreenshot, 'press', ','.join(keys), folder='.')
     for i in range(presses):
         for k in keys:
             _failSafeCheck()
@@ -1112,7 +1135,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
 
     _autoPause(pause, _pause)
 
-def typewrite(message, interval=0.0, pause=None, _pause=True):
+def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
@@ -1133,10 +1156,11 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
     Returns:
       None
     """
-    interval = float(interval)
+    interval = float(interval) # TODO - this should be taken out.
 
     _failSafeCheck()
 
+    _logScreenshot(logScreenshot, 'write', message, folder='.')
     for c in message:
         if len(c) > 1:
             c = c.lower()
@@ -1166,10 +1190,11 @@ def hotkey(*args, **kwargs):
     Returns:
       None
     """
-    interval = float(kwargs.get('interval', 0.0))
+    interval = float(kwargs.get('interval', 0.0)) # TODO - this should be taken out.
 
     _failSafeCheck()
 
+    _logScreenshot(kwargs.get('logScreenshot'), 'hotkey', ','.join(args), folder='.')
     for c in args:
         if len(c) > 1:
             c = c.lower()
