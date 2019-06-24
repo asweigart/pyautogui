@@ -18,7 +18,7 @@ from __future__ import absolute_import, division, print_function
 
 __version__ = '0.9.45'
 
-import sys, time, random, datetime, os, platform
+import sys, time, datetime, os, platform
 
 
 if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3,2)):
@@ -1000,8 +1000,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     width, height = size()
 
     # Make sure x and y are within the screen bounds.
-    x = max(0, min(x, width - 1))
-    y = max(0, min(y, height - 1))
+    #x = max(0, min(x, width - 1))
+    #y = max(0, min(y, height - 1))
 
     # If the duration is small enough, just move the cursor there instantly.
     steps = [(x, y)]
