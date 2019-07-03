@@ -148,3 +148,6 @@ These functions return `None` if the image couldn't be found on the screen.
 
 Note: The locate functions are slow and can take a full second or two.
 
+To Open a program as Administrator
+----------------------------------
+subprocess.call(['runas', '/user:Administrator', 'path_to_program.exe'])
