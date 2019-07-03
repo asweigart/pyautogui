@@ -100,3 +100,17 @@ The locateCenterOnScreen() function returns the center of this match region:
     (1441, 582)
     >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
 ```
+
+
+Mouse Event Detection (Unix X11 Only)
+--------------------------
+```python
+    >>>import pyautogui
+    >>>print('press left mouse button')
+    >>>pyautogui.waitForMouseEvent('left_down')
+    >>>print('you did it!')
+    >>>while(pyautogui.getMouseEvent() != 'left_up'):
+    >>>     print('now leave the button to stop me')
+    >>>print('it works!')
+
+```

@@ -12,6 +12,8 @@ import Xlib.XK
 
 BUTTON_NAME_MAPPING = {LEFT: 1, MIDDLE: 2, RIGHT: 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
 
+MOUSE_EVENT = {1 : 'left', 2 : 'middle', 3 : 'right'}
+
 
 if sys.platform in ('java', 'darwin', 'win32'):
     raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
@@ -95,7 +97,43 @@ def _mouseUp(x, y, button):
     button = BUTTON_NAME_MAPPING[button]
     fake_input(_display, X.ButtonRelease, button)
     _display.sync()
+    
+def _getMouseEvent():
+    screen = _display.screen()
+    window = screen.root
+    window.grab_pointer(1, X.PointerMotionMask|X.ButtonReleaseMask|X.ButtonPressMask, X.GrabModeAsync, X.GrabModeAsync, X.NONE, X.NONE, X.CurrentTime)
+    e = _display.next_event()
+    _display.ungrab_pointer(X.CurrentTime)
+    
+    if e.type == X.ButtonPress:
+        e = MOUSE_EVENT[e.detail] + '_down'
+        
+    elif e.type == X.ButtonRelease:
+        e = MOUSE_EVENT[e.detail] + '_up'
+        
+    else:
+        e = 'moving'
+          
+    return e
 
+def _waitForMouseEvent(e):
+    
+    assert e in ['left_down', 'right_down', 'middle_down', 'left_up', 'middle_up', 'right_up', 'moving'], "Event can only be 'left_down', 'right_down', 'middle_down', 'left_up', 'middle_up', 'right_up', 'moving'"
+    
+    while(True):
+        ee = _getMouseEvent()
+        _ee = ee.split('_')
+        
+        if len(_ee) == 2:
+            x, y = _position()
+            if _ee[1] == 'down':
+                _mouseDown(x, y, _ee[0])
+            else:
+                _mouseUp(x, y, _ee[0])
+            
+        if ee == e:
+            return True
+        
 
 def _keyDown(key):
     """Performs a keyboard key press without the release. This will put that
