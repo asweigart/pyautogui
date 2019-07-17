@@ -16,7 +16,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.45'
+__version__ = '0.9.46'
 
 import sys, time, datetime, os, platform
 
@@ -76,6 +76,13 @@ except ImportError:
         raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
     center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
 
+try:
+    import mouseinfo
+    def mouseInfo():
+        mouseinfo.MouseInfoWindow()
+except ImportError:
+    def mouseInfo():
+        raise Exception('PyAutoGUI was unable to import mouseinfo. Please install this module.')
 
 def useImageNotFoundException(value=None):
     if value is None:
@@ -1028,9 +1035,18 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
             # A single step does not require tweening.
             time.sleep(sleep_amount)
 
-        _failSafeCheck()
         tweenX = int(round(tweenX))
         tweenY = int(round(tweenY))
+
+        # Moving the cursor to a fail-safe corner as part of the planned
+        # mouse movements shouldn't trigger the fail-safe. This may seem
+        # ridiculous, but remember that (tweenX, tweenY) is the *calculated*
+        # coordinate of where the mouse should be, while _failSafeCheck()
+        # uses the *actual position* of the mouse from position() to
+        # decide if it should raise the fail-safe exception.
+        if (tweenX, tweenY) not in FAILSAFE_POINTS:
+            _failSafeCheck()
+
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
         elif moveOrDrag == 'drag':
@@ -1038,7 +1054,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         else:
             raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
-    _failSafeCheck()
+    if (tweenX, tweenY) not in FAILSAFE_POINTS:
+        _failSafeCheck()
 
 
 # Keyboard Functions
