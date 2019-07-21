@@ -9,6 +9,7 @@ For now, the primary aim for PyAutoGUI is cross-platform mouse and keyboard cont
 
 Future features planned (specific versions not planned yet):
 
+- A tool for determining why an image can't be found in a particular screenshot. (This is a common source of questions for users.)
 - Full compatibility on Raspberry Pis.
 - "Wave" function, which is used just to see where the mouse is by shaking the mouse cursor a bit. A small helper function.
 - locateNear() function, which is like the other locate-related screen reading functions except it finds the first instance near an xy point on the screen.
@@ -20,6 +21,9 @@ Future features planned (specific versions not planned yet):
 - Optional nonblocking pyautogui calls.
 - "strict" mode for keyboard - passing an invalid keyboard key causes an exception instead of silently skipping it.
 - rename keyboardMapping to KEYBOARD_MAPPING
+- Ability to convert png and other image files into a string that can be copy/pasted directly in the source code, so that they don't have to be shared separately with people's pyautogui scripts.
+- Test to make sure pyautogui works in Windows/mac/linux VMs.
+- A way to compare two images and highlight differences between them (good for pointing out when a UI changes, etc.)
 
 Window handling features:
  - pyautogui.getWindows()      # returns a dict of window titles mapped to window IDs

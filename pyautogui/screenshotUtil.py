@@ -130,7 +130,7 @@ def _screenshot_win32(imageFilename=None):
 
 def _screenshot_osx(imageFilename=None):
     if imageFilename is None:
-        tmpFilename = '.screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
+        tmpFilename = 'screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
     else:
         tmpFilename = imageFilename
     subprocess.call(['screencapture', '-x', tmpFilename])

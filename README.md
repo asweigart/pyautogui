@@ -4,6 +4,8 @@ PyAutoGUI
 PyAutoGUI is a cross-platform GUI automation Python module for human beings.
 Used to programmatically control the mouse & keyboard.
 
+`pip install pyautogui`
+
 Full documentation available at https://pyautogui.readthedocs.org
 
 Simplified Chinese documentation（简体中文版文档）available at
@@ -14,7 +16,7 @@ Source code available at https://github.com/asweigart/pyautogui
 Dependencies
 ============
 
-If you are installing PyAutoGUI from PyPI using pip:
+PyAutoGUI supports Python 2 and 3. If you are installing PyAutoGUI from PyPI using pip:
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
@@ -41,19 +43,27 @@ Example Usage
 
 Keyboard and Mouse Control
 --------------------------
+
+The x, y coordinates used by PyAutoGUI has the 0, 0 origin coordinates in the top left corner of the screen. The x coordinates increase going to the right (just as in mathematics) but the y coordinates increase going down (the opposite of mathematics). On a screen that is 1920 x 1080 pixels in size, coordinates 0, 0 are for the top left while 1919, 1079 is for the bottom right.
+
+Currently, PyAutoGUI only works on the primary monitor. PyAutoGUI isn't reliable for the screen of a second monitor (the mouse functions may or may not work on multi-monitor setups depending on your operating system and version).
+
+All keyboard presses done by PyAutoGUI are sent to the window that currently has focus, as if you had pressed the physical keyboard key.
+
 ```python
     >>> import pyautogui
-    >>> screenWidth, screenHeight = pyautogui.size()
-    >>> currentMouseX, currentMouseY = pyautogui.position()
-    >>> pyautogui.moveTo(100, 150)
-    >>> pyautogui.click()
-    >>> pyautogui.moveRel(None, 10)  # move mouse 10 pixels down
-    >>> pyautogui.doubleClick()
-    >>> pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.tweens.easeInOutQuad)  # use tweening/easing function to move mouse over 2 seconds.
-    >>> pyautogui.typewrite('Hello world!', interval=0.25)  # type with quarter-second pause in between each key
-    >>> pyautogui.press('esc')
+    >>> screenWidth, screenHeight = pyautogui.size() # Returns two integers, the width and height of the screen. (The primary monitor, in multi-monitor setups.)
+    >>> currentMouseX, currentMouseY = pyautogui.position() # Retursn two integes, the x and y of the mouse cursor's current position.
+    >>> pyautogui.moveTo(100, 150) # Move the mouse to the x, y coordinates 100, 150.
+    >>> pyautogui.click() # Click the mouse at its current location.
+    >>> pyautogui.click(200, 220) # Click the mouse at the x, y coordinates 200, 220.
+    >>> pyautogui.move(None, 10)  # Move mouse 10 pixels down, that is, move the mouse relative to its current position.
+    >>> pyautogui.doubleClick() # Double click the mouse at the
+    >>> pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.tweens.easeInOutQuad) # Use tweening/easing function to move mouse over 2 seconds.
+    >>> pyautogui.write('Hello world!', interval=0.25)  # Type with quarter-second pause in between each key.
+    >>> pyautogui.press('esc') # Simulate pressing the Escape key.
     >>> pyautogui.keyDown('shift')
-    >>> pyautogui.typewrite(['left', 'left', 'left', 'left', 'left', 'left'])
+    >>> pyautogui.write(['left', 'left', 'left', 'left', 'left', 'left'])
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.hotkey('ctrl', 'c')
 ```
@@ -73,6 +83,7 @@ Display Message Boxes
     >>> pyautogui.password('Enter password (text will be hidden)')
     'swordfish'
 ```
+
 Screenshot Functions
 --------------------
 
@@ -102,3 +113,13 @@ The locateCenterOnScreen() function returns the center of this match region:
     (1441, 582)
     >>> pyautogui.click(buttonx, buttony)  # clicks the center of where the button was found
 ```
+
+How Does PyAutoGUI Work?
+========================
+
+The three major operating systems (Windows, macOS, and Linux) each have ways of
+controlling the user interface without requiring the input of an actual mouse
+and keyboard. These mechanisms are usually used for improving accessibility -
+providing a way for those with visual or motor impairments to interact with
+their computer. However, the same interfaces can also be used to provide
+"remote control" automation features.

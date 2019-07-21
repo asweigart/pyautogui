@@ -4,6 +4,7 @@ answer newbie questions, and generally made PyAutoGUI that much better:
 
 Al Sweigart https://github.com/asweigart/
 Alexandr Orlov https://github.com/hey-sancho
+Andrew Selzer https://github.com/afs2015
 Anwar A. Ruff https://github.com/aaruff
 Ari Lacenski https://github.com/tensory
 Ashok Fernandez https://github.com/ashokfernandez/
@@ -24,6 +25,7 @@ jakibaki https://github.com/
 Jeremy R. Gray https://github.com/jeremygray
 Jon Winsley https://github.com/glitchassassin
 Jose Riha https://github.com/jose1711
+Julien Schueller https://github.com/jschueller
 Korons https://github.com/Korons
 lb1a https://github.com/lb1a
 Lesmana Zimmer https://github.com/lesmana

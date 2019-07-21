@@ -6,7 +6,7 @@ import os
 import time
 import threading
 from collections import namedtuple  # Added in Python 2.6.
-from PIL import Image
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyautogui
@@ -22,7 +22,20 @@ else:
 try:
     import pytweening
 except:
-    assert False, 'The pytweening module must be installed to complete the tests: pip install pytweening'
+    assert False, 'The PyTweening module must be installed to complete the tests: pip install pytweening'
+
+try:
+    import pyscreeze
+except:
+    assert False, 'The PyScreeze module must be installed to complete the tests: pip install pyscreeze'
+
+"""
+# TODO - pygetwindow is Windows-only for now, so don't require it for testing just yet.
+try:
+    import pygetwindow
+except:
+    assert False, 'The PyGetWindow module must be installed to complete the tests: pip install pygetwindow'
+"""
 
 # TODO - note that currently most of the click-related functionality is not tested.
 
@@ -75,13 +88,11 @@ class TestGeneral(unittest.TestCase):
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
+        pyautogui.moveTo(42, 42)  # make sure failsafe isn't triggered during this test
         pyautogui.FAILSAFE = True
-
 
     def tearDown(self):
         pyautogui.FAILSAFE = self.oldFailsafeSetting
-
 
     def test_accessibleNames(self):
         # Check that all the functions are defined.
@@ -176,13 +187,8 @@ class TestGeneral(unittest.TestCase):
     def test_position(self):
         mousex, mousey = pyautogui.position()
 
-        if (runningOnPython2 and sys.version_info[2] not in (6, 7)) and sys.platform != 'darwin':
-            # Python 2 on OS X returns int.
-            self.assertTrue(isinstance(mousex, long), 'Type of mousex is %s' % (type(mousex)))
-            self.assertTrue(isinstance(mousey, long), 'Type of mousey is %s' % (type(mousey)))
-        else:
-            self.assertTrue(isinstance(mousex, int), 'Type of mousex is %s' % (type(mousex)))
-            self.assertTrue(isinstance(mousey, int), 'Type of mousey is %s' % (type(mousey)))
+        self.assertTrue(isinstance(mousex, int), 'Type of mousex is %s' % (type(mousex)))
+        self.assertTrue(isinstance(mousey, int), 'Type of mousey is %s' % (type(mousey)))
 
         # Test passing x and y arguments to position().
         pyautogui.moveTo(mousex + 1, mousey + 1)
@@ -574,13 +580,14 @@ class TestFailSafe(unittest.TestCase):
     def test_failsafe(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(42, 42) # make sure mouse is not in failsafe position to begin with
+        pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with
 
-        pyautogui.FAILSAFE = True
-        self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, 0, 0)
+        for x, y in pyautogui.FAILSAFE_POINTS:
+            pyautogui.FAILSAFE = True
+            self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, x, y)
 
-        pyautogui.FAILSAFE = False
-        pyautogui.moveTo(0, 0)# This line should not cause the fail safe exception to be raised.
+            pyautogui.FAILSAFE = False
+            pyautogui.moveTo(x, y)# This line should not cause the fail safe exception to be raised.
 
         pyautogui.FAILSAFE = self.oldFailsafeSetting
 

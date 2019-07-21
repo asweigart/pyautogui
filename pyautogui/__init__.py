@@ -5,16 +5,6 @@
 """
 IMPORTANT NOTE!
 
-To use this module on macOS, you need the Rubicon-ObjC module installed.
-For Python 3, run:
-    sudo pip3 install rubicon-objc
-
-To use this module on Linux, you need Xlib module installed.
-For Python 3, run:
-    sudo pip3 install python3-Xlib
-For Python 2, run:
-    sudo pip install Xlib
-
 To use this module on Windows, you do not need anything else.
 
 You will need PIL/Pillow to use the screenshot features.
@@ -24,11 +14,19 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.36'
+__version__ = '0.9.46'
 
-import collections
-import sys
-import time
+import sys, time, datetime, os, platform
+
+
+if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3,2)):
+    # Python 2 and 3.1 and 3.2 uses collections.Sequence
+    import collections
+    collectionsSequence = collections.Sequence
+else:
+    # Python 3.3+ uses collections.abc.Sequence
+    import collections.abc
+    collectionsSequence = collections.abc.Sequence
 
 
 try:
@@ -44,7 +42,15 @@ try:
     # getPointOnLine has been redefined in this file, to avoid dependency on pytweening.
     # linear has also been redefined in this file.
 except ImportError:
-    pass
+    def couldNotImportPyTweening():
+        raise Exception('PyAutoGUI was unable to import pytweening. Please install this module.')
+        easeInQuad = easeOutQuad = easeInOutQuad = \
+        easeInCubic = easeOutCubic = easeInOutCubic = easeInQuart = easeOutQuart = \
+        easeInOutQuart = easeInQuint = easeOutQuint = easeInOutQuint = easeInSine = \
+        easeOutSine = easeInOutSine = easeInExpo = easeOutExpo = easeInOutExpo = \
+        easeInCirc = easeOutCirc = easeInOutCirc = easeInElastic = easeOutElastic = \
+        easeInOutElastic = easeInBack = easeOutBack = easeInOutBack = easeInBounce = \
+        easeOutBounce = easeInOutBounce = couldNotImportPyTweening
 
 
 try:
@@ -52,7 +58,9 @@ try:
     from pymsgbox import alert, confirm, prompt, password
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
-    pass
+    def couldNotImportPyMsgBox():
+        raise Exception('PyAutoGUI was unable to import pymsgbox. Please install this module.')
+    alert = confirm = prompt = password = couldNotImportPyMsgBox
 
 
 try:
@@ -61,9 +69,35 @@ try:
         locateCenterOnScreen, locateOnScreen, pixel, pixelMatchesColor,
         screenshot)
 except ImportError:
-    # If pyscreeze module is not found, screenshot-related features will simply
-    # not work.
-    pass
+    # If pyscreeze module is not found, screenshot-related features will simply not work.
+    def couldNotImportPyScreeze():
+        raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
+    center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
+
+try:
+    import mouseinfo
+    def mouseInfo():
+        mouseinfo.MouseInfoWindow()
+except ImportError:
+    def mouseInfo():
+        raise Exception('PyAutoGUI was unable to import mouseinfo. Please install this module.')
+
+def useImageNotFoundException(value=None):
+    if value is None:
+        value = True
+    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
+
+
+
+if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
+    try:
+        import pygetwindow
+        from pygetwindow import Window, getActiveWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+    except ImportError:
+        # If pygetwindow module is not found, those methods will not be available.
+        def couldNotImportPyGetWindow():
+            raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
+        Window = getActiveWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
 
 
 KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
@@ -90,6 +124,12 @@ KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
      'command', 'option', 'optionleft', 'optionright']
 KEYBOARD_KEYS = KEY_NAMES   # keeping old KEYBOARD_KEYS for backwards compatibility
 
+# Constants for the mouse button names:
+LEFT      = 'left'
+MIDDLE    = 'middle'
+RIGHT     = 'right'
+PRIMARY   = 'primary'
+SECONDARY = 'secondary'
 
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
@@ -104,10 +144,10 @@ elif sys.platform == 'darwin':
     from . import _pyautogui_osx as platformModule
 elif sys.platform == 'win32':
     from . import _pyautogui_win as platformModule
-    from ._window_win import Window, getWindows, getWindow
-else:
+elif platform.system() == 'Linux':
     from . import _pyautogui_x11 as platformModule
-
+else:
+    raise NotImplementedError('Your platform (%s) is not supported by PyAutoGUI.' % (platform.system()))
 
 # TODO: Having module-wide user-writable global variables is bad. It makes
 # restructuring the code very difficult. For instance, what if we decide to
@@ -118,12 +158,24 @@ else:
 # In seconds. Any duration less than this is rounded to 0.0 to instantly move
 # the mouse.
 MINIMUM_DURATION = 0.1
-# If sleep_amount is too short, time.sleep() will be a no-op and the mouse
-# cursor moves there instantly.
+# If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
 PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
+
+
+# If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
+# The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
+# The points are for the corners of the screen, but note that these points don't automatically change if the screen resolution changes.
 FAILSAFE = True
+FAILSAFE_POINTS = [(0, 0)]
+
+LOG_SCREENSHOTS = False # If True, save screenshots for clicks and key presses.
+LOG_SCREENSHOTS_LIMIT = 10 # If not None, PyAutoGUI deletes old screenshots when this limit has been reached.
+G_LOG_SCREENSHOTS_FILENAMES = [] # TODO - make this a deque
+
+Point = collections.namedtuple('Point', 'x y')
+Size = collections.namedtuple('Size', 'width height')
 
 
 # General Functions
@@ -145,17 +197,27 @@ def linear(n):
 
     Copied from pytweening module.
     """
+
+    # We use this function instead of pytweening.linear for the default tween function just in case pytweening couldn't be imported.
     if not 0.0 <= n <= 1.0:
         raise ValueError('Argument must be between 0.0 and 1.0.')
     return n
 
 
 def _autoPause(pause, _pause):
-    if _pause:
-        if pause is not None:
-            time.sleep(pause)
-        elif PAUSE != 0:
-            time.sleep(PAUSE)
+    """If `pause` is not `None`, then sleep for `pause` seconds.
+    If `_pause` is `True`, then sleep for `PAUSE` seconds (the global pause setting).
+
+    This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, `_pause`
+    is set to `True` to add a short sleep so that the user can engage the failsafe. By default, this sleep
+    is as long as `PAUSE` settings. However, this can be override by setting `pause`, in which case the sleep
+    is as long as `pause` seconds.
+    """
+    if pause is not None:
+        time.sleep(pause)
+    elif _pause:
+        assert isinstance(PAUSE, int) or isinstance(PAUSE, float)
+        time.sleep(PAUSE)
 
 
 def _unpackXY(x, y):
@@ -164,18 +226,54 @@ def _unpackXY(x, y):
     On functions that receive a pair of x,y coordinates, they can be passed as
     separate arguments, or as a single two-element sequence.
     """
-    if isinstance(x, collections.Sequence):
+    if isinstance(x, str):
+        # x parameter is the string of an image filename to find and click on:
+        x, y = center(locateOnScreen(x))
+
+    elif isinstance(x, collectionsSequence):
         if len(x) == 2:
+            # x is a two-integer tuple: (x, y)
             if y is None:
                 x, y = x
             else:
-                raise ValueError('When passing a sequence at the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+                raise ValueError('When passing a sequence as the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
+        elif len(x) == 4:
+            # x is a four-integer tuple: (left, top, width, height)
+            if y is None:
+                x, y = center(x)
+            else:
+                raise ValueError('When passing a sequence as the x argument, the y argument must not be passed (received {0}).'.format(repr(y)))
         else:
-            raise ValueError('The supplied sequence must have exactly 2 elements ({0} were received).'.format(len(x)))
+            raise ValueError('The supplied sequence must have exactly 2 or exactly 4 elements ({0} were received).'.format(len(x)))
     else:
-        pass
+        pass # x and y are just number values
 
     return x, y
+
+
+def _logScreenshot(logScreenshot, action, specifics, folder='.'):
+    if logScreenshot == False:
+        return # Don't take a screenshot.
+    if logScreenshot is None and LOG_SCREENSHOTS == False:
+        return # Don't take a screenshot.
+
+    # Ensure that the "specifics" string isn't too long for the filename:
+    if len(specifics) > 12:
+        specifics = specifics[:12] + '...'
+
+    now = datetime.datetime.now()
+    filename = '%s-%s-%s_%s-%s-%s-%s_%s_%s.png' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
+                                                      now.hour, now.minute, now.second, str(now.microsecond)[:3],
+                                                      action, specifics)
+    filepath = os.path.join(folder, filename)
+
+    # Delete the oldest screenshot if we've reached the maximum:
+    if (LOG_SCREENSHOTS_LIMIT is not None) and (len(G_LOG_SCREENSHOTS_FILENAMES) >= LOG_SCREENSHOTS_LIMIT):
+        os.unlink(os.path.join(folder, G_LOG_SCREENSHOTS_FILENAMES[0]))
+        del G_LOG_SCREENSHOTS_FILENAMES[0]
+
+    screenshot(filepath)
+    G_LOG_SCREENSHOTS_FILENAMES.append(filename)
 
 
 def position(x=None, y=None):
@@ -190,15 +288,17 @@ def position(x=None, y=None):
 
     Returns:
       (x, y) tuple of the current xy coordinates of the mouse cursor.
+
+    NOTE: The position() functon doesn't check for failsafe.
     """
     posx, posy = platformModule._position()
     posx = int(posx)
     posy = int(posy)
-    if x is not None:
+    if x is not None: # If set, the x parameter overrides the return value.
         posx = int(x)
-    if y is not None:
+    if y is not None: # If set, the y parameter overrides the return value.
         posy = int(y)
-    return posx, posy
+    return Point(posx, posy)
 
 
 def size():
@@ -207,11 +307,13 @@ def size():
     Returns:
       (width, height) tuple of the screen size, in pixels.
     """
-    return platformModule._size()
+    return Size(*platformModule._size())
 
 
 def onScreen(x, y=None):
-    """Returns whether the given xy coordinates are on the screen or not.
+    """Returns whether the given xy coordinates are on the primary screen or not.
+
+    Note that this function doesn't work for secondary screens.
 
     Args:
       Either the arguments are two separate values, first arg for x and second
@@ -234,7 +336,65 @@ def onScreen(x, y=None):
 # Mouse Functions
 # ===============
 
-def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+"""
+NOTE: Although "mouse1" and "mouse2" buttons usually refer to the left and
+right mouse buttons respectively, in PyAutoGUI 1, 2, and 3 refer to the left,
+middle, and right buttons, respectively. This is because Xlib interprets
+button 2 as the middle button and button 3 as the right button, so we hold
+that for Windows and macOS as well (since those operating systems don't use
+button numbers but rather just "left" or "right").
+"""
+
+def _translateButton(button):
+    """
+    The left, middle, and right mouse buttons are button numbers 1, 2, and 3
+    respectively. This is the numbering that Xlib on Linux uses (while Windows
+    and macOS don't care about numbers; they just use "left" and "right").
+
+    The 'left' and 'right' mouse buttons will always refer to the physical
+    buttons on the mouse. The same applies for button 1 and 3.
+
+    However, if `button` is 'primary' or 'secondary', then we must check if
+    the mouse buttons have been "swapped" by the operating system's mouse
+    settings. If not swapped, the primary and secondary buttons are the left
+    and right mouse buttons respectively, and if swapped, the primary and
+    secondary buttons are the right and left mouse buttons, respectively.
+
+    TODO - The swap detection hasn't been done yet.
+    """
+    # TODO - We should check the OS settings to see if it's a left-hand setup, where button 1 would be "right".
+
+    # Check that `button` has a valid value:
+    button = button.lower()
+    if platform.system() == 'Linux':
+        # Check for valid button arg on Linux:
+        if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3, 4, 5, 6, 7):
+            raise ValueError("button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7)")
+    else:
+        # Check for valid button arg on Windows and macOS:
+        if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3):
+            raise ValueError("button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3)")
+
+    # TODO - Check if the primary/secondary mouse buttons have been swapped:
+    if button in (PRIMARY, SECONDARY):
+        swapped = False # TODO - Add the operating system-specific code to detect mouse swap later.
+        if swapped:
+            if button == PRIMARY:
+                return RIGHT
+            elif button == SECONDARY:
+                return LEFT
+        else:
+            if button == PRIMARY:
+                return LEFT
+            elif button == SECONDARY:
+                return RIGHT
+
+    # Return a mouse button integer value, not a string like 'left':
+    return {LEFT: LEFT, MIDDLE: MIDDLE, RIGHT: RIGHT,
+            1: LEFT, 2: MIDDLE, 3:RIGHT, 4:4, 5:5, 6:6, 7:7}[button]
+
+
+def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -245,11 +405,11 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         mouse down happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         mouse down happens. None by default.
-      button (str, int, optional): The mouse button pressed down. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button pressed down. TODO
 
     Returns:
       None
@@ -257,25 +417,20 @@ def mouseDown(x=None, y=None, button='left', duration=0.0, tween=linear, pause=N
     Raises:
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
-    if button not in ('left', 'middle', 'right', 1, 2, 3):
-        raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-
+    button = _translateButton(button)
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
-    x, y = platformModule._position() # TODO - this isn't right. We need to check the params.
-    if button == 1 or str(button).lower() == 'left':
-        platformModule._mouseDown(x, y, 'left')
-    elif button == 2 or str(button).lower() == 'middle':
-        platformModule._mouseDown(x, y, 'middle')
-    elif button == 3 or str(button).lower() == 'right':
-        platformModule._mouseDown(x, y, 'right')
+    x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
+    _logScreenshot(logScreenshot, 'mouseDown', '%s,%s' % (x, y), folder='.')
+    platformModule._mouseDown(x, y, button)
 
     _autoPause(pause, _pause)
 
 
-def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -286,11 +441,11 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         mouse up happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         mouse up happens. None by default.
-      button (str, int, optional): The mouse button released. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
 
     Returns:
       None
@@ -298,24 +453,20 @@ def mouseUp(x=None, y=None, button='left', duration=0.0, tween=linear, pause=Non
     Raises:
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
-    if button not in ('left', 'middle', 'right', 1, 2, 3):
-        raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3), not %s" % button)
-
+    button = _translateButton(button)
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
-    x, y = platformModule._position()
-    if button == 1 or str(button).lower() == 'left':
-        platformModule._mouseUp(x, y, 'left')
-    elif button == 2 or str(button).lower() == 'middle':
-        platformModule._mouseUp(x, y, 'middle')
-    elif button == 3 or str(button).lower() == 'right':
-        platformModule._mouseUp(x, y, 'right')
+    x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
+    _logScreenshot(logScreenshot, 'mouseUp', '%s,%s' % (x, y), folder='.')
+    platformModule._mouseUp(x, y, button)
 
     _autoPause(pause, _pause)
 
-def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+
+def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down and then immediately releasing it.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -324,8 +475,10 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     screen.
 
     Args:
-      x (int, float, None, tuple, optional): The x position on the screen where
+      x (int, float, None, tuple, str, optional): The x position on the screen where
         the click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       clicks (int, optional): The number of clicks to perform. 1 by default.
@@ -333,9 +486,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
       interval (float, optional): The number of seconds in between each click,
         if the number of clicks is greater than 1. 0.0 by default, for no
         pause in between clicks.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button clicked. TODO
 
     Returns:
       None
@@ -343,31 +494,29 @@ def click(x=None, y=None, clicks=1, interval=0.0, button='left', duration=0.0, t
     Raises:
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3
     """
-    if button not in ('left', 'middle', 'right', 1, 2, 3):
-        raise ValueError("button argument must be one of ('left', 'middle', 'right', 1, 2, 3)")
-
+    button = _translateButton(button)
     _failSafeCheck()
     x, y = _unpackXY(x, y)
+
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
-    x, y = platformModule._position()
-    for i in range(clicks):
-        _failSafeCheck()
-        if button == 1 or str(button).lower() == 'left':
-            platformModule._click(x, y, 'left')
-        elif button == 2 or str(button).lower() == 'middle':
-            platformModule._click(x, y, 'middle')
-        elif button == 3 or str(button).lower() == 'right':
-            platformModule._click(x, y, 'right')
-        else:
-            # These mouse buttons for hor. and vert. scrolling only apply to x11:
-            platformModule._click(x, y, button)
+    x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
 
-        time.sleep(interval)
+    _logScreenshot(logScreenshot, 'click', '%s,%s,%s,%s' % (button, clicks, x, y), folder='.')
+
+    if sys.platform == 'darwin':
+        platformModule._multiClick(x, y, button, 3)
+    else:
+        for i in range(clicks):
+            _failSafeCheck()
+            if button in (LEFT, MIDDLE, RIGHT):
+                platformModule._click(x, y, button)
+
+            time.sleep(interval)
 
     _autoPause(pause, _pause)
 
-def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -380,20 +529,52 @@ def rightClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=Tr
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
+      interval (float, optional): The number of seconds in between each click,
+        if the number of clicks is greater than 1. 0.0 by default, for no
+        pause in between clicks.
 
     Returns:
       None
     """
     _failSafeCheck()
-
-    click(x, y, 1, 0.0, 'right', _pause=False)
-
+    click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
 
-def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+    """Performs a right mouse button click.
+
+    This is a wrapper function for click('right', x, y).
+
+    The x and y parameters detail where the mouse event happens. If None, the
+    current mouse position is used. If a float value, it is rounded down. If
+    outside the boundaries of the screen, the event happens at edge of the
+    screen.
+
+    Args:
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
+      y (int, float, None, optional): The y position on the screen where the
+        click happens. None by default.
+      interval (float, optional): The number of seconds in between each click,
+        if the number of clicks is greater than 1. 0.0 by default, for no
+        pause in between clicks.
+
+    Returns:
+      None
+    """
+    _failSafeCheck()
+    click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
+    _autoPause(pause, _pause)
+
+
+def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -406,6 +587,8 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
 
@@ -413,13 +596,11 @@ def middleClick(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=T
       None
     """
     _failSafeCheck()
-
-    click(x, y, 1, 0.0, 'middle', _pause=False)
-
+    click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
 
-def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -432,14 +613,14 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
         if the number of clicks is greater than 1. 0.0 by default, for no
         pause in between clicks.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
 
     Returns:
       None
@@ -450,12 +631,21 @@ def doubleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     """
     _failSafeCheck()
 
-    click(x, y, 2, interval, button, _pause=False)
+    # Multiple clicks work different in OSX
+    if sys.platform == 'darwin':
+        x, y = _unpackXY(x, y)
+        _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+        x, y = platformModule._position()
+        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
+        platformModule._multiClick(x, y, button, 2)
+    else:
+		# Click for Windows or Linux:
+        click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
 
 
-def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween=linear, pause=None, _pause=True):
+def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a triple click..
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -468,14 +658,14 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       interval (float, optional): The number of seconds in between each click,
         if the number of clicks is greater than 1. 0.0 by default, for no
         pause in between clicks.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
 
     Returns:
       None
@@ -486,12 +676,20 @@ def tripleClick(x=None, y=None, interval=0.0, button='left', duration=0.0, tween
     """
     _failSafeCheck()
 
-    click(x, y, 3, interval, button, _pause=False)
-
+    # Multiple clicks work different in OSX
+    if sys.platform == 'darwin':
+        x, y = _unpackXY(x, y)
+        _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
+        x, y = platformModule._position()
+        _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
+        platformModule._multiClick(x, y, button, 3)
+    else:
+		# Click for Windows or Linux:
+        click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
 
-def scroll(clicks, x=None, y=None, pause=None, _pause=True):
+def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -517,12 +715,13 @@ def scroll(clicks, x=None, y=None, pause=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
+    _logScreenshot(logScreenshot, 'scroll', '%s,%s,%s' % (clicks,x, y), folder='.')
     platformModule._scroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
+def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -546,12 +745,13 @@ def hscroll(clicks, x=None, y=None, pause=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
+    _logScreenshot(logScreenshot, 'hscroll', '%s,%s,%s' % (clicks, x, y), folder='.')
     platformModule._hscroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
+def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -574,12 +774,14 @@ def vscroll(clicks, x=None, y=None, pause=None, _pause=True):
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
+
+    _logScreenshot(logScreenshot, 'vscroll', '%s,%s,%s' % (clicks, x, y), folder='.')
     platformModule._vscroll(clicks, x, y)
 
     _autoPause(pause, _pause)
 
 
-def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -590,6 +792,8 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Args:
       x (int, float, None, tuple, optional): The x position on the screen where the
         click happens. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): The y position on the screen where the
         click happens. None by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -602,16 +806,16 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, _pause=True):
     Returns:
       None
     """
+    _failSafeCheck()
     x, y = _unpackXY(x, y)
 
-    _failSafeCheck()
-
+    _logScreenshot(logScreenshot, 'moveTo', '%s,%s' % (x, y), folder='.')
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
 
     _autoPause(pause, _pause)
 
 
-def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, _pause=True):
+def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -636,16 +840,20 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
       None
     """
 
-    xOffset, yOffset = _unpackXY(xOffset, yOffset)
-
     _failSafeCheck()
 
+    xOffset, yOffset = _unpackXY(xOffset, yOffset)
+
+    _logScreenshot(logScreenshot, 'moveRel', '%s,%s' % (xOffset, yOffset), folder='.')
     _mouseMoveDrag('move', None, None, xOffset, yOffset, duration, tween)
 
     _autoPause(pause, _pause)
 
 
-def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
+move = moveRel # For PyAutoGUI 1.0, move() replaces moveRel().
+
+
+def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=None, logScreenshot=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
 
@@ -657,6 +865,8 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
     Args:
       x (int, float, None, tuple, optional): How far left (for negative values) or
         right (for positive values) to move the cursor. 0 by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
       y (int, float, None, optional): How far up (for negative values) or
         down (for positive values) to move the cursor. 0 by default.
       duration (float, optional): The amount of time it takes to move the mouse
@@ -665,24 +875,27 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button='left', pause=None
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default. See the tweens.py file for
         details.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+        Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
       None
     """
     _failSafeCheck()
-    if type(x) in (tuple, list):
-        x, y = x[0], x[1]
-    mouseDown(button=button, _pause=False)
+    x, y = _unpackXY(x, y)
+
+    _logScreenshot(logScreenshot, 'dragTo', '%s,%s' % (x, y), folder='.')
+    if mouseDownUp:
+        mouseDown(button=button, logScreenshot=False, _pause=False)
     _mouseMoveDrag('drag', x, y, 0, 0, duration, tween, button)
-    mouseUp(button=button, _pause=False)
+    if mouseDownUp:
+        mouseUp(button=button, logScreenshot=False, _pause=False)
 
     _autoPause(pause, _pause)
 
 
-def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pause=None, _pause=True):
+def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pause=None, logScreenshot=None, _pause=True, mouseDownUp=True):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
 
@@ -702,9 +915,9 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default. See the tweens.py file for
         details.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+        Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
       None
@@ -723,11 +936,17 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button='left', pau
     _failSafeCheck()
 
     mousex, mousey = platformModule._position()
-    mouseDown(button=button, _pause=False)
+    _logScreenshot(logScreenshot, 'dragRel', '%s,%s' % (xOffset, yOffset), folder='.')
+    if mouseDownUp:
+        mouseDown(button=button, logScreenshot=False, _pause=False)
     _mouseMoveDrag('drag', mousex, mousey, xOffset, yOffset, duration, tween, button)
-    mouseUp(button=button, _pause=False)
+    if mouseDownUp:
+        mouseUp(button=button, logScreenshot=False, _pause=False)
 
     _autoPause(pause, _pause)
+
+
+drag = dragRel # For PyAutoGUI 1.0, we want drag() to replace dragRel().
 
 
 def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, button=None):
@@ -757,9 +976,7 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default. See the tweens.py file for
         details.
-      button (str, int, optional): The mouse button clicked. Must be one of
-        'left', 'middle', 'right' (or 1, 2, or 3) respectively. 'left' by
-        default.
+      button (str, int, optional): The mouse button released. TODO
 
     Returns:
       None
@@ -790,8 +1007,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     width, height = size()
 
     # Make sure x and y are within the screen bounds.
-    x = max(0, min(x, width - 1))
-    y = max(0, min(y, height - 1))
+    #x = max(0, min(x, width - 1))
+    #y = max(0, min(y, height - 1))
 
     # If the duration is small enough, just move the cursor there instantly.
     steps = [(x, y)]
@@ -816,9 +1033,18 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
             # A single step does not require tweening.
             time.sleep(sleep_amount)
 
-        _failSafeCheck()
         tweenX = int(round(tweenX))
         tweenY = int(round(tweenY))
+
+        # Moving the cursor to a fail-safe corner as part of the planned
+        # mouse movements shouldn't trigger the fail-safe. This may seem
+        # ridiculous, but remember that (tweenX, tweenY) is the *calculated*
+        # coordinate of where the mouse should be, while _failSafeCheck()
+        # uses the *actual position* of the mouse from position() to
+        # decide if it should raise the fail-safe exception.
+        if (tweenX, tweenY) not in FAILSAFE_POINTS:
+            _failSafeCheck()
+
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
         elif moveOrDrag == 'drag':
@@ -826,7 +1052,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         else:
             raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
-    _failSafeCheck()
+    if (tweenX, tweenY) not in FAILSAFE_POINTS:
+        _failSafeCheck()
 
 
 # Keyboard Functions
@@ -852,7 +1079,7 @@ def isValidKey(key):
     return platformModule.keyboardMapping.get(key, None) != None
 
 
-def keyDown(key, pause=None, _pause=True):
+def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -870,11 +1097,12 @@ def keyDown(key, pause=None, _pause=True):
         key = key.lower()
 
     _failSafeCheck()
+    _logScreenshot(logScreenshot, 'keyDown', key, folder='.')
     platformModule._keyDown(key)
 
     _autoPause(pause, _pause)
 
-def keyUp(key, pause=None, _pause=True):
+def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
     Args:
@@ -888,11 +1116,12 @@ def keyUp(key, pause=None, _pause=True):
         key = key.lower()
 
     _failSafeCheck()
+    _logScreenshot(logScreenshot, 'keyUp', key, folder='.')
     platformModule._keyUp(key)
 
     _autoPause(pause, _pause)
 
-def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
+def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -908,7 +1137,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
       None
     """
     if type(keys) == str:
-        keys = [keys] # put string in a list
+        keys = [keys] # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -917,6 +1146,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
             else:
                 lowerKeys.append(s)
     interval = float(interval)
+    _logScreenshot(logScreenshot, 'press', ','.join(keys), folder='.')
     for i in range(presses):
         for k in keys:
             _failSafeCheck()
@@ -926,7 +1156,7 @@ def press(keys, presses=1, interval=0.0, pause=None, _pause=True):
 
     _autoPause(pause, _pause)
 
-def typewrite(message, interval=0.0, pause=None, _pause=True):
+def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
@@ -947,10 +1177,11 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
     Returns:
       None
     """
-    interval = float(interval)
+    interval = float(interval) # TODO - this should be taken out.
 
     _failSafeCheck()
 
+    _logScreenshot(logScreenshot, 'write', message, folder='.')
     for c in message:
         if len(c) > 1:
             c = c.lower()
@@ -959,6 +1190,9 @@ def typewrite(message, interval=0.0, pause=None, _pause=True):
         _failSafeCheck()
 
     _autoPause(pause, _pause)
+
+
+write = typewrite # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
 def hotkey(*args, **kwargs):
@@ -977,10 +1211,11 @@ def hotkey(*args, **kwargs):
     Returns:
       None
     """
-    interval = float(kwargs.get('interval', 0.0))
+    interval = float(kwargs.get('interval', 0.0)) # TODO - this should be taken out.
 
     _failSafeCheck()
 
+    _logScreenshot(kwargs.get('logScreenshot'), 'hotkey', ','.join(args), folder='.')
     for c in args:
         if len(c) > 1:
             c = c.lower()
@@ -1000,32 +1235,48 @@ class FailSafeException(Exception):
 
 
 def _failSafeCheck():
-    if FAILSAFE and position() == (0, 0):
-        raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to upper-left corner. To disable this fail-safe, set pyautogui.FAILSAFE to False.')
+    if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
+        raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to a corner of the screen. To disable this fail-safe, set pyautogui.FAILSAFE to False. DISABLING FAIL-SAFE IS NOT RECOMMENDED.')
 
 
 def displayMousePosition(xOffset=0, yOffset=0):
     """This function is meant to be run from the command line. It will
     automatically display the location and RGB of the mouse cursor."""
+    try:
+        runningIDLE = sys.stdin.__module__.startswith('idlelib')
+    except:
+        runningIDLE = False
+
     print('Press Ctrl-C to quit.')
     if xOffset != 0 or yOffset != 0:
         print('xOffset: %s yOffset: %s' % (xOffset, yOffset))
-    resolution = size()
     try:
         while True:
             # Get and print the mouse coordinates.
             x, y = position()
             positionStr = 'X: ' + str(x - xOffset).rjust(4) + ' Y: ' + str(y - yOffset).rjust(4)
-            if (x - xOffset) < 0 or (y - yOffset) < 0 or (x - xOffset) >= resolution[0] or (y - yOffset) >= resolution[1]:
+            if not onScreen(x - xOffset, y - yOffset) or sys.platform == 'darwin':
+                # Pixel color can only be found for the primary monitor, and also not on mac due to the screenshot having the mouse cursor in the way.
                 pixelColor = ('NaN', 'NaN', 'NaN')
             else:
-                pixelColor = pyscreeze.screenshot().getpixel((x, y))
+                pixelColor = pyscreeze.screenshot().getpixel((x, y)) # NOTE: On Windows & Linux, getpixel() returns a 3-integer tuple, but on macOS it returns a 4-integer tuple.
             positionStr += ' RGB: (' + str(pixelColor[0]).rjust(3)
             positionStr += ', ' + str(pixelColor[1]).rjust(3)
             positionStr += ', ' + str(pixelColor[2]).rjust(3) + ')'
             sys.stdout.write(positionStr)
-            sys.stdout.write('\b' * len(positionStr))
+            if not runningIDLE:
+                # If this is a terminal, than we can erase the text by printing \b backspaces.
+                sys.stdout.write('\b' * len(positionStr))
+            else:
+                # If this isn't a terminal (i.e. IDLE) then we can only append more text. Print a newline instead and pause a second (so we don't send too much output).
+                sys.stdout.write('\n')
+                time.sleep(1)
             sys.stdout.flush()
     except KeyboardInterrupt:
         sys.stdout.write('\n')
         sys.stdout.flush()
+
+
+# Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.
+_right, _bottom = size()
+FAILSAFE_POINTS.extend([(0, _bottom - 1), (_right - 1, 0), (_right - 1, _bottom - 1)])
