@@ -1,7 +1,8 @@
 # Screenshot-related features of PyAutoGUI
 
 """
-So, apparently Pillow support on Ubuntu 64-bit has several additional steps since it doesn't have JPEG/PNG support out of the box. Description here:
+So, apparently Pillow support on Ubuntu 64-bit has several additional steps
+since it doesn't have JPEG/PNG support out of the box. Description here:
 
 https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
 http://ubuntuforums.org/showthread.php?t=1751455
@@ -34,6 +35,7 @@ except:
     # if there is no "which" program to find maim, then assume there is no maim.
     pass
 
+
 def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
     needleFileObj = None
     haystackFileObj = None
@@ -46,7 +48,6 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
         haystackFileObj = open(haystackImage, 'rb')
         haystackImage = Image.open(haystackFileObj)
 
-
     if grayscale:
         needleImage = ImageOps.grayscale(needleImage)
         haystackImage = ImageOps.grayscale(haystackImage)
@@ -54,10 +55,10 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
     needleWidth, needleHeight = needleImage.size
     haystackWidth, haystackHeight = haystackImage.size
 
-    needleImageData = tuple(needleImage.getdata()) # TODO - rename to needleImageData??
+    needleImageData = tuple(needleImage.getdata())  # TODO - rename to needleImageData??
     haystackImageData = tuple(haystackImage.getdata())
 
-    needleImageRows = [needleImageData[y * needleWidth:(y+1) * needleWidth] for y in range(needleHeight)] # LEFT OFF - check this
+    needleImageRows = [needleImageData[y * needleWidth:(y+1) * needleWidth] for y in range(needleHeight)]  # LEFT OFF - check this
     needleImageFirstRow = needleImageRows[0]
 
     assert len(needleImageFirstRow) == needleWidth
@@ -84,7 +85,6 @@ def locateAll(needleImage, haystackImage, grayscale=False, limit=None):
                     if haystackFileObj is not None:
                         haystackFileObj.close()
 
-
     # There was no limit or the limit wasn't reached, but close the file handles anyway.
     if needleFileObj is not None:
         needleFileObj.close()
@@ -101,11 +101,11 @@ def locate(needleImage, haystackImage, grayscale=False):
         return None
 
 
-def locateOnScreen(image, grayscale=False,region=None):
+def locateOnScreen(image, grayscale=False, region=None):
     screenshotIm = screenshot(region=region)
     retVal = locate(image, screenshotIm, grayscale)
     if 'fp' in dir(screenshotIm) and screenshotIm.fp is not None:
-        screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
+        screenshotIm.fp.close()  # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 
@@ -113,7 +113,7 @@ def locateAllOnScreen(image, grayscale=False, limit=None, region=None):
     screenshotIm = screenshot(region=region)
     retVal = locateAll(image, screenshotIm, grayscale, limit)
     if 'fp' in dir(screenshotIm) and screenshotIm.fp is not None:
-        screenshotIm.fp.close() # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
+        screenshotIm.fp.close()  # Screenshots on Windows won't have an fp since they came from ImageGrab, not a file.
     return retVal
 
 
@@ -142,7 +142,9 @@ def _screenshot_osx(imageFilename=None):
 
 def _screenshot_linux(imageFilename=None, region=None):
     if not scrotExists:
-        raise NotImplementedError('"scrot" must be installed to use screenshot functions in Linux. Run: sudo apt-get install scrot')
+        raise NotImplementedError(
+            '"scrot" must be installed to use screenshot functions in Linux. Run: sudo apt-get install scrot'
+        )
     if imageFilename is None:
         tmpFilename = '.screenshot%s.png' % (datetime.datetime.now().strftime('%Y-%m%d_%H-%M-%S-%f'))
     else:
@@ -152,9 +154,11 @@ def _screenshot_linux(imageFilename=None, region=None):
             subprocess.call(['scrot', tmpFilename])
         else:
             if not maimExists:
-                raise NotImplementedError('"maim" must be installed to use screenshot functions with region in Linux. Run: sudo apt-get install maim')
-            left,top,width,height = [str(x) for x in region]
-            subprocess.call(['maim','-x',left,'-y',top,'-w',width,'-h',height, tmpFilename])
+                raise NotImplementedError(
+                    '"maim" must be installed to use screenshot functions with region in Linux. Run: sudo apt-get install maim'
+                )
+            left, top, width, height = [str(x) for x in region]
+            subprocess.call(['maim', '-x', left, '-y', top, '-w', width, '-h', height, tmpFilename])
         im = Image.open(tmpFilename)
         if imageFilename is None:
             os.unlink(tmpFilename)
@@ -164,8 +168,7 @@ def _screenshot_linux(imageFilename=None, region=None):
         raise Exception('The scrot program must be installed to take a screenshot with PyAutoGUI on Linux. Run: sudo apt-get install scrot')
 
 
-
-def _kmp(needle, haystack): # Knuth-Morris-Pratt search algorithm implementation (to be used by screen capture)
+def _kmp(needle, haystack):  # Knuth-Morris-Pratt search algorithm implementation (to be used by screen capture)
     # build table of shift amounts
     shifts = [1] * (len(needle) + 1)
     shift = 1
@@ -214,4 +217,4 @@ else:
     screenshot = _screenshot_linux
 
 
-grab = screenshot # for compatibility with Pillow/PIL's ImageGrab module.
+grab = screenshot  # for compatibility with Pillow/PIL's ImageGrab module.

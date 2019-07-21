@@ -81,7 +81,7 @@ class Window(object):
     #     pass
 
 
-def getWindows():    #https://sjohannes.wordpress.com/2012/03/23/win32-python-getting-all-window-titles/
+def getWindows():  # https://sjohannes.wordpress.com/2012/03/23/win32-python-getting-all-window-titles/
     """Return dict: {'window title' : window handle} for all visible windows"""
     titles = {}
 
@@ -95,6 +95,7 @@ def getWindows():    #https://sjohannes.wordpress.com/2012/03/23/win32-python-ge
     EnumWindows(EnumWindowsProc(foreach_window), 0)
 
     return titles
+
 
 def getWindow(title, exact=False):
     """Return Window object if 'title' or its part found in visible windows titles, else return None

@@ -9,6 +9,9 @@ from ctypes import (
 from rubicon.objc import ObjCClass, CGPoint
 from rubicon.objc.types import register_preferred_encoding
 
+import pyautogui
+from pyautogui import LEFT, MIDDLE, RIGHT
+
 #####################################################################
 
 appkit = cdll.LoadLibrary(util.find_library('AppKit'))
@@ -49,11 +52,13 @@ core_graphics.CGDisplayPixelsWide.restype = c_size_t
 core_graphics.CGEventCreateKeyboardEvent.argtypes = [CGEventSourceRef, CGKeyCode, c_bool]
 core_graphics.CGEventCreateKeyboardEvent.restype = CGEventRef
 
-# CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType, CGPoint mouseCursorPosition, CGMouseButton mouseButton);
+# CGEventRef CGEventCreateMouseEvent(
+#   CGEventSourceRef source, CGEventType mouseType, CGPoint mouseCursorPosition, CGMouseButton mouseButton);
 core_graphics.CGEventCreateMouseEvent.argtypes = [CGEventSourceRef, CGEventType, CGPoint, CGMouseButton]
 core_graphics.CGEventCreateMouseEvent.restype = CGEventRef
 
-# CGEventRef CGEventCreateScrollWheelEvent(CGEventSourceRef source, CGScrollEventUnit units, uint32_t wheelCount, int32_t wheel1, ...);
+# CGEventRef CGEventCreateScrollWheelEvent(
+#   CGEventSourceRef source, CGScrollEventUnit units, uint32_t wheelCount, int32_t wheel1, ...);
 core_graphics.CGEventCreateScrollWheelEvent.argtypes = [CGEventSourceRef, CGScrollEventUnit, c_uint32, c_int32]
 core_graphics.CGEventCreateScrollWheelEvent.restype = CGEventRef
 
@@ -111,10 +116,7 @@ class kCGScrollEventUnit(Enum):
 
 #####################################################################
 
-import pyautogui
-from pyautogui import LEFT, MIDDLE, RIGHT
-
-if sys.platform !=  'darwin':
+if sys.platform != 'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
 
 
@@ -380,7 +382,7 @@ def _specialKeyEvent(key, upDown):
 
     ev = NSEvent.otherEventWithType(
         core_graphics.NSSystemDefined,
-        location=(0,0),
+        location=(0, 0),
         flags=0xa00 if upDown == 'down' else 0xb00,
         timestamp=0,
         window=0,
@@ -399,18 +401,22 @@ def _position():
 
 
 def _size():
-    return core_graphics.CGDisplayPixelsWide(core_graphics.CGMainDisplayID()), core_graphics.CGDisplayPixelsHigh(core_graphics.CGMainDisplayID())
+    return (
+        core_graphics.CGDisplayPixelsWide(core_graphics.CGMainDisplayID()),
+        core_graphics.CGDisplayPixelsHigh(core_graphics.CGMainDisplayID())
+    )
 
 
 def _scroll(clicks, x=None, y=None):
     _vscroll(clicks, x, y)
 
 
-"""
-According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/Quartz.CGEventCreateScrollWheelEvent
-"Scrolling movement is generally represented by small signed integer values, typically in a range from -10 to +10. Large values may have unexpected results, depending on the application that processes the event."
-The scrolling functions will create multiple events that scroll 10 each, and then scroll the remainder.
-"""
+# According to https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html#//apple_ref/c/func/Quartz.CGEventCreateScrollWheelEvent
+# "Scrolling movement is generally represented by small signed integer values,
+# typically in a range from -10 to +10. Large values may have unexpected
+# results, depending on the application that processes the event."
+# The scrolling functions will create multiple events that scroll 10 each,
+# and then scroll the remainder.
 
 def _vscroll(clicks, x=None, y=None):
     _moveTo(x, y)
@@ -442,7 +448,7 @@ def _hscroll(clicks, x=None, y=None):
             kCGScrollEventUnit.Line.value,  # units
             2,  # wheelCount (number of dimensions)
             0,  # vertical movement
-            10 if clicks >= 0 else -10) # horizontal movement
+            10 if clicks >= 0 else -10)  # horizontal movement
         core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
     scrollWheelEvent = core_graphics.CGEventCreateScrollWheelEvent(
@@ -450,7 +456,7 @@ def _hscroll(clicks, x=None, y=None):
         kCGScrollEventUnit.Line.value,  # units
         2,  # wheelCount (number of dimensions)
         0,  # vertical movement
-        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10)) # horizontal movement
+        (clicks % 10) if clicks >= 0 else (-1 * clicks % 10))  # horizontal movement
     core_graphics.CGEventPost(kCGEventTap.HID.value, scrollWheelEvent)
 
 
@@ -489,23 +495,24 @@ def _click(x, y, button):
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
+
 def _multiClick(x, y, button, num):
-    btn    = None
-    down   = None
-    up     = None
+    btn = None
+    down = None
+    up = None
 
     if button == LEFT:
-        btn  = kCGMouseButton.Left
+        btn = kCGMouseButton.Left
         down = kCGEvent.LeftMouseDown
-        up   = kCGEvent.LeftMouseUp
+        up = kCGEvent.LeftMouseUp
     elif button == MIDDLE:
-        btn  = kCGMouseButton.Center
+        btn = kCGMouseButton.Center
         down = kCGEvent.OtherMouseDown
-        up   = kCGEvent.OtherMouseUp
+        up = kCGEvent.OtherMouseUp
     elif button == RIGHT:
-        btn  = kCGMouseButton.Right
+        btn = kCGMouseButton.Right
         down = kCGEvent.RightMouseDown
-        up   = kCGEvent.RightMouseUp
+        up = kCGEvent.RightMouseUp
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
         return

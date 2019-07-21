@@ -31,20 +31,23 @@ else:
 
 try:
     import pytweening
-    from pytweening import (easeInQuad, easeOutQuad, easeInOutQuad,
+    from pytweening import (
+        easeInQuad, easeOutQuad, easeInOutQuad,
         easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart, easeOutQuart,
         easeInOutQuart, easeInQuint, easeOutQuint, easeInOutQuint, easeInSine,
         easeOutSine, easeInOutSine, easeInExpo, easeOutExpo, easeInOutExpo,
         easeInCirc, easeOutCirc, easeInOutCirc, easeInElastic, easeOutElastic,
         easeInOutElastic, easeInBack, easeOutBack, easeInOutBack, easeInBounce,
-        easeOutBounce, easeInOutBounce)
+        easeOutBounce, easeInOutBounce
+    )
     # getLine is not needed.
     # getPointOnLine has been redefined in this file, to avoid dependency on pytweening.
     # linear has also been redefined in this file.
 except ImportError:
     def couldNotImportPyTweening():
         raise Exception('PyAutoGUI was unable to import pytweening. Please install this module.')
-        easeInQuad = easeOutQuad = easeInOutQuad = \
+
+    easeInQuad = easeOutQuad = easeInOutQuad = \
         easeInCubic = easeOutCubic = easeInOutCubic = easeInQuart = easeOutQuart = \
         easeInOutQuart = easeInQuint = easeOutQuint = easeInOutQuint = easeInSine = \
         easeOutSine = easeInOutSine = easeInExpo = easeOutExpo = easeInOutExpo = \
@@ -65,9 +68,11 @@ except ImportError:
 
 try:
     import pyscreeze
-    from pyscreeze import (center, grab, locate, locateAll, locateAllOnScreen,
+    from pyscreeze import (
+        center, grab, locate, locateAll, locateAllOnScreen,
         locateCenterOnScreen, locateOnScreen, pixel, pixelMatchesColor,
-        screenshot)
+        screenshot
+    )
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def couldNotImportPyScreeze():
@@ -82,14 +87,14 @@ except ImportError:
     def mouseInfo():
         raise Exception('PyAutoGUI was unable to import mouseinfo. Please install this module.')
 
+
 def useImageNotFoundException(value=None):
     if value is None:
         value = True
     pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
 
 
-
-if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
+if sys.platform == 'win32':  # PyGetWindow currently only supports Windows.
     try:
         import pygetwindow
         from pygetwindow import Window, getActiveWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
@@ -100,28 +105,30 @@ if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
         Window = getActiveWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
 
 
-KEY_NAMES = ['\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
-     ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
-     '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`',
-     'a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-     'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~',
-     'accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace',
-     'browserback', 'browserfavorites', 'browserforward', 'browserhome',
-     'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear',
-     'convert', 'ctrl', 'ctrlleft', 'ctrlright', 'decimal', 'del', 'delete',
-     'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
-     'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
-     'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
-     'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
-     'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
-     'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
-     'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
-     'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn',
-     'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
-     'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
-     'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab',
-     'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
-     'command', 'option', 'optionleft', 'optionright']
+KEY_NAMES = [
+    '\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(',
+    ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
+    '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`',
+    'a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~',
+    'accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace',
+    'browserback', 'browserfavorites', 'browserforward', 'browserhome',
+    'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear',
+    'convert', 'ctrl', 'ctrlleft', 'ctrlright', 'decimal', 'del', 'delete',
+    'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
+    'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
+    'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
+    'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
+    'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
+    'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
+    'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
+    'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn',
+    'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
+    'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
+    'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab',
+    'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
+    'command', 'option', 'optionleft', 'optionright'
+]
 KEYBOARD_KEYS = KEY_NAMES   # keeping old KEYBOARD_KEYS for backwards compatibility
 
 # Constants for the mouse button names:
@@ -131,6 +138,7 @@ RIGHT     = 'right'
 PRIMARY   = 'primary'
 SECONDARY = 'secondary'
 
+
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
     return character.isupper() or character in '~!@#$%^&*()_+{}|:"<>?'
@@ -138,7 +146,7 @@ def isShiftCharacter(character):
 
 # The platformModule is where we reference the platform-specific functions.
 if sys.platform.startswith('java'):
-    #from . import _pyautogui_java as platformModule
+    # from . import _pyautogui_java as platformModule
     raise NotImplementedError('Jython is not yet supported by PyAutoGUI.')
 elif sys.platform == 'darwin':
     from . import _pyautogui_osx as platformModule
@@ -158,21 +166,25 @@ else:
 # In seconds. Any duration less than this is rounded to 0.0 to instantly move
 # the mouse.
 MINIMUM_DURATION = 0.1
-# If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
+# If sleep_amount is less than MINIMUM_DURATION, time.sleep()
+# will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
-PAUSE = 0.1 # The number of seconds to pause after EVERY public function call. Useful for debugging.
+PAUSE = 0.1  # The number of seconds to pause after EVERY public function call. Useful for debugging.
 
 
-# If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
-# The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
-# The points are for the corners of the screen, but note that these points don't automatically change if the screen resolution changes.
+# If the mouse is over a coordinate in FAILSAFE_POINTS and
+# FAILSAFE is True, the FailSafeException is raised.
+# The rest of the points are added to the FAILSAFE_POINTS list
+# at the bottom of this file, after size() has been defined.
+# The points are for the corners of the screen, but note that
+# these points don't automatically change if the screen resolution changes.
 FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 
-LOG_SCREENSHOTS = False # If True, save screenshots for clicks and key presses.
-LOG_SCREENSHOTS_LIMIT = 10 # If not None, PyAutoGUI deletes old screenshots when this limit has been reached.
-G_LOG_SCREENSHOTS_FILENAMES = [] # TODO - make this a deque
+LOG_SCREENSHOTS = False  # If True, save screenshots for clicks and key presses.
+LOG_SCREENSHOTS_LIMIT = 10  # If not None, PyAutoGUI deletes old screenshots when this limit has been reached.
+G_LOG_SCREENSHOTS_FILENAMES = []  # TODO - make this a deque
 
 Point = collections.namedtuple('Point', 'x y')
 Size = collections.namedtuple('Size', 'width height')
@@ -253,18 +265,20 @@ def _unpackXY(x, y):
 
 def _logScreenshot(logScreenshot, action, specifics, folder='.'):
     if logScreenshot == False:
-        return # Don't take a screenshot.
+        return  # Don't take a screenshot.
     if logScreenshot is None and LOG_SCREENSHOTS == False:
-        return # Don't take a screenshot.
+        return  # Don't take a screenshot.
 
     # Ensure that the "specifics" string isn't too long for the filename:
     if len(specifics) > 12:
         specifics = specifics[:12] + '...'
 
     now = datetime.datetime.now()
-    filename = '%s-%s-%s_%s-%s-%s-%s_%s_%s.png' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
-                                                      now.hour, now.minute, now.second, str(now.microsecond)[:3],
-                                                      action, specifics)
+    filename = '%s-%s-%s_%s-%s-%s-%s_%s_%s.png' % (
+        now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
+        now.hour, now.minute, now.second, str(now.microsecond)[:3],
+        action, specifics
+    )
     filepath = os.path.join(folder, filename)
 
     # Delete the oldest screenshot if we've reached the maximum:
@@ -294,9 +308,9 @@ def position(x=None, y=None):
     posx, posy = platformModule._position()
     posx = int(posx)
     posy = int(posy)
-    if x is not None: # If set, the x parameter overrides the return value.
+    if x is not None:  # If set, the x parameter overrides the return value.
         posx = int(x)
-    if y is not None: # If set, the y parameter overrides the return value.
+    if y is not None:  # If set, the y parameter overrides the return value.
         posy = int(y)
     return Point(posx, posy)
 
@@ -369,7 +383,9 @@ def _translateButton(button):
     if platform.system() == 'Linux':
         # Check for valid button arg on Linux:
         if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3, 4, 5, 6, 7):
-            raise ValueError("button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7)")
+            raise ValueError(
+                "button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7)"
+            )
     else:
         # Check for valid button arg on Windows and macOS:
         if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3):
@@ -377,7 +393,7 @@ def _translateButton(button):
 
     # TODO - Check if the primary/secondary mouse buttons have been swapped:
     if button in (PRIMARY, SECONDARY):
-        swapped = False # TODO - Add the operating system-specific code to detect mouse swap later.
+        swapped = False  # TODO - Add the operating system-specific code to detect mouse swap later.
         if swapped:
             if button == PRIMARY:
                 return RIGHT
@@ -390,8 +406,18 @@ def _translateButton(button):
                 return RIGHT
 
     # Return a mouse button integer value, not a string like 'left':
-    return {LEFT: LEFT, MIDDLE: MIDDLE, RIGHT: RIGHT,
-            1: LEFT, 2: MIDDLE, 3:RIGHT, 4:4, 5:5, 6:6, 7:7}[button]
+    return {
+        LEFT: LEFT,
+        MIDDLE: MIDDLE,
+        RIGHT: RIGHT,
+        1: LEFT,
+        2: MIDDLE,
+        3: RIGHT,
+        4: 4,
+        5: 5,
+        6: 6,
+        7: 7
+    }[button]
 
 
 def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -423,7 +449,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
 
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
 
-    x, y = platformModule._position() # TODO Why do we call _position() here and overwrite x, y?
+    x, y = platformModule._position()  # TODO Why do we call _position() here and overwrite x, y?
     _logScreenshot(logScreenshot, 'mouseDown', '%s,%s' % (x, y), folder='.')
     platformModule._mouseDown(x, y, button)
 
@@ -515,6 +541,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
             time.sleep(interval)
 
     _autoPause(pause, _pause)
+
 
 def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
@@ -639,7 +666,7 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
         platformModule._multiClick(x, y, button, 2)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
@@ -684,7 +711,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
         platformModule._multiClick(x, y, button, 3)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
@@ -715,7 +742,7 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
         x, y = x[0], x[1]
     x, y = position(x, y)
 
-    _logScreenshot(logScreenshot, 'scroll', '%s,%s,%s' % (clicks,x, y), folder='.')
+    _logScreenshot(logScreenshot, 'scroll', '%s,%s,%s' % (clicks, x, y), folder='.')
     platformModule._scroll(clicks, x, y)
 
     _autoPause(pause, _pause)
@@ -931,7 +958,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pa
         xOffset, yOffset = xOffset[0], xOffset[1]
 
     if xOffset == 0 and yOffset == 0:
-        return # no-op case
+        return  # no-op case
 
     _failSafeCheck()
 
@@ -946,7 +973,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pa
     _autoPause(pause, _pause)
 
 
-drag = dragRel # For PyAutoGUI 1.0, we want drag() to replace dragRel().
+drag = dragRel  # For PyAutoGUI 1.0, we want drag() to replace dragRel().
 
 
 def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, button=None):
@@ -987,7 +1014,7 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     assert moveOrDrag in ('move', 'drag'), "moveOrDrag must be in ('move', 'drag'), not %s" % (moveOrDrag)
 
     if sys.platform != 'darwin':
-        moveOrDrag = 'move' # Only OS X needs the drag event specifically.
+        moveOrDrag = 'move'  # Only OS X needs the drag event specifically.
 
     xOffset = int(xOffset) if xOffset is not None else 0
     yOffset = int(yOffset) if yOffset is not None else 0
@@ -1052,8 +1079,8 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         else:
             raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
-    if (tweenX, tweenY) not in FAILSAFE_POINTS:
-        _failSafeCheck()
+    # The final position should always be checked
+    _failSafeCheck()
 
 
 # Keyboard Functions
@@ -1076,7 +1103,7 @@ def isValidKey(key):
     Returns:
       bool: True if key is a valid value, False if not.
     """
-    return platformModule.keyboardMapping.get(key, None) != None
+    return platformModule.keyboardMapping.get(key, None) is not None
 
 
 def keyDown(key, pause=None, logScreenshot=None, _pause=True):
@@ -1102,6 +1129,7 @@ def keyDown(key, pause=None, logScreenshot=None, _pause=True):
 
     _autoPause(pause, _pause)
 
+
 def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
@@ -1121,6 +1149,7 @@ def keyUp(key, pause=None, logScreenshot=None, _pause=True):
 
     _autoPause(pause, _pause)
 
+
 def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
@@ -1137,7 +1166,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
       None
     """
     if type(keys) == str:
-        keys = [keys] # If keys is 'enter', convert it to ['enter'].
+        keys = [keys]  # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1155,6 +1184,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
         time.sleep(interval)
 
     _autoPause(pause, _pause)
+
 
 def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
@@ -1177,7 +1207,7 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
     Returns:
       None
     """
-    interval = float(interval) # TODO - this should be taken out.
+    interval = float(interval)  # TODO - this should be taken out.
 
     _failSafeCheck()
 
@@ -1192,7 +1222,7 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
     _autoPause(pause, _pause)
 
 
-write = typewrite # In PyAutoGUI 1.0, write() replaces typewrite().
+write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
 def hotkey(*args, **kwargs):
@@ -1211,7 +1241,7 @@ def hotkey(*args, **kwargs):
     Returns:
       None
     """
-    interval = float(kwargs.get('interval', 0.0)) # TODO - this should be taken out.
+    interval = float(kwargs.get('interval', 0.0))  # TODO - this should be taken out.
 
     _failSafeCheck()
 

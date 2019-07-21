@@ -2,13 +2,10 @@ from __future__ import division, print_function
 
 import unittest
 import sys
-import os
 import time
 import threading
 from collections import namedtuple  # Added in Python 2.6.
 
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
@@ -18,15 +15,14 @@ if runningOnPython2:
 else:
     INPUT_FUNC = input
 
-
 try:
     import pytweening
-except:
+except ImportError:
     assert False, 'The PyTweening module must be installed to complete the tests: pip install pytweening'
 
 try:
     import pyscreeze
-except:
+except ImportError:
     assert False, 'The PyScreeze module must be installed to complete the tests: pip install pyscreeze'
 
 """
@@ -80,7 +76,7 @@ class P(namedtuple('P', ['x', 'y'])):
     def __pos__(self):
         return self
 
-    def __neg__(self):
+    def __abs__(self):
         return P(abs(self.x), abs(self.y))
 
 
@@ -139,7 +135,8 @@ class TestGeneral(unittest.TestCase):
         pyautogui.screenshot
         pyautogui.grab
 
-        # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
+        # TODO(denilsonsa): I believe we should get rid of these symbols.
+        # If someone wants tweening, import pytweening module instead!
         # Tweening-related API
         pyautogui.getPointOnLine
         pyautogui.linear
@@ -174,7 +171,6 @@ class TestGeneral(unittest.TestCase):
         pyautogui.easeOutBounce
         pyautogui.easeInOutBounce
 
-
     def test_size(self):
         width, height = pyautogui.size()
 
@@ -182,7 +178,6 @@ class TestGeneral(unittest.TestCase):
         self.assertTrue(isinstance(height, int), 'Type of height is %s' % (type(height)))
         self.assertTrue(width > 0, 'Width is set to %s' % (width))
         self.assertTrue(height > 0, 'Height is set to %s' % (height))
-
 
     def test_position(self):
         mousex, mousey = pyautogui.position()
@@ -199,7 +194,6 @@ class TestGeneral(unittest.TestCase):
         x, y = pyautogui.position(None, mousey)
         self.assertNotEqual(x, mousex)
         self.assertEqual(y, mousey)
-
 
     def test_onScreen(self):
         zero = P(0, 0)
@@ -227,10 +221,26 @@ class TestGeneral(unittest.TestCase):
 
         for value, coords in [(True, on_screen), (False, off_screen)]:
             for coord in coords:
-                self.assertEqual(value, pyautogui.onScreen(*coord), 'onScreen({0}, {1}) should be {2}'.format(coord.x, coord.y, value))
-                self.assertEqual(value, pyautogui.onScreen(list(coord)), 'onScreen([{0}, {1}]) should be {2}'.format(coord.x, coord.y, value))
-                self.assertEqual(value, pyautogui.onScreen(tuple(coord)), 'onScreen(({0}, {1})) should be {2}'.format(coord.x, coord.y, value))
-                self.assertEqual(value, pyautogui.onScreen(coord), 'onScreen({0}) should be {1}'.format(repr(coord), value))
+                self.assertEqual(
+                    value,
+                    pyautogui.onScreen(*coord),
+                    'onScreen({0}, {1}) should be {2}'.format(coord.x, coord.y, value)
+                )
+                self.assertEqual(
+                    value,
+                    pyautogui.onScreen(list(coord)),
+                    'onScreen([{0}, {1}]) should be {2}'.format(coord.x, coord.y, value)
+                )
+                self.assertEqual(
+                    value,
+                    pyautogui.onScreen(tuple(coord)),
+                    'onScreen(({0}, {1})) should be {2}'.format(coord.x, coord.y, value)
+                )
+                self.assertEqual(
+                    value,
+                    pyautogui.onScreen(coord),
+                    'onScreen({0}) should be {1}'.format(repr(coord), value)
+                )
 
         # These can raise either ValueError or TypeError.
         with self.assertRaises(ValueError):
@@ -246,15 +256,15 @@ class TestGeneral(unittest.TestCase):
         oldValue = pyautogui.PAUSE
 
         startTime = time.time()
-        pyautogui.PAUSE = 0.35 # there should be a 0.35 second pause after each call
+        pyautogui.PAUSE = 0.35  # there should be a 0.35 second pause after each call
         pyautogui.moveTo(1, 1)
-        pyautogui.moveRel(0,1)
+        pyautogui.moveRel(0, 1)
         pyautogui.moveTo(1, 1)
 
         elapsed = time.time() - startTime
-        self.assertTrue(1.0 < elapsed <  1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
+        self.assertTrue(1.0 < elapsed < 1.1, 'Took %s seconds, expected 1.0 < 1.1 seconds.' % (elapsed))
 
-        pyautogui.PAUSE = oldValue # restore the old PAUSE value
+        pyautogui.PAUSE = oldValue  # restore the old PAUSE value
 
 
 class TestMouse(unittest.TestCase):
@@ -276,7 +286,7 @@ class TestMouse(unittest.TestCase):
         self.center = P(*pyautogui.size()) // 2
 
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(*self.center) # make sure failsafe isn't triggered during this test
+        pyautogui.moveTo(*self.center)  # make sure failsafe isn't triggered during this test
         pyautogui.FAILSAFE = True
 
     def tearDown(self):
@@ -350,7 +360,11 @@ class TestMouse(unittest.TestCase):
             resetMouse()
             pyautogui.moveTo(destination.x, destination.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = P(*pyautogui.position())
-            self.assertEqual(mousepos, destination, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination))
+            self.assertEqual(
+                mousepos,
+                destination,
+                '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination)
+            )
 
     def test_moveRel(self):
         # start at the center
@@ -428,7 +442,11 @@ class TestMouse(unittest.TestCase):
             resetMouse()
             pyautogui.moveRel(delta.x, delta.y, duration=pyautogui.MINIMUM_DURATION * 2, tween=tweenFunc)
             mousepos = P(*pyautogui.position())
-            self.assertEqual(mousepos, destination, '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination))
+            self.assertEqual(
+                mousepos,
+                destination,
+                '%s tween move failed. mousepos set to %s instead of %s' % (tweenName, mousepos, destination)
+            )
 
     def test_scroll(self):
         # TODO - currently this just checks that scrolling doesn't result in an error.
@@ -446,9 +464,8 @@ class TypewriteThread(threading.Thread):
         self.msg = msg
         self.interval = interval
 
-
     def run(self):
-        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
+        time.sleep(0.25)  # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
         pyautogui.typewrite(self.msg, self.interval)
 
 
@@ -457,9 +474,8 @@ class PressThread(threading.Thread):
         super(PressThread, self).__init__()
         self.keysArg = keysArg
 
-
     def run(self):
-        time.sleep(0.25) # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
+        time.sleep(0.25)  # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
         pyautogui.press(self.keysArg)
 
 
@@ -470,13 +486,11 @@ class TestKeyboard(unittest.TestCase):
     def setUp(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(42, 42) # make sure failsafe isn't triggered during this test
+        pyautogui.moveTo(42, 42)  # make sure failsafe isn't triggered during this test
         pyautogui.FAILSAFE = True
-
 
     def tearDown(self):
         pyautogui.FAILSAFE = self.oldFailsafeSetting
-
 
     def test_typewrite(self):
         # 'Hello world!\n' test
@@ -502,11 +516,9 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, allKeys)
 
-
     def checkForValidCharacters(self, msg):
         for c in msg:
             self.assertTrue(pyautogui.isValidKey(c), '"%c" is not a valid key on platform %s' % (c, sys.platform))
-
 
     def test_typewrite_slow(self):
 
@@ -517,8 +529,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, 'Hello world!')
         elapsed = time.time() - startTime
-        self.assertTrue(1.0 < elapsed <  2.0, 'Took %s seconds, expected 1.0 < x 2.0 seconds.' % (elapsed))
-
+        self.assertTrue(1.0 < elapsed < 2.0, 'Took %s seconds, expected 1.0 < x 2.0 seconds.' % (elapsed))
 
     def test_typewrite_editable(self):
         # Backspace test
@@ -527,50 +538,55 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, 'axyz')
 
-        # TODO - Currently the arrow keys don't seem to work entirely correctly on OS X.
-        if sys.platform != 'darwin':
-            # Arrow key test
-            t = TypewriteThread(['a', 'b', 'c', 'left', 'left', 'right', 'x', '\n'])
-            t.start()
-            response = INPUT_FUNC()
-            self.assertEqual(response, 'abxc')
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_typewrite_editable_arrows(self):
+        # Arrow key test
+        t = TypewriteThread(['a', 'b', 'c', 'left', 'left', 'right', 'x', '\n'])
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, 'abxc')
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_typewrite_editable_del(self):
         # Del key test
-        t = TypewriteThread(['a', 'b', 'c', 'left', 'left','left', 'del', 'delete', '\n'])
+        t = TypewriteThread(['a', 'b', 'c', 'left', 'left', 'left', 'del', 'delete', '\n'])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, 'c')
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_typewrite_editable_home_end(self):
         # Home and end key test
-        t = TypewriteThread(['a', 'b', 'c', 'home', 'x','end', 'z', '\n'])
+        t = TypewriteThread(['a', 'b', 'c', 'home', 'x', 'end', 'z', '\n'])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, 'xabcz')
 
-
-    def test_press(self):
+    def test_press_enter(self):
         # '' test
         t = PressThread('enter')
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, '')
 
+    def test_press_strings(self):
         # 'a' test, also test sending list of 1- and multi-length strings
         t = PressThread(['a', 'enter'])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, 'a')
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_press_arrows(self):
         # 'ba' test, also test sending list of 1- and multi-length strings
         t = PressThread(['a', 'left', 'b', 'enter'])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, 'ba')
 
-
     def test_typewrite_space(self):
         # Backspace test
-        t = TypewriteThread(['space', ' ', '\n']) # test both 'space' and ' '
+        t = TypewriteThread(['space', ' ', '\n'])  # test both 'space' and ' '
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, '  ')
@@ -580,17 +596,16 @@ class TestFailSafe(unittest.TestCase):
     def test_failsafe(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
         pyautogui.FAILSAFE = False
-        pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with
+        # make sure mouse is not in failsafe position to begin with
+        pyautogui.moveTo(10, 10)
 
         for x, y in pyautogui.FAILSAFE_POINTS:
             pyautogui.FAILSAFE = True
-            self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, x, y)
+            with self.assertRaises(pyautogui.FailSafeException):
+                pyautogui.moveTo(x, y)
 
             pyautogui.FAILSAFE = False
-            pyautogui.moveTo(x, y)# This line should not cause the fail safe exception to be raised.
+            # This line should not cause the fail safe exception to be raised.
+            pyautogui.moveTo(x, y)
 
         pyautogui.FAILSAFE = self.oldFailsafeSetting
-
-
-if __name__ == '__main__':
-    unittest.main()

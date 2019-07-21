@@ -16,11 +16,11 @@ BUTTON_NAME_MAPPING = {LEFT: 1, MIDDLE: 2, RIGHT: 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 
 if sys.platform in ('java', 'darwin', 'win32'):
     raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
 
-#from pyautogui import *
 
-"""
-Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ), itself derived from her "Crikey" lib.
-"""
+# Much of this code is based on information gleaned from Paul Barton's
+# PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's
+# pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ),
+# itself derived from her "Crikey" lib.
 
 def _position():
     """Returns the current xy coordinates of the mouse cursor as a two-integer
@@ -37,15 +37,14 @@ def _size():
     return _display.screen().width_in_pixels, _display.screen().height_in_pixels
 
 
-
 def _vscroll(clicks, x=None, y=None):
     clicks = int(clicks)
     if clicks == 0:
         return
     elif clicks > 0:
-        button = 4 # scroll up
+        button = 4  # scroll up
     else:
-        button = 5 # scroll down
+        button = 5  # scroll down
 
     for i in range(abs(clicks)):
         _click(x, y, button=button)
@@ -56,9 +55,9 @@ def _hscroll(clicks, x=None, y=None):
     if clicks == 0:
         return
     elif clicks > 0:
-        button = 7 # scroll right
+        button = 7  # scroll right
     else:
-        button = 6 # scroll left
+        button = 6  # scroll left
 
     for i in range(abs(clicks)):
         _click(x, y, button=button)
