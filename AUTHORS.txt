@@ -38,3 +38,4 @@ qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
+Stefan Hoelzl https://github.com/stefanhoelzl
