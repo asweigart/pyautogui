@@ -507,7 +507,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
     _logScreenshot(logScreenshot, 'click', '%s,%s,%s,%s' % (button, clicks, x, y), folder='.')
 
     if sys.platform == 'darwin':
-        platformModule._multiClick(x, y, button, 3)
+        platformModule._multiClick(x, y, button, clicks)
     else:
         for i in range(clicks):
             _failSafeCheck()
