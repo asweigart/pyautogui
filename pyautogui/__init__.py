@@ -16,7 +16,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.46'
+__version__ = '0.9.47'
 
 import sys, time, datetime, os, platform
 
@@ -1278,6 +1278,16 @@ def displayMousePosition(xOffset=0, yOffset=0):
         sys.stdout.write('\n')
         sys.stdout.flush()
 
+
+def sleep(seconds):
+    time.sleep(seconds)
+
+
+def countdown(seconds):
+    for i in range(seconds, 0, -1):
+        print(str(i), end=' ', flush=True)
+        time.sleep(1)
+    print()
 
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.
 _right, _bottom = size()
