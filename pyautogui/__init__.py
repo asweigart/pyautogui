@@ -1149,6 +1149,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
                 lowerKeys.append(s.lower())
             else:
                 lowerKeys.append(s)
+        keys = lowerKeys
     interval = float(interval)
     _logScreenshot(logScreenshot, 'press', ','.join(keys), folder='.')
     for i in range(presses):
