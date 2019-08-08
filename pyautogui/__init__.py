@@ -1139,8 +1139,8 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
       None
     """
     if type(keys) == str:
-	if len(keys) > 1:
-	    keys = keys.lower()
+        if len(keys) > 1:
+            keys = keys.lower()
         keys = [keys] # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
