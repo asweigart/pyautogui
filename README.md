@@ -113,4 +113,11 @@ The locateCenterOnScreen() function returns the center of this match region:
 How Does PyAutoGUI Work?
 ========================
 
-The three major operating systems (Windows, macOS, and Linux) each have ways of making the operating system
+The three major operating systems (Windows, macOS, and Linux) each have different ways to programmatically control the mouse and keyboard. This can often involve confusing, obscure, and deeply techincal details. The job of PyAutoGUI is to hide all of this complexity behind a simple API.
+
+* On Windows, PyAutoGUI accesses the Windows API (also called the WinAPI or win32 API) through the built-in `ctypes` module. The `nicewin` module at https://github.com/asweigart/nicewin provides a demonstration for how Windows API calls can be made through Python.
+
+* On macOS, PyAutoGUI uses the `pyobjc` module to access the Cocoa API.
+
+* On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
+
