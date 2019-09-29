@@ -18,7 +18,7 @@ from __future__ import absolute_import, division, print_function
 
 __version__ = '0.9.48'
 
-import sys, time, datetime, os, platform
+import sys, time, datetime, os, platform, re
 
 
 if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3,2)):
@@ -1238,9 +1238,11 @@ def hotkey(*args, **kwargs):
     _autoPause(kwargs.get('pause', None), kwargs.get('_pause', True))
 
 
-class FailSafeException(Exception):
+class PyAutoGUIException(Exception):
     pass
 
+class FailSafeException(PyAutoGUIException):
+    pass
 
 def failSafeCheck():
     if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
@@ -1314,6 +1316,332 @@ def countdown(seconds):
         print(str(i), end=' ', flush=True)
         time.sleep(1)
     print()
+
+def _getNumberToken(commandStr):
+    """Gets the number token at the start of commandStr.
+
+    Given '5hello' returns '5'
+    Given '  5hello' returns '  5'
+    Given '-42hello' returns '-42'
+    Given '+42hello' returns '+42'
+    Given '3.14hello' returns '3.14'
+
+    Raises an exception if it can't tokenize a number.
+    """
+    pattern = re.compile(r'^(\s*(\+|\-)?\d+(\.\d+)?)')
+    mo = pattern.search(commandStr)
+    if mo is None:
+        raise PyAutoGUIException('Invalid command at index 0: a number was expected')
+
+    return mo.group(1)
+
+
+def _getQuotedStringToken(commandStr):
+    """Gets the quoted string token at the start of commandStr.
+    The quoted string must use single quotes.
+
+    Given "'hello'world" returns "'hello'"
+    Given "  'hello'world" returns "  'hello'"
+
+    Raises an exception if it can't tokenize a quoted string.
+    """
+    pattern = re.compile(r"^((\s*)('(.*?)'))")
+    mo = pattern.search(commandStr)
+    if mo is None:
+        raise PyAutoGUIException('Invalid command at index 0: a quoted string was expected')
+
+    return mo.group(1)
+
+
+def _getParensCommandStrToken(commandStr):
+    """Gets the command string token at the start of commandStr. It will also
+    be enclosed with parentheses.
+
+    Given "(ccc)world" returns "(ccc)"
+    Given "  (ccc)world" returns "  (ccc)"
+    Given "(ccf10(r))world" returns "(ccf10(r))"
+
+    Raises an exception if it can't tokenize a quoted string.
+    """
+
+    # Check to make sure at least one open parenthesis exists:
+    pattern = re.compile(r'^\s*\(')
+    mo = pattern.search(commandStr)
+    if mo is None:
+        raise PyAutoGUIException('Invalid command at index 0: No open parenthesis found.')
+
+    # Check to make sure the parentheses are balanced:
+    i = 0
+    openParensCount = 0
+    while i < len(commandStr):
+        if commandStr[i] == '(':
+            openParensCount += 1
+        elif commandStr[i] == ')':
+            openParensCount -= 1
+            if openParensCount == 0:
+                i += 1 # Remember to increment i past the ) before breaking.
+                break
+            elif openParensCount == -1:
+                raise PyAutoGUIException('Invalid command at index 0: No open parenthesis for this close parenthesis.')
+        i += 1
+    if openParensCount > 0:
+        raise PyAutoGUIException('Invalid command at index 0: Not enough close parentheses.')
+
+    return commandStr[0:i]
+
+
+def _getCommaToken(commandStr):
+    """Gets the comma token at the start of commandStr.
+
+    Given ',' returns ','
+    Given '  ,', returns '  ,'
+
+    Raises an exception if a comma isn't found.
+    """
+    pattern = re.compile(r'^((\s*),)')
+    mo = pattern.search(commandStr)
+    if mo is None:
+        raise PyAutoGUIException('Invalid command at index 0: a comma was expected')
+
+    return mo.group(1)
+
+def _tokenizeCommandStr(commandStr):
+    """Tokenizes commandStr into a list of commands and their arguments for
+    the run() function. Returns the list."""
+
+    commandPattern = re.compile(r'^(su|sd|ss|c|l|m|r|g|d|k|w|h|f|s|a|p)')
+
+    # Tokenize the command string.
+    commandList = []
+    i = 0 # Points to the current index in commandStr that is being tokenized.
+    while i < len(commandStr):
+        if commandStr[i] in (' ', '\t', '\n', '\r'):
+            # Skip over whitespace:
+            i += 1
+            continue
+
+        mo = commandPattern.match(commandStr[i:])
+        if mo is None:
+            raise PyAutoGUIException('Invalid command at index %s: %s is not a valid command' % (i, commandStr[i]))
+
+        individualCommand = mo.group(1)
+        commandList.append(individualCommand)
+        i += len(individualCommand)
+
+        # Handle the no argument commands (c, l, m, r, su, sd, ss):
+        if individualCommand in ('c', 'l', 'm', 'r', 'su', 'sd', 'ss'):
+            pass # This just exists so these commands are covered by one of these cases.
+
+        # Handle the arguments of the mouse (g)o and mouse (d)rag commands:
+        elif individualCommand in ('g', 'd'):
+            try:
+                x = _getNumberToken(commandStr[i:])
+                i += len(x) # Increment past the x number.
+
+                comma = _getCommaToken(commandStr[i:])
+                i += len(comma) # Increment past the comma (and any whitespace).
+
+                y = _getNumberToken(commandStr[i:])
+                i += len(y) # Increment past the y number.
+
+            except PyAutoGUIException as excObj:
+                # Exception message starts with something like "Invalid command at index 0:"
+                # Change the index number and reraise it.
+                indexPart, colon, message = str(excObj).partition(':')
+
+                indexNum = indexPart[len('Invalid command at index '):]
+                newIndexNum = int(indexNum) + i
+                raise PyAutoGUIException('Invalid command at index %s:%s' % (newIndexNum, message))
+
+            # Make sure either both x and y have +/- or neither of them do:
+            if x.lstrip()[0].isdecimal() and not y.lstrip()[0].isdecimal():
+                raise PyAutoGUIException('Invalid command at index %s: Y has a +/- but X does not.' % (i - len(y)))
+            if not x.lstrip()[0].isdecimal() and y.lstrip()[0].isdecimal():
+                raise PyAutoGUIException('Invalid command at index %s: Y does not have a +/- but X does.' % (i - len(y)))
+
+            # Get rid of any whitespace at the front:
+            commandList.append(x.lstrip())
+            commandList.append(y.lstrip())
+
+        # Handle the arguments of the (s)leep and (p)ause commands:
+        elif individualCommand in ('s', 'p'):
+            try:
+                num = _getNumberToken(commandStr[i:])
+                i += len(num) # Increment past the number.
+
+                # TODO - raise an exception if a + or - is in the number.
+
+            except PyAutoGUIException as excObj:
+                # Exception message starts with something like "Invalid command at index 0:"
+                # Change the index number and reraise it.
+                indexPart, colon, message = str(excObj).partition(':')
+
+                indexNum = indexPart[len('Invalid command at index '):]
+                newIndexNum = int(indexNum) + i
+                raise PyAutoGUIException('Invalid command at index %s:%s' % (newIndexNum, message))
+
+            # Get rid of any whitespace at the front:
+            commandList.append(num.lstrip())
+
+        # Handle the arguments of the (k)ey press, (w)rite, (h)otkeys, and (a)lert commands:
+        elif individualCommand in ('k', 'w', 'h', 'a'):
+            try:
+                quotedString = _getQuotedStringToken(commandStr[i:])
+                i += len(quotedString) # Increment past the quoted string.
+            except PyAutoGUIException as excObj:
+                # Exception message starts with something like "Invalid command at index 0:"
+                # Change the index number and reraise it.
+                indexPart, colon, message = str(excObj).partition(':')
+
+                indexNum = indexPart[len('Invalid command at index '):]
+                newIndexNum = int(indexNum) + i
+                raise PyAutoGUIException('Invalid command at index %s:%s' % (newIndexNum, message))
+
+            # Get rid of any whitespace at the front and the quotes:
+            commandList.append(quotedString[1:-1].lstrip())
+
+        # Handle the arguments of the (f)or loop command:
+        elif individualCommand == 'f':
+            try:
+                numberOfLoops = _getNumberToken(commandStr[i:])
+                i += len(numberOfLoops) # Increment past the number of loops.
+
+                subCommandStr = _getParensCommandStrToken(commandStr[i:])
+                i += len(subCommandStr) # Increment past the sub-command string.
+
+            except PyAutoGUIException as excObj:
+                # Exception message starts with something like "Invalid command at index 0:"
+                # Change the index number and reraise it.
+                indexPart, colon, message = str(excObj).partition(':')
+
+                indexNum = indexPart[len('Invalid command at index '):]
+                newIndexNum = int(indexNum) + i
+                raise PyAutoGUIException('Invalid command at index %s:%s' % (newIndexNum, message))
+
+            # Get rid of any whitespace at the front:
+            commandList.append(numberOfLoops.lstrip())
+
+            # Get rid of any whitespace at the front and the quotes:
+            subCommandStr = subCommandStr.lstrip()[1:-1]
+            # Recursively call this function and append the list it returns:
+            commandList.append(_tokenizeCommandStr(subCommandStr))
+
+    return commandList
+
+
+def _runCommandList(commandList, _ssCount):
+    i = 0
+    while i < len(commandList):
+        command = commandList[i]
+
+        if command == 'c':
+            click(button=PRIMARY)
+        elif command == 'l':
+            click(button=LEFT)
+        elif command == 'm':
+            click(button=MIDDLE)
+        elif command == 'r':
+            click(button=RIGHT)
+        elif command == 'su':
+            scroll(1) # scroll up
+        elif command == 'sd':
+            scroll(-1) # scroll down
+        elif command == 'ss':
+            screenshot('screenshot%s.png' % (_ssCount[0]))
+            _ssCount[0] += 1
+        elif command == 's':
+            sleep(float(commandList[i+1]))
+            i += 1
+        elif command == 'p':
+            PAUSE = float(commandList[i+1])
+            i += 1
+        elif command == 'g':
+            if commandList[i+1][0] in ('+', '-') and commandList[i+2][0] in ('+', '-'):
+                move(int(commandList[i+1]), int(commandList[i+2]))
+            else:
+                moveTo(int(commandList[i+1]), int(commandList[i+2]))
+            i += 2
+        elif command == 'd':
+            if commandList[i+1][0] in ('+', '-') and commandList[i+2][0] in ('+', '-'):
+                drag(int(commandList[i+1]), int(commandList[i+2]))
+            else:
+                dragTo(int(commandList[i+1]), int(commandList[i+2]))
+            i += 2
+        elif command == 'k':
+            press(commandList[i+1])
+            i += 1
+        elif command == 'w':
+            write(commandList[i+1])
+            i += 1
+        elif command == 'h':
+            hotkey(*commandList[i+1].replace(' ', '').split(','))
+            i += 1
+        elif command == 'a':
+            alert(commandList[i+1])
+            i += 1
+        elif command == 'f':
+            for j in range(int(commandList[i+1])):
+                _runCommandList(commandList[i+2], _ssCount)
+            i += 2
+        i += 1
+
+
+def run(commandStr, _ssCount=None):
+    """Run a series of PyAutoGUI function calls according to a mini-language
+    made for this function. The `commandStr` is composed of character
+    commands that represent PyAutoGUI function calls.
+
+    The character commands and their equivalents are here:
+
+    c = click(button=PRIMARY)
+    l = click(button=LEFT)
+    m = click(button=MIDDLE)
+    r = click(button=RIGHT)
+    su = scroll(1) # scroll up
+    sd = scroll(-1) # scroll down
+    ss = screenshot('screenshot1.png') # the filename increments each time
+
+    gX,Y = moveTo(X, Y)
+    g+|-X,+|-Y = move(X, Y)
+    dX,Y = dragTo(X, Y)
+    d+|-X,+|-Y = drag(X, Y)
+
+    k'key' = press('key')
+    w'text' = write('text')
+    h'key,key,key' = hotkey(*'key,key,key'.replace(' ', '').split(','))
+    a'hello' = alert('hello')
+
+    sN = sleep(N)
+    sN.N = sleep(N.N)
+    pN = PAUSE = N
+    pN.N = PAUSE = N.N
+
+    fN(commands) = for i in range(N): run(commands)
+
+    Whitespace is ignored. Command characters must be lowercase. Quotes must
+    be single quotes.
+
+    Note that any changes to PAUSE with the p command will be undone before
+    this function returns.
+    """
+
+    # run("ccc")  straight forward
+    # run("susu") if 's' then peek at the next character
+    global PAUSE
+
+    if _ssCount is None:
+        _ssCount = [0] # Setting this to a mutable list so that the callers can read the changed value. TODO improve this comment
+
+    commandList = _tokenizeCommandStr(commandStr)
+
+    # Carry out each command.
+    originalPAUSE = PAUSE
+    _runCommandList(commandList, _ssCount)
+    PAUSE = originalPAUSE
+
+
+
+
 
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.
 _right, _bottom = size()

@@ -1,14 +1,15 @@
 from __future__ import division, print_function
 
-import unittest
-import sys
 import os
-import time
+import random
+import sys
 import threading
+import time
+import unittest
 from collections import namedtuple  # Added in Python 2.6.
 
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pyautogui
 
 runningOnPython2 = sys.version_info[0] == 2
@@ -441,6 +442,162 @@ class TestMouse(unittest.TestCase):
         pyautogui.vscroll(1)
         pyautogui.vscroll(-1)
 
+class TestRun(unittest.TestCase):
+    def test_getNumberToken(self):
+        self.assertEqual(pyautogui._getNumberToken('5hello'), '5')
+        self.assertEqual(pyautogui._getNumberToken('-5hello'), '-5')
+        self.assertEqual(pyautogui._getNumberToken('+5hello'), '+5')
+        self.assertEqual(pyautogui._getNumberToken('5.5hello'), '5.5')
+        self.assertEqual(pyautogui._getNumberToken('+5.5hello'), '+5.5')
+        self.assertEqual(pyautogui._getNumberToken('-5.5hello'), '-5.5')
+        self.assertEqual(pyautogui._getNumberToken('  5hello'), '  5')
+        self.assertEqual(pyautogui._getNumberToken('  -5hello'), '  -5')
+        self.assertEqual(pyautogui._getNumberToken('  +5hello'), '  +5')
+        self.assertEqual(pyautogui._getNumberToken('  5.5hello'), '  5.5')
+        self.assertEqual(pyautogui._getNumberToken('  +5.5hello'), '  +5.5')
+        self.assertEqual(pyautogui._getNumberToken('  -5.5hello'), '  -5.5')
+
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getNumberToken('') # Blank string and no number.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getNumberToken('hello') # Missing a number.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getNumberToken('    ') # Missing a number.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getNumberToken('hello 42') # Number is not at the start.
+
+    def test_getQuotedStringToken(self):
+        self.assertEqual(pyautogui._getQuotedStringToken("'hello'world"), "'hello'")
+        self.assertEqual(pyautogui._getQuotedStringToken("''world"), "''")
+        self.assertEqual(pyautogui._getQuotedStringToken("  'hello'world"), "  'hello'")
+
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("xyz") # No quotes.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("xyz") # No quotes.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("  xyz") # No quotes, spaces in front.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("'xyz") # Start quote only.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("xyz'") # End quote only.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken('"xyz"') # Double quotes don't count.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken('') # Blank string.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getQuotedStringToken("xyz 'hello'") # Quoted string is not at the start.
+
+    def test_getCommaToken(self):
+        self.assertEqual(pyautogui._getCommaToken(','), ',')
+        self.assertEqual(pyautogui._getCommaToken('  ,'), '  ,')
+
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getCommaToken('') # Blank string.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getCommaToken('hello,') # Comma is not at the start.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getCommaToken('hello') # No comma.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getCommaToken('    ') # No comma.
+
+    def test_getParensCommandStrToken(self):
+        self.assertEqual(pyautogui._getParensCommandStrToken('()'), '()')
+        self.assertEqual(pyautogui._getParensCommandStrToken('  ()'), '  ()')
+        self.assertEqual(pyautogui._getParensCommandStrToken('()hello'), '()')
+        self.assertEqual(pyautogui._getParensCommandStrToken('  ()hello'), '  ()')
+        self.assertEqual(pyautogui._getParensCommandStrToken('(hello)world'), '(hello)')
+        self.assertEqual(pyautogui._getParensCommandStrToken('  (hello)world'), '  (hello)')
+        self.assertEqual(pyautogui._getParensCommandStrToken('(he(ll)(o))world'), '(he(ll)(o))')
+        self.assertEqual(pyautogui._getParensCommandStrToken('  (he(ll)(o))world'), '  (he(ll)(o))')
+
+        self.assertEqual(pyautogui._getParensCommandStrToken('(he(ll)(o)))world'), '(he(ll)(o))') # Extra close parentheses.
+        self.assertEqual(pyautogui._getParensCommandStrToken('  (he(ll)(o)))world'), '  (he(ll)(o))') # Extra close parentheses.
+
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken('') # Blank string.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken('  ') # No parens.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken('hello') # No parens
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken(' (') # No close parenthesis.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken('(he(ll)o') # Not enough close parentheses.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
+            pyautogui._getParensCommandStrToken('') # Blank string.
+
+
+    def test_tokenizeCommandStr(self):
+        self.assertEqual(pyautogui._tokenizeCommandStr(''), []) # Empty command string.
+        self.assertEqual(pyautogui._tokenizeCommandStr('  '), []) # Whitespace only command string.
+        self.assertEqual(pyautogui._tokenizeCommandStr('c'), ['c'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('  c  '), ['c'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('ccc'), ['c', 'c', 'c'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('  c  c  c  '), ['c', 'c', 'c'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('clmr'), ['c', 'l', 'm', 'r'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('susdss'), ['su', 'sd', 'ss'])
+        self.assertEqual(pyautogui._tokenizeCommandStr(' su sd ss '), ['su', 'sd', 'ss'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('clmrsusdss'), ['c', 'l', 'm', 'r', 'su', 'sd', 'ss'])
+
+        # Do a whole bunch of tests with random no-argument commands with random whitespace.
+        random.seed(42)
+        for i in range(100):
+            commands = []
+            commands.extend(['c'] * random.randint(0,9))
+            commands.extend(['l'] * random.randint(0,9))
+            commands.extend(['m'] * random.randint(0,9))
+            commands.extend(['r'] * random.randint(0,9))
+            commands.extend(['su'] * random.randint(0,9))
+            commands.extend(['sd'] * random.randint(0,9))
+            commands.extend(['ss'] * random.randint(0,9))
+            random.shuffle(commands)
+            commandStr = []
+            for command in commands:
+                commandStr.append(command)
+                commandStr.append(' ' * random.randint(0, 9))
+            commandStr = ''.join(commandStr)
+            self.assertEqual(pyautogui._tokenizeCommandStr(commandStr), commands)
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('g10,10'), ['g', '10', '10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g 10,10'), ['g', '10', '10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g10 ,10'), ['g', '10', '10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g10, 10'), ['g', '10', '10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr(' g 10 , 10 '), ['g', '10', '10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('  g  10  ,  10  '), ['g', '10', '10'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('g+10,+10'), ['g', '+10', '+10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g +10,+10'), ['g', '+10', '+10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g+10 ,+10'), ['g', '+10', '+10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g+10, +10'), ['g', '+10', '+10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr(' g +10 , +10 '), ['g', '+10', '+10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('  g  +10  ,  +10  '), ['g', '+10', '+10'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('g-10,-10'), ['g', '-10', '-10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g -10,-10'), ['g', '-10', '-10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g-10 ,-10'), ['g', '-10', '-10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('g-10, -10'), ['g', '-10', '-10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr(' g -10 , -10 '), ['g', '-10', '-10'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('  g  -10  ,  -10  '), ['g', '-10', '-10'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('d10,10'), ['d', '10', '10'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('d1,2g3,4'), ['d', '1', '2', 'g', '3', '4'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr("w'hello'"), ['w', 'hello'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr("d1,2w'hello'g3,4"), ['d', '1', '2', 'w', 'hello', 'g', '3', '4'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('s42'), ['s', '42'])
+        self.assertEqual(pyautogui._tokenizeCommandStr('s42.3'), ['s', '42.3'])
+
+        self.assertEqual(pyautogui._tokenizeCommandStr('f10(c)'), ['f', '10', ['c']])
+        self.assertEqual(pyautogui._tokenizeCommandStr('f10(lmr)'), ['f', '10', ['l', 'm', 'r']])
+        self.assertEqual(pyautogui._tokenizeCommandStr('f10(f5(cc))'), ['f', '10', ['f', '5', ['c', 'c']]])
+
+        # TODO add negative cases
+
+        # TODO add mocks for pyautogui for this.
 
 class TypewriteThread(threading.Thread):
     def __init__(self, msg, interval=0.0):
