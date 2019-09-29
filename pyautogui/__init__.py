@@ -16,7 +16,7 @@ You will need PIL/Pillow to use the screenshot features.
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = '0.9.47'
+__version__ = '0.9.48'
 
 import sys, time, datetime, os, platform
 
@@ -94,7 +94,7 @@ def useImageNotFoundException(value=None):
 if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
     try:
         import pygetwindow
-        from pygetwindow import Window, getActiveWindow, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
+        from pygetwindow import Window, getActiveWindow, getActiveWindowTitle, getWindowsAt, getWindowsWithTitle, getAllWindows, getAllTitles
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
         def couldNotImportPyGetWindow():
@@ -132,6 +132,12 @@ MIDDLE    = 'middle'
 RIGHT     = 'right'
 PRIMARY   = 'primary'
 SECONDARY = 'secondary'
+
+# Different keyboard mappings:
+# TODO - finish this feature.
+# NOTE: Eventually, I'd like to come up with a better system than this. For now, this seems like it works.
+QWERTY = r"""`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?"""
+QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZUIOP*(_ASDFGHJKL<|YXCVBNM<>&"""
 
 def isShiftCharacter(character):
     """Returns True if the key character is uppercase or shifted."""
@@ -420,7 +426,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
     button = _translateButton(button)
-    _failSafeCheck()
+    failSafeCheck()
     x, y = _unpackXY(x, y)
 
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
@@ -456,7 +462,7 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
     button = _translateButton(button)
-    _failSafeCheck()
+    failSafeCheck()
     x, y = _unpackXY(x, y)
 
     _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
@@ -497,7 +503,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3
     """
     button = _translateButton(button)
-    _failSafeCheck()
+    failSafeCheck()
     x, y = _unpackXY(x, y)
 
     _mouseMoveDrag('move', x, y, 0, 0, duration, tween)
@@ -510,7 +516,7 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
         platformModule._multiClick(x, y, button, 3)
     else:
         for i in range(clicks):
-            _failSafeCheck()
+            failSafeCheck()
             if button in (LEFT, MIDDLE, RIGHT):
                 platformModule._click(x, y, button)
 
@@ -542,7 +548,7 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
@@ -571,7 +577,7 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
@@ -597,7 +603,7 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
     _autoPause(pause, _pause)
 
@@ -631,7 +637,7 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    _failSafeCheck()
+    failSafeCheck()
 
     # Multiple clicks work different in OSX
     if sys.platform == 'darwin':
@@ -641,7 +647,7 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
         platformModule._multiClick(x, y, button, 2)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
@@ -676,7 +682,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    _failSafeCheck()
+    failSafeCheck()
 
     # Multiple clicks work different in OSX
     if sys.platform == 'darwin':
@@ -686,7 +692,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
         platformModule._multiClick(x, y, button, 3)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
@@ -712,7 +718,7 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -742,7 +748,7 @@ def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -772,7 +778,7 @@ def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -808,7 +814,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     x, y = _unpackXY(x, y)
 
     _logScreenshot(logScreenshot, 'moveTo', '%s,%s' % (x, y), folder='.')
@@ -842,7 +848,7 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
       None
     """
 
-    _failSafeCheck()
+    failSafeCheck()
 
     xOffset, yOffset = _unpackXY(xOffset, yOffset)
 
@@ -884,7 +890,7 @@ def dragTo(x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, pause=Non
     Returns:
       None
     """
-    _failSafeCheck()
+    failSafeCheck()
     x, y = _unpackXY(x, y)
 
     _logScreenshot(logScreenshot, 'dragTo', '%s,%s' % (x, y), folder='.')
@@ -935,7 +941,7 @@ def dragRel(xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, pa
     if xOffset == 0 and yOffset == 0:
         return # no-op case
 
-    _failSafeCheck()
+    failSafeCheck()
 
     mousex, mousey = platformModule._position()
     _logScreenshot(logScreenshot, 'dragRel', '%s,%s' % (xOffset, yOffset), folder='.')
@@ -1041,11 +1047,11 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         # Moving the cursor to a fail-safe corner as part of the planned
         # mouse movements shouldn't trigger the fail-safe. This may seem
         # ridiculous, but remember that (tweenX, tweenY) is the *calculated*
-        # coordinate of where the mouse should be, while _failSafeCheck()
+        # coordinate of where the mouse should be, while failSafeCheck()
         # uses the *actual position* of the mouse from position() to
         # decide if it should raise the fail-safe exception.
         if (tweenX, tweenY) not in FAILSAFE_POINTS:
-            _failSafeCheck()
+            failSafeCheck()
 
         if moveOrDrag == 'move':
             platformModule._moveTo(tweenX, tweenY)
@@ -1055,7 +1061,7 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
             raise NotImplementedError('Unknown value of moveOrDrag: {0}'.format(moveOrDrag))
 
     if (tweenX, tweenY) not in FAILSAFE_POINTS:
-        _failSafeCheck()
+        failSafeCheck()
 
 
 # Keyboard Functions
@@ -1098,7 +1104,7 @@ def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     if len(key) > 1:
         key = key.lower()
 
-    _failSafeCheck()
+    failSafeCheck()
     _logScreenshot(logScreenshot, 'keyDown', key, folder='.')
     platformModule._keyDown(key)
 
@@ -1117,7 +1123,7 @@ def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     if len(key) > 1:
         key = key.lower()
 
-    _failSafeCheck()
+    failSafeCheck()
     _logScreenshot(logScreenshot, 'keyUp', key, folder='.')
     platformModule._keyUp(key)
 
@@ -1151,7 +1157,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
     _logScreenshot(logScreenshot, 'press', ','.join(keys), folder='.')
     for i in range(presses):
         for k in keys:
-            _failSafeCheck()
+            failSafeCheck()
             platformModule._keyDown(k)
             platformModule._keyUp(k)
         time.sleep(interval)
@@ -1181,7 +1187,7 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
     """
     interval = float(interval) # TODO - this should be taken out.
 
-    _failSafeCheck()
+    failSafeCheck()
 
     _logScreenshot(logScreenshot, 'write', message, folder='.')
     for c in message:
@@ -1189,7 +1195,7 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
             c = c.lower()
         press(c, _pause=False)
         time.sleep(interval)
-        _failSafeCheck()
+        failSafeCheck()
 
     _autoPause(pause, _pause)
 
@@ -1215,7 +1221,7 @@ def hotkey(*args, **kwargs):
     """
     interval = float(kwargs.get('interval', 0.0)) # TODO - this should be taken out.
 
-    _failSafeCheck()
+    failSafeCheck()
 
     _logScreenshot(kwargs.get('logScreenshot'), 'hotkey', ','.join(args), folder='.')
     for c in args:
@@ -1236,7 +1242,7 @@ class FailSafeException(Exception):
     pass
 
 
-def _failSafeCheck():
+def failSafeCheck():
     if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to a corner of the screen. To disable this fail-safe, set pyautogui.FAILSAFE to False. DISABLING FAIL-SAFE IS NOT RECOMMENDED.')
 
@@ -1277,6 +1283,26 @@ def displayMousePosition(xOffset=0, yOffset=0):
     except KeyboardInterrupt:
         sys.stdout.write('\n')
         sys.stdout.flush()
+
+
+def snapshot(tag, folder=None, region=None, radius=None):
+    # TODO feature not finished
+    if region is not None and radius is not None:
+        raise Exception('Either region or radius arguments (or neither) can be passed to snapshot, but not both')
+
+    if radius is not None:
+        x, y = platformModule._position()
+
+
+
+    if folder is None:
+        folder = os.getcwd()
+
+    now = datetime.datetime.now()
+    filename = '%s-%s-%s_%s-%s-%s-%s_%s.png' % (now.year, str(now.month).rjust(2, '0'), str(now.day).rjust(2, '0'),
+                                                      now.hour, now.minute, now.second, str(now.microsecond)[:3], tag)
+    filepath = os.path.join(folder, filename)
+    screenshot(filepath)
 
 
 def sleep(seconds):

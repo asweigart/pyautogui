@@ -61,8 +61,8 @@ This example drags the mouse in a square spiral shape in MS Paint (or any graphi
 
 .. image:: square_spiral.png
 
-Frequently Asked Questions
-==========================
+FAQ: Frequently Asked Questions
+===============================
 
 Send questions to <a href="mailto:al@inventwithpython.com">al@inventwithpython.com</a>
 
@@ -77,6 +77,10 @@ A: No, right now PyAutoGUI only handles the primary monitor.
 **Q: Does PyAutoGUI do OCR?**
 
 A: No, but this is a feature that's on the roadmap.
+
+**Q: Can PyAutoGUI do keylogging, or detect if a key is currently pressed down?**
+
+A: No, PyAutoGUI cannot do this currently.
 
 
 Fail-Safes
@@ -104,7 +108,6 @@ Contents:
    screenshot.rst
    tests.rst
    roadmap.rst
-   faq.rst
 
 This documentation is still a work in progress.
 
