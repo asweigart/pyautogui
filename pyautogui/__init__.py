@@ -638,10 +638,10 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         x, y = _unpackXY(x, y)
         _mouseMoveDrag('move', x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
-        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
         platformModule._multiClick(x, y, button, 2)
+        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
@@ -686,7 +686,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
         platformModule._multiClick(x, y, button, 3)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
