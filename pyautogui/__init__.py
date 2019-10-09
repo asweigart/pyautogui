@@ -13,12 +13,26 @@ You will need PIL/Pillow to use the screenshot features.
 """
 
 
+# TODO - the following features are half-implemented right now:
+# snapshot logging
+# non-qwerty keyboard mapping
+# primary secondary mouse button awareness
+
+
+
 from __future__ import absolute_import, division, print_function
 
 
 __version__ = '0.9.48'
 
 import sys, time, datetime, os, platform, re
+
+
+class PyAutoGUIException(Exception):
+    pass
+
+class FailSafeException(PyAutoGUIException):
+    pass
 
 
 if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3,2)):
@@ -45,7 +59,7 @@ try:
     # linear has also been redefined in this file.
 except ImportError:
     def couldNotImportPyTweening():
-        raise Exception('PyAutoGUI was unable to import pytweening. Please install this module.')
+        raise PyAutoGUIException('PyAutoGUI was unable to import pytweening. Please install this module to enable the function you tried to call.')
         easeInQuad = easeOutQuad = easeInOutQuad = \
         easeInCubic = easeOutCubic = easeInOutCubic = easeInQuart = easeOutQuart = \
         easeInOutQuart = easeInQuint = easeOutQuint = easeInOutQuint = easeInSine = \
@@ -61,7 +75,7 @@ try:
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
     def couldNotImportPyMsgBox():
-        raise Exception('PyAutoGUI was unable to import pymsgbox. Please install this module.')
+        raise PyAutoGUIException('PyAutoGUI was unable to import pymsgbox. Please install this module to enable the function you tried to call.')
     alert = confirm = prompt = password = couldNotImportPyMsgBox
 
 
@@ -73,7 +87,7 @@ try:
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def couldNotImportPyScreeze():
-        raise Exception('PyAutoGUI was unable to import pyscreeze. Please install this module.')
+        raise PyAutoGUIException('PyAutoGUI was unable to import pyscreeze. (This is likely because you\'re running a version of Python that Pillow (which pyscreeze depends on) doesn\'t support currently.) Please install this module to enable the function you tried to call.')
     center = grab = locate = locateAll = locateAllOnScreen = locateCenterOnScreen = locateOnScreen = pixel = pixelMatchesColor = screenshot = couldNotImportPyScreeze
 
 try:
@@ -82,12 +96,12 @@ try:
         mouseinfo.MouseInfoWindow()
 except ImportError:
     def mouseInfo():
-        raise Exception('PyAutoGUI was unable to import mouseinfo. Please install this module.')
+        raise PyAutoGUIException('PyAutoGUI was unable to import mouseinfo. Please install this module to enable the function you tried to call.')
 
 def useImageNotFoundException(value=None):
     if value is None:
         value = True
-    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
+    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value # TODO - this will cause a NameError if PyScreeze couldn't be imported.
 
 
 
@@ -98,7 +112,7 @@ if sys.platform == 'win32': # PyGetWindow currently only supports Windows.
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
         def couldNotImportPyGetWindow():
-            raise Exception('PyAutoGUI was unable to import pygetwindow. Please install this module.')
+            raise PyAutoGUIException('PyAutoGUI was unable to import pygetwindow. Please install this module to enable the function you tried to call.')
         Window = getActiveWindow = getWindowsAt = getWindowsWithTitle = getAllWindows = getAllTitles = couldNotImportPyGetWindow
 
 
@@ -1238,12 +1252,6 @@ def hotkey(*args, **kwargs):
     _autoPause(kwargs.get('pause', None), kwargs.get('_pause', True))
 
 
-class PyAutoGUIException(Exception):
-    pass
-
-class FailSafeException(PyAutoGUIException):
-    pass
-
 def failSafeCheck():
     if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
         raise FailSafeException('PyAutoGUI fail-safe triggered from mouse moving to a corner of the screen. To disable this fail-safe, set pyautogui.FAILSAFE to False. DISABLING FAIL-SAFE IS NOT RECOMMENDED.')
@@ -1287,7 +1295,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
         sys.stdout.flush()
 
 
-def snapshot(tag, folder=None, region=None, radius=None):
+def _snapshot(tag, folder=None, region=None, radius=None):
     # TODO feature not finished
     if region is not None and radius is not None:
         raise Exception('Either region or radius arguments (or neither) can be passed to snapshot, but not both')
@@ -1591,38 +1599,43 @@ def run(commandStr, _ssCount=None):
     made for this function. The `commandStr` is composed of character
     commands that represent PyAutoGUI function calls.
 
+    For example, `run('ccg-20,+0c')` clicks the mouse twice, then makes
+    the mouse cursor go 20 pixels to the left, then click again.
+
+    Whitespace between commands and arguments is ignored. Command characters
+    must be lowercase. Quotes must be single quotes.
+
+    For example, the previous call could also be written as `run('c c g -20, +0 c')`.
+
     The character commands and their equivalents are here:
 
-    c = click(button=PRIMARY)
-    l = click(button=LEFT)
-    m = click(button=MIDDLE)
-    r = click(button=RIGHT)
-    su = scroll(1) # scroll up
-    sd = scroll(-1) # scroll down
-    ss = screenshot('screenshot1.png') # the filename increments each time
+    `c` => `click(button=PRIMARY)`
+    `l` => `click(button=LEFT)`
+    `m` => `click(button=MIDDLE)`
+    `r` => `click(button=RIGHT)`
+    `su` => `scroll(1) # scroll up`
+    `sd` => `scroll(-1) # scroll down`
+    `ss` => `screenshot('screenshot1.png') # filename number increases on its own`
 
-    gX,Y = moveTo(X, Y)
-    g+|-X,+|-Y = move(X, Y)
-    dX,Y = dragTo(X, Y)
-    d+|-X,+|-Y = drag(X, Y)
+    `gX,Y` => `moveTo(X, Y)`
+    `g+X,-Y` => `move(X, Y) # The + or - prefix is the difference between move() and moveTo()`
+    `dX,Y` => `dragTo(X, Y)`
+    `d+X,-Y` => `drag(X, Y) # The + or - prefix is the difference between drag() and dragTo()`
 
-    k'key' = press('key')
-    w'text' = write('text')
-    h'key,key,key' = hotkey(*'key,key,key'.replace(' ', '').split(','))
-    a'hello' = alert('hello')
+    `k'key'` => `press('key')`
+    `w'text'` => `write('text')`
+    `h'key,key,key'` => `hotkey(*'key,key,key'.replace(' ', '').split(','))`
+    `a'hello'` => `alert('hello')`
 
-    sN = sleep(N)
-    sN.N = sleep(N.N)
-    pN = PAUSE = N
-    pN.N = PAUSE = N.N
+    `sN` => `sleep(N) # N can be an int or float`
+    `pN` => `PAUSE = N # N can be an int or float`
 
-    fN(commands) = for i in range(N): run(commands)
+    `fN(commands)` => for i in range(N): run(commands)
 
-    Whitespace is ignored. Command characters must be lowercase. Quotes must
-    be single quotes.
+    Note that any changes to `PAUSE` with the `p` command will be undone when
+    this function returns. The original `PAUSE` setting will be reset.
 
-    Note that any changes to PAUSE with the p command will be undone before
-    this function returns.
+    TODO - This function is under development.
     """
 
     # run("ccc")  straight forward

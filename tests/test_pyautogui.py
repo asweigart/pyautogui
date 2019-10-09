@@ -738,15 +738,36 @@ class TestKeyboard(unittest.TestCase):
 class TestFailSafe(unittest.TestCase):
     def test_failsafe(self):
         self.oldFailsafeSetting = pyautogui.FAILSAFE
-        pyautogui.FAILSAFE = False
-        pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with
 
+        pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with
         for x, y in pyautogui.FAILSAFE_POINTS:
             pyautogui.FAILSAFE = True
-            self.assertRaises(pyautogui.FailSafeException, pyautogui.moveTo, x, y)
+            # When move(), moveTo(), drag(), or dragTo() moves the mouse to a
+            # failsafe point, it shouldn't raise the fail safe. (This would
+            # be annoying. Only a human moving the mouse to a failsafe point
+            # should trigger the failsafe.)
+            pyautogui.moveTo(x, y)
 
             pyautogui.FAILSAFE = False
-            pyautogui.moveTo(x, y)# This line should not cause the fail safe exception to be raised.
+            pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with (for the next iteration)
+
+        pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with
+        for x, y in pyautogui.FAILSAFE_POINTS:
+            pyautogui.FAILSAFE = True
+            pyautogui.moveTo(x, y) # This line should not cause the fail safe exception to be raised.
+
+            # A second pyautogui function call to do something while the cursor is in a fail safe point SHOULD raise the failsafe:
+            self.assertRaises(pyautogui.FailSafeException, pyautogui.press, 'esc')
+
+            pyautogui.FAILSAFE = False
+            pyautogui.moveTo(1, 1) # make sure mouse is not in failsafe position to begin with (for the next iteration)
+
+        for x, y in pyautogui.FAILSAFE_POINTS:
+            pyautogui.FAILSAFE = False
+            pyautogui.moveTo(x, y) # This line should not cause the fail safe exception to be raised.
+
+            # This line shouldn't cause a failsafe to trigger because FAILSAFE is set to False.
+            pyautogui.press('esc')
 
         pyautogui.FAILSAFE = self.oldFailsafeSetting
 
