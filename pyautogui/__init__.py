@@ -507,7 +507,10 @@ def click(x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, 
     _logScreenshot(logScreenshot, 'click', '%s,%s,%s,%s' % (button, clicks, x, y), folder='.')
 
     if sys.platform == 'darwin':
-        platformModule._multiClick(x, y, button, 3)
+        for i in range(clicks):
+            _failSafeCheck()
+            if button in (LEFT, MIDDLE, RIGHT):
+                platformModule._multiClick(x, y, button, 1, interval)
     else:
         for i in range(clicks):
             _failSafeCheck()
@@ -641,7 +644,7 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
         platformModule._multiClick(x, y, button, 2)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
     _autoPause(pause, _pause)
@@ -686,7 +689,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _logScreenshot(logScreenshot, 'click', '%s,3,%s,%s' % (x, y), folder='.')
         platformModule._multiClick(x, y, button, 3)
     else:
-		# Click for Windows or Linux:
+        # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
     _autoPause(pause, _pause)
 
