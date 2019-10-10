@@ -1,14 +1,19 @@
+import io
+import os
 import re
 from setuptools import setup
 
-# Load version from module (without loading the whole module)
+scriptFolder = os.path.dirname(os.path.realpath(__file__))
+os.chdir(scriptFolder)
+
+# Find version info from module (without importing the module):
 with open('pyautogui/__init__.py', 'r') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
-# Read in the README.md for the long description.
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+# Use the README.md content for the long description:
+with io.open("README.md", encoding="utf-8") as fileObj:
+    long_description = fileObj.read()
 
 setup(
     name='PyAutoGUI',
@@ -16,8 +21,7 @@ setup(
     url='https://github.com/asweigart/pyautogui',
     author='Al Sweigart',
     author_email='al@inventwithpython.com',
-    description=('A cross-platform module for GUI automation for human beings. '
-                 'Control the keyboard and mouse from a Python script.'),
+    description=('PyAutoGUI lets Python control the mouse and keyboard, and other GUI automation tasks. For Windows, macOS, and Linux, on Python 3 and 2.'),
     long_description=long_description,
     long_description_content_type="text/markdown",
     license='BSD',
