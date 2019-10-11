@@ -1,16 +1,8 @@
-# PyAutoGUI: Cross-platform GUI automation for human beings.
-# BSD license
+# PyAutoGUI lets Python control the mouse and keyboard, and other GUI automation tasks. For Windows, macOS, and Linux,
+# on Python 3 and 2.
+# https://github.com/asweigart/pyautogui
 # Al Sweigart al@inventwithpython.com (Send me feedback & suggestions!)
 
-"""
-IMPORTANT NOTE!
-
-
-
-To use this module on Windows, you do not need anything else.
-
-You will need PIL/Pillow to use the screenshot features.
-"""
 
 
 # TODO - the following features are half-implemented right now:
@@ -34,10 +26,20 @@ import re
 from .keynames import KEY_NAMES
 
 class PyAutoGUIException(Exception):
+    """
+    PyAutoGUI code will raise this exception class for any invalid actions. If PyAutoGUI raises some other exception,
+    you should assume that this is caused by a bug in PyAutoGUI itself. (Including a failure to catch potential
+    exceptions raised by PyAutoGUI.)
+    """
     pass
 
 
 class FailSafeException(PyAutoGUIException):
+    """
+    This exception is raised by PyAutoGUI functions when the user puts the mouse cursor into one of the"failsafe
+    points" (by default, one of the four corners of the primary monitor). This exception shouldn't be caught; it's
+    meant to provide a way to terminate a misbehaving script.
+    """
     pass
 
 
@@ -94,39 +96,43 @@ try:
 except ImportError:
 
     def couldNotImportPyTweening():
+        """
+        This function raises PyAutoGUIException. It's used for the PyTweening function names if the PyTweening module
+        failed to be imported.
+        """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import pytweening. Please install this module to enable the function you tried to call."
         )
-        easeInQuad = couldNotImportPyTweening
-        easeOutQuad = couldNotImportPyTweening
-        easeInOutQuad = couldNotImportPyTweening
-        easeInCubic = couldNotImportPyTweening
-        easeOutCubic = couldNotImportPyTweening
-        easeInOutCubic = couldNotImportPyTweening
-        easeInQuart = couldNotImportPyTweening
-        easeOutQuart = couldNotImportPyTweening
-        easeInOutQuart = couldNotImportPyTweening
-        easeInQuint = couldNotImportPyTweening
-        easeOutQuint = couldNotImportPyTweening
-        easeInOutQuint = couldNotImportPyTweening
-        easeInSine = couldNotImportPyTweening
-        easeOutSine = couldNotImportPyTweening
-        easeInOutSine = couldNotImportPyTweening
-        easeInExpo = couldNotImportPyTweening
-        easeOutExpo = couldNotImportPyTweening
-        easeInOutExpo = couldNotImportPyTweening
-        easeInCirc = couldNotImportPyTweening
-        easeOutCirc = couldNotImportPyTweening
-        easeInOutCirc = couldNotImportPyTweening
-        easeInElastic = couldNotImportPyTweening
-        easeOutElastic = couldNotImportPyTweening
-        easeInOutElastic = couldNotImportPyTweening
-        easeInBack = couldNotImportPyTweening
-        easeOutBack = couldNotImportPyTweening
-        easeInOutBack = couldNotImportPyTweening
-        easeInBounce = couldNotImportPyTweening
-        easeOutBounce = couldNotImportPyTweening
-        easeInOutBounce = couldNotImportPyTweening
+    easeInQuad = couldNotImportPyTweening
+    easeOutQuad = couldNotImportPyTweening
+    easeInOutQuad = couldNotImportPyTweening
+    easeInCubic = couldNotImportPyTweening
+    easeOutCubic = couldNotImportPyTweening
+    easeInOutCubic = couldNotImportPyTweening
+    easeInQuart = couldNotImportPyTweening
+    easeOutQuart = couldNotImportPyTweening
+    easeInOutQuart = couldNotImportPyTweening
+    easeInQuint = couldNotImportPyTweening
+    easeOutQuint = couldNotImportPyTweening
+    easeInOutQuint = couldNotImportPyTweening
+    easeInSine = couldNotImportPyTweening
+    easeOutSine = couldNotImportPyTweening
+    easeInOutSine = couldNotImportPyTweening
+    easeInExpo = couldNotImportPyTweening
+    easeOutExpo = couldNotImportPyTweening
+    easeInOutExpo = couldNotImportPyTweening
+    easeInCirc = couldNotImportPyTweening
+    easeOutCirc = couldNotImportPyTweening
+    easeInOutCirc = couldNotImportPyTweening
+    easeInElastic = couldNotImportPyTweening
+    easeOutElastic = couldNotImportPyTweening
+    easeInOutElastic = couldNotImportPyTweening
+    easeInBack = couldNotImportPyTweening
+    easeOutBack = couldNotImportPyTweening
+    easeInOutBack = couldNotImportPyTweening
+    easeInBounce = couldNotImportPyTweening
+    easeOutBounce = couldNotImportPyTweening
+    easeInOutBounce = couldNotImportPyTweening
 
 
 try:
@@ -135,6 +141,10 @@ try:
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
     def couldNotImportPyMsgBox():
+        """
+        This function raises PyAutoGUIException. It's used for the PyMsgBox function names if the PyMsgbox module
+        failed to be imported.
+        """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import pymsgbox. Please install this module to enable the function you tried to call."
         )
@@ -159,32 +169,44 @@ try:
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def couldNotImportPyScreeze():
+        """
+        This function raises PyAutoGUIException. It's used for the PyScreeze function names if the PyScreeze module
+        failed to be imported.
+        """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."
         )
 
-        center = couldNotImportPyScreeze
-        grab = couldNotImportPyScreeze
-        locate = couldNotImportPyScreeze
-        locateAll = couldNotImportPyScreeze
-        locateAllOnScreen = couldNotImportPyScreeze
-        locateCenterOnScreen = couldNotImportPyScreeze
-        locateOnScreen = couldNotImportPyScreeze
-        pixel = couldNotImportPyScreeze
-        pixelMatchesColor = couldNotImportPyScreeze
-        screenshot = couldNotImportPyScreeze
+    center = couldNotImportPyScreeze
+    grab = couldNotImportPyScreeze
+    locate = couldNotImportPyScreeze
+    locateAll = couldNotImportPyScreeze
+    locateAllOnScreen = couldNotImportPyScreeze
+    locateCenterOnScreen = couldNotImportPyScreeze
+    locateOnScreen = couldNotImportPyScreeze
+    pixel = couldNotImportPyScreeze
+    pixelMatchesColor = couldNotImportPyScreeze
+    screenshot = couldNotImportPyScreeze
 
 
 try:
     import mouseinfo
 
     def mouseInfo():
+        """
+        Launches the MouseInfo app. This application provides mouse coordinate information which can be useful when
+        planning GUI automation tasks. This function blocks until the application is closed.
+        """
         mouseinfo.MouseInfoWindow()
 
 
 except ImportError:
 
     def mouseInfo():
+        """
+        This function raises PyAutoGUIException. It's used for the MouseInfo function names if the MouseInfo module
+        failed to be imported.
+        """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import mouseinfo. Please install this module to enable the function you tried to call."
         )
@@ -212,6 +234,10 @@ if sys.platform == "win32":  # PyGetWindow currently only supports Windows.
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
         def couldNotImportPyGetWindow():
+            """
+            This function raises PyAutoGUIException. It's used for the PyGetWindow function names if the PyGetWindow
+            module failed to be imported.
+            """
             raise PyAutoGUIException(
                 "PyAutoGUI was unable to import pygetwindow. Please install this module to enable the function you tried to call."
             )
@@ -242,8 +268,11 @@ QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZU
 
 
 def isShiftCharacter(character):
-    """Returns True if the key character is uppercase or shifted."""
-    return character.isupper() or character in '~!@#$%^&*()_+{}|:"<>?'
+    """
+    Returns True if the `character` is a keyboard key that would require the shift key to be held down, such as
+    uppercase letters or the symbols on the keyboard's number row.
+    """
+    return character.isupper() or character in set('~!@#$%^&*()_+{}|:"<>?')
 
 
 # The platformModule is where we reference the platform-specific functions.
@@ -293,10 +322,11 @@ Size = collections.namedtuple("Size", "width height")
 
 
 def getPointOnLine(x1, y1, x2, y2, n):
-    """Returns the (x, y) tuple of the point that has progressed a proportion
-    n along the line defined by the two x, y coordinates.
+    """
+    Returns an (x, y) tuple of the point that has progressed a proportion `n` along the line defined by the two
+    `x`, `y` coordinates.
 
-    Copied from pytweening module.
+    This function was copied from pytweening module, so that it can be called even if PyTweening is not installed.
     """
     x = ((x2 - x1) * n) + x1
     y = ((y2 - y1) * n) + y1
@@ -304,9 +334,10 @@ def getPointOnLine(x1, y1, x2, y2, n):
 
 
 def linear(n):
-    """Trivial linear tweening function.
+    """
+    Trivial linear tweening function.
 
-    Copied from pytweening module.
+    This function was copied from pytweening module, so that it can be called even if PyTweening is not installed.
     """
 
     # We use this function instead of pytweening.linear for the default tween function just in case pytweening couldn't be imported.
@@ -316,7 +347,10 @@ def linear(n):
 
 
 def _autoPause(pause, _pause):
-    """If `pause` is not `None`, then sleep for `pause` seconds.
+    """
+    A helper function for performing a pause at the end of a PyAutoGUI function based on some settings.
+
+    If `pause` is not `None`, then sleep for `pause` seconds.
     If `_pause` is `True`, then sleep for `PAUSE` seconds (the global pause setting).
 
     This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, `_pause`
@@ -1197,12 +1231,9 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         tweenX = int(round(tweenX))
         tweenY = int(round(tweenY))
 
-        # Moving the cursor to a fail-safe corner as part of the planned
-        # mouse movements shouldn't trigger the fail-safe. This may seem
-        # ridiculous, but remember that (tweenX, tweenY) is the *calculated*
-        # coordinate of where the mouse should be, while failSafeCheck()
-        # uses the *actual position* of the mouse from position() to
-        # decide if it should raise the fail-safe exception.
+        # Do a fail-safe check to see if the user moved the mouse to a fail-safe position, but not if the mouse cursor
+        # moved there as a result of a this function. (Just because tweenX and tweenY aren't in a fail-safe position
+        # doesn't mean the user couldn't have moved the mouse cursor to a fail-safe position.)
         if (tweenX, tweenY) not in FAILSAFE_POINTS:
             failSafeCheck()
 
@@ -1300,6 +1331,8 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
     Returns:
       None
     """
+    failSafeCheck()
+
     if type(keys) == str:
         keys = [keys]  # If keys is 'enter', convert it to ['enter'].
     else:
@@ -1695,6 +1728,7 @@ def _tokenizeCommandStr(commandStr):
 
 
 def _runCommandList(commandList, _ssCount):
+    global PAUSE
     i = 0
     while i < len(commandList):
         command = commandList[i]
