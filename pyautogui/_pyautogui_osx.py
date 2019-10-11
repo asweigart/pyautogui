@@ -413,7 +413,6 @@ def _multiClick(x, y, button, num, interval=0.0):
         time.sleep(interval)
 
 
-
 def _sendMouseEvent(ev, x, y, button):
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, ev, (x, y), button)
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
