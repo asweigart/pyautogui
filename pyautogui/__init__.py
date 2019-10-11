@@ -650,7 +650,7 @@ def click(
 
     if sys.platform == 'darwin':
         for i in range(clicks):
-            _failSafeCheck()
+            failSafeCheck()
             if button in (LEFT, MIDDLE, RIGHT):
                 platformModule._multiClick(x, y, button, 1, interval)
     else:
