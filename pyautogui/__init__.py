@@ -1291,7 +1291,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
     Args:
       key (str, list): The key to be pressed. The valid names are listed in
       KEYBOARD_KEYS. Can also be a list of such strings.
-      presses (integer, optiional): the number of press repetition
+      presses (integer, optional): the number of press repetition
       1 by default, for just one press
       interval (float, optional): How many seconds between each press.
       0.0 by default, for no pause between presses.
