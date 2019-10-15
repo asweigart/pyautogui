@@ -234,15 +234,11 @@ class TestGeneral(unittest.TestCase):
                     value, pyautogui.onScreen(coord), "onScreen({0}) should be {1}".format(repr(coord), value)
                 )
 
-        # These can raise either ValueError or TypeError.
-        with self.assertRaises(ValueError):
+        # These raise PyAutoGUIException.
+        with self.assertRaises(pyautogui.PyAutoGUIException):
             pyautogui.onScreen([0, 0], 0)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(pyautogui.PyAutoGUIException):
             pyautogui.onScreen((0, 0), 0)
-        with self.assertRaises(TypeError):
-            pyautogui.onScreen(0, 0, 0)
-        with self.assertRaises(TypeError):
-            pyautogui.onScreen(0)
 
     def test_pause(self):
         oldValue = pyautogui.PAUSE
@@ -326,18 +322,6 @@ class TestMouse(unittest.TestCase):
         mousepos = P(*pyautogui.position())
         self.assertEqual(mousepos, desired)
 
-        # moving the mouse with only x specified
-        desired -= P(42, 0)
-        pyautogui.moveTo(desired.x, None)
-        mousepos = P(*pyautogui.position())
-        self.assertEqual(mousepos, desired)
-
-        # ...and only y specified
-        desired -= P(0, 42)
-        pyautogui.moveTo(None, desired.y)
-        mousepos = P(*pyautogui.position())
-        self.assertEqual(mousepos, desired)
-
         # Passing a list instead of separate x and y.
         desired += P(42, 42)
         pyautogui.moveTo(list(desired))
@@ -397,25 +381,25 @@ class TestMouse(unittest.TestCase):
 
         # move right
         desired += P(42, 0)
-        pyautogui.moveRel(42, None)
+        pyautogui.moveRel(42, 0)
         mousepos = P(*pyautogui.position())
         self.assertEqual(mousepos, desired)
 
         # move down
         desired += P(0, 42)
-        pyautogui.moveRel(None, 42)
+        pyautogui.moveRel(0, 42)
         mousepos = P(*pyautogui.position())
         self.assertEqual(mousepos, desired)
 
         # move left
         desired += P(-42, 0)
-        pyautogui.moveRel(-42, None)
+        pyautogui.moveRel(-42, 0)
         mousepos = P(*pyautogui.position())
         self.assertEqual(mousepos, desired)
 
         # move up
         desired += P(0, -42)
-        pyautogui.moveRel(None, -42)
+        pyautogui.moveRel(0, -42)
         mousepos = P(*pyautogui.position())
         self.assertEqual(mousepos, desired)
 

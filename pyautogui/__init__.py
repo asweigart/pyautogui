@@ -109,8 +109,8 @@ except ImportError:
 
     def couldNotImportPyTweening():
         """
-        This function raises PyAutoGUIException. It's used for the PyTweening function names if the PyTweening module
-        failed to be imported.
+        This function raises ``PyAutoGUIException``. It's used for the PyTweening function names if the PyTweening
+        module failed to be imported.
         """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import pytweening. Please install this module to enable the function you tried to call."
@@ -154,7 +154,7 @@ except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
     def couldNotImportPyMsgBox():
         """
-        This function raises PyAutoGUIException. It's used for the PyMsgBox function names if the PyMsgbox module
+        This function raises ``PyAutoGUIException``. It's used for the PyMsgBox function names if the PyMsgbox module
         failed to be imported.
         """
         raise PyAutoGUIException(
@@ -171,7 +171,7 @@ except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def couldNotImportPyScreeze():
         """
-        This function raises PyAutoGUIException. It's used for the PyScreeze function names if the PyScreeze module
+        This function raises ``PyAutoGUIException``. It's used for the PyScreeze function names if the PyScreeze module
         failed to be imported.
         """
         raise PyAutoGUIException(
@@ -337,7 +337,7 @@ QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZU
 
 def isShiftCharacter(character):
     """
-    Returns True if the `character` is a keyboard key that would require the shift key to be held down, such as
+    Returns True if the ``character`` is a keyboard key that would require the shift key to be held down, such as
     uppercase letters or the symbols on the keyboard's number row.
     """
     return character.isupper() or character in set('~!@#$%^&*()_+{}|:"<>?')
@@ -394,14 +394,16 @@ def _genericPyAutoGUIChecks(wrappedFunction):
     A decorator that calls failSafeCheck() before the decorated function and
     _handlePause() after it.
     """
+
     @functools.wraps(wrappedFunction)
     def wrapper(*args, **kwargs):
         funcArgs = inspect.getcallargs(wrappedFunction, *args, **kwargs)
 
         failSafeCheck()
         returnVal = wrappedFunction(*args, **kwargs)
-        _handlePause(funcArgs.get('pause'), funcArgs.get('_pause'))
+        _handlePause(funcArgs.get("pause"), funcArgs.get("_pause"))
         return returnVal
+
     return wrapper
 
 
@@ -411,8 +413,8 @@ def _genericPyAutoGUIChecks(wrappedFunction):
 
 def getPointOnLine(x1, y1, x2, y2, n):
     """
-    Returns an (x, y) tuple of the point that has progressed a proportion `n` along the line defined by the two
-    `x`, `y` coordinates.
+    Returns an (x, y) tuple of the point that has progressed a proportion ``n`` along the line defined by the two
+    ``x1``, ``y1`` and ``x2``, ``y2`` coordinates.
 
     This function was copied from pytweening module, so that it can be called even if PyTweening is not installed.
     """
@@ -423,15 +425,15 @@ def getPointOnLine(x1, y1, x2, y2, n):
 
 def linear(n):
     """
-    Returns n, where n is the float argument between 0.0 and 1.0. This function is for the default linear tween for
-    mouse moving functions.
+    Returns ``n``, where ``n`` is the float argument between ``0.0`` and ``1.0``. This function is for the default
+    linear tween for mouse moving functions.
 
-    This function was copied from pytweening module, so that it can be called even if PyTweening is not installed.
+    This function was copied from PyTweening module, so that it can be called even if PyTweening is not installed.
     """
 
     # We use this function instead of pytweening.linear for the default tween function just in case pytweening couldn't be imported.
     if not 0.0 <= n <= 1.0:
-        raise ValueError("Argument must be between 0.0 and 1.0.")
+        raise PyAutoGUIException("Argument must be between 0.0 and 1.0.")
     return n
 
 
@@ -439,13 +441,13 @@ def _handlePause(pause, _pause):
     """
     A helper function for performing a pause at the end of a PyAutoGUI function based on some settings.
 
-    If `pause` is not `None`, then sleep for `pause` seconds.
-    Otherwise, if `_pause` is `True`, then sleep for `PAUSE` seconds (the global pause setting).
+    If `pause`` is not ``None``, then sleep for ``pause`` seconds.
+    Otherwise, if ``_pause`` is ``True``, then sleep for ``PAUSE`` seconds (the global pause setting).
 
-    This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, `_pause`
-    is set to `True` to add a short sleep so that the user can engage the failsafe. By default, this sleep
-    is as long as `PAUSE` settings. However, this can be override by passing an argument for the `pause` parameter,
-    in which case the sleep is as long as `pause` seconds.
+    This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, ``_pause``
+    is set to ``True`` to add a short sleep so that the user can engage the failsafe. By default, this sleep
+    is as long as ``PAUSE`` settings. However, this can be override by passing an argument for the ``pause`` parameter,
+    in which case the sleep is as long as ``pause`` seconds.
     """
     if pause is not None:
         time.sleep(pause)
@@ -456,13 +458,17 @@ def _handlePause(pause, _pause):
 
 def _normalizeXYArgs(firstArg, secondArg):
     """
-    Returns a `Point` object based on `firstArg` and `secondArg`, which are the first two arguments passed to several
-    PyAutoGUI functions.
+    Returns a ``Point`` object based on ``firstArg`` and ``secondArg``, which are the first two arguments passed to
+    several PyAutoGUI functions. If ``firstArg`` and ``secondArg`` are both ``None``, returns the current mouse cursor
+    position.
 
-    `firstArg` and `secondArg` can be integers, a sequence of integers, or a string representing an image filename
+    ``firstArg`` and ``secondArg`` can be integers, a sequence of integers, or a string representing an image filename
     to find on the screen (and return the center coordinates of).
     """
-    if isinstance(firstArg, str):
+    if firstArg is None and secondArg is None:
+        return position()
+
+    elif isinstance(firstArg, str):
         # If x is a string, we assume it's an image filename to locate on the screen:
         try:
             location = locateOnScreen(firstArg)
@@ -481,9 +487,9 @@ def _normalizeXYArgs(firstArg, secondArg):
         if len(firstArg) == 2:
             # firstArg is a two-integer tuple: (x, y)
             if secondArg is None:
-                return Point(firstArg[0], firstArg[1])
+                return Point(int(firstArg[0]), int(firstArg[1]))
             else:
-                raise ValueError(
+                raise PyAutoGUIException(
                     "When passing a sequence for firstArg, secondArg must not be passed (received {0}).".format(
                         repr(secondArg)
                     )
@@ -493,19 +499,19 @@ def _normalizeXYArgs(firstArg, secondArg):
             if secondArg is None:
                 return center(firstArg)
             else:
-                raise ValueError(
+                raise PyAutoGUIException(
                     "When passing a sequence for firstArg, secondArg must not be passed and default to None (received {0}).".format(
                         repr(secondArg)
                     )
                 )
         else:
-            raise ValueError(
+            raise PyAutoGUIException(
                 "The supplied sequence must have exactly 2 or exactly 4 elements ({0} were received).".format(
                     len(firstArg)
                 )
             )
     else:
-        return Point(firstArg, secondArg)  # firstArg and secondArg are just x and y number values
+        return Point(int(firstArg), int(secondArg))  # firstArg and secondArg are just x and y number values
 
 
 def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
@@ -513,14 +519,14 @@ def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
     A helper function that creates a screenshot to act as a logging mechanism. When a PyAutoGUI function is called,
     this function is also called to capture the state of the screen when that function was called.
 
-    If `logScreenshot` is `False` (or None and the `LOG_SCREENSHOTS` constant is `False`), no screenshot is taken.
+    If ``logScreenshot`` is ``False`` (or None and the ``LOG_SCREENSHOTS`` constant is ``False``), no screenshot is taken.
 
-    The `funcName` argument is a string of the calling function's name. It's used in the screenshot's filename.
+    The ``funcName`` argument is a string of the calling function's name. It's used in the screenshot's filename.
 
-    The `funcArgs` argument is a string describing the arguments passed to the calling function. It's limited to
+    The ``funcArgs`` argument is a string describing the arguments passed to the calling function. It's limited to
     tweleve characters to keep it short.
 
-    The `folder` argument is the folder to place the screenshot file in, and defaults to the current working directory.
+    The ``folder`` argument is the folder to place the screenshot file in, and defaults to the current working directory.
     """
     if logScreenshot == False:
         return  # Don't take a screenshot.
@@ -555,8 +561,8 @@ def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
 
 
 def position(x=None, y=None):
-    """Returns the current xy coordinates of the mouse cursor as a two-integer
-    tuple.
+    """
+    Returns the current xy coordinates of the mouse cursor as a two-integer tuple.
 
     Args:
       x (int, None, optional) - If not None, this argument overrides the x in
@@ -624,23 +630,28 @@ button numbers but rather just "left" or "right").
 """
 
 
-def _translateButton(button):
+def _normalizeButton(button):
     """
-    The left, middle, and right mouse buttons are button numbers 1, 2, and 3
-    respectively. This is the numbering that Xlib on Linux uses (while Windows
-    and macOS don't care about numbers; they just use "left" and "right").
+    The left, middle, and right mouse buttons are button numbers 1, 2, and 3 respectively. This is the numbering that
+    Xlib on Linux uses (while Windows and macOS don't care about numbers; they just use "left" and "right").
 
-    The 'left' and 'right' mouse buttons will always refer to the physical
-    buttons on the mouse. The same applies for button 1 and 3.
+    This function takes one of ``LEFT``, ``MIDDLE``, ``RIGHT``, ``PRIMARY``, ``SECONDARY``, ``1``, ``2``, ``3``, ``4``,
+    ``5``, ``6``, or ``7`` for the button argument and returns either ``LEFT``, ``MIDDLE``, ``RIGHT``, ``4``, ``5``,
+    ``6``, or ``7``. The ``PRIMARY``, ``SECONDARY``, ``1``, ``2``, and ``3`` values are never returned.
 
-    However, if `button` is 'primary' or 'secondary', then we must check if
-    the mouse buttons have been "swapped" by the operating system's mouse
-    settings. If not swapped, the primary and secondary buttons are the left
-    and right mouse buttons respectively, and if swapped, the primary and
-    secondary buttons are the right and left mouse buttons, respectively.
+    The ``'left'`` and ``'right'`` mouse buttons will always refer to the physical left and right
+    buttons on the mouse. The same applies for buttons 1 and 3.
 
-    TODO - The swap detection hasn't been done yet.
+    However, if ``button`` is ``'primary'`` or ``'secondary'``, then we must check if
+    the mouse buttons have been "swapped" (for left-handed users) by the operating system's mouse
+    settings.
+
+    If the buttons are swapped, the primary button is the right mouse button and the secondary button is the left mouse
+    button. If not swapped, the primary and secondary buttons are the left and right buttons, respectively.
+
+    NOTE: Swap detection has not been implemented yet.
     """
+    # TODO - The swap detection hasn't been done yet. For Windows, see https://stackoverflow.com/questions/45627956/check-if-mouse-buttons-are-swapped-or-not-in-c
     # TODO - We should check the OS settings to see if it's a left-hand setup, where button 1 would be "right".
 
     # Check that `button` has a valid value:
@@ -648,13 +659,13 @@ def _translateButton(button):
     if platform.system() == "Linux":
         # Check for valid button arg on Linux:
         if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3, 4, 5, 6, 7):
-            raise ValueError(
+            raise PyAutoGUIException(
                 "button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3, 4, 5, 6, 7)"
             )
     else:
         # Check for valid button arg on Windows and macOS:
         if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3):
-            raise ValueError(
+            raise PyAutoGUIException(
                 "button argument must be one of ('left', 'middle', 'right', 'primary', 'secondary', 1, 2, 3)"
             )
 
@@ -674,6 +685,7 @@ def _translateButton(button):
 
     # Return a mouse button integer value, not a string like 'left':
     return {LEFT: LEFT, MIDDLE: MIDDLE, RIGHT: RIGHT, 1: LEFT, 2: MIDDLE, 3: RIGHT, 4: 4, 5: 5, 6: 6, 7: 7}[button]
+
 
 @_genericPyAutoGUIChecks
 def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -697,14 +709,13 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
       None
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
-    button = _translateButton(button)
+    button = _normalizeButton(button)
     x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
 
-    x, y = platformModule._position()  # TODO Why do we call _position() here and overwrite x, y?
     _logScreenshot(logScreenshot, "mouseDown", "%s,%s" % (x, y), folder=".")
     platformModule._mouseDown(x, y, button)
 
@@ -731,14 +742,13 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
       None
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
-    button = _translateButton(button)
+    button = _normalizeButton(button)
     x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
 
-    x, y = platformModule._position()  # TODO Why do we call _position() here and overwrite x, y?
     _logScreenshot(logScreenshot, "mouseUp", "%s,%s" % (x, y), folder=".")
     platformModule._mouseUp(x, y, button)
 
@@ -756,39 +766,43 @@ def click(
     logScreenshot=None,
     _pause=True,
 ):
-    """Performs pressing a mouse button down and then immediately releasing it.
+    """
+    Performs pressing a mouse button down and then immediately releasing it. Returns ``None``.
 
-    The x and y parameters detail where the mouse event happens. If None, the
-    current mouse position is used. If a float value, it is rounded down. If
-    outside the boundaries of the screen, the event happens at edge of the
-    screen.
+    When no arguments are passed, the primary mouse button is clicked at the mouse cursor's current location.
 
-    Args:
-      x (int, float, None, tuple, str, optional): The x position on the screen where
-        the click happens. None by default. If tuple, this is used for x and y.
-        If x is a str, it's considered a filename of an image to find on
-        the screen with locateOnScreen() and click the center of.
-      y (int, float, None, optional): The y position on the screen where the
-        click happens. None by default.
-      clicks (int, optional): The number of clicks to perform. 1 by default.
-        For example, passing 2 would do a doubleclick.
-      interval (float, optional): The number of seconds in between each click,
-        if the number of clicks is greater than 1. 0.0 by default, for no
-        pause in between clicks.
-      button (str, int, optional): The mouse button clicked. TODO
+    If integers for ``x`` and ``y`` are passed, the click will happen at that XY coordinate. If ``x`` is a string, the
+    string is an image filename that PyAutoGUI will attempt to locate on the screen and click the center of. If ``x``
+    is a sequence of two coordinates, those coordinates will be used for the XY coordinate to click on.
 
-    Returns:
-      None
+    The ``clicks`` argument is an int of how many clicks to make, and defaults to ``1``.
+
+    The ``interval`` argument is an int or float of how many seconds to wait in between each click, if ``clicks`` is
+    greater than ``1``. It defaults to ``0.0`` for no pause in between clicks.
+
+    The ``button`` argument is one of the constants ``LEFT``, ``MIDDLE``, ``RIGHT``, ``PRIMARY``, or ``SECONDARY``.
+    It defaults to ``PRIMARY`` (which is the left mouse button, unless the operating system has been set for
+    left-handed users.)
+
+    If ``x`` and ``y`` are specified, and the click is not happening at the mouse cursor's current location, then
+    the ``duration`` argument is an int or float of how many seconds it should take to move the mouse to the XY
+    coordinates. It defaults to ``0`` for an instant move.
+
+    If ``x`` and ``y`` are specified and ``duration`` is not ``0``, the ``tween`` argument is a tweening function
+    that specifies the movement pattern of the mouse cursor as it moves to the XY coordinates. The default is a
+    simple linear tween. See the PyTweening module documentation for more details.
+
+    The ``pause`` parameter is deprecated. Call the ``pyautogui.sleep()`` function to implement a pause.
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, 3
     """
-    button = _translateButton(button)
+    # TODO: I'm leaving buttons 4, 5, 6, and 7 undocumented for now. I need to understand how they work.
+    button = _normalizeButton(button)
     x, y = _normalizeXYArgs(x, y)
 
+    # Move the mouse cursor to the x, y coordinate:
     _mouseMoveDrag("move", x, y, 0, 0, duration, tween)
-
-    x, y = platformModule._position()  # TODO Why do we call _position() here and overwrite x, y?
 
     _logScreenshot(logScreenshot, "click", "%s,%s,%s,%s" % (button, clicks, x, y), folder=".")
 
@@ -801,7 +815,6 @@ def click(
                 platformModule._click(x, y, button)
 
             time.sleep(interval)
-
 
 
 @_genericPyAutoGUIChecks
@@ -916,7 +929,7 @@ def doubleClick(
       None
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
 
@@ -961,7 +974,7 @@ def tripleClick(
       None
 
     Raises:
-      ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
     # Multiple clicks work different in OSX
@@ -1123,8 +1136,8 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
     _mouseMoveDrag("move", None, None, xOffset, yOffset, duration, tween)
 
 
-
 move = moveRel  # For PyAutoGUI 1.0, move() replaces moveRel().
+
 
 @_genericPyAutoGUIChecks
 def dragTo(
@@ -1230,7 +1243,6 @@ def dragRel(
     _mouseMoveDrag("drag", mousex, mousey, xOffset, yOffset, duration, tween, button)
     if mouseDownUp:
         mouseUp(button=button, logScreenshot=False, _pause=False)
-
 
 
 drag = dragRel  # For PyAutoGUI 1.0, we want drag() to replace dragRel().
@@ -1435,7 +1447,6 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
         time.sleep(interval)
 
 
-
 @_genericPyAutoGUIChecks
 def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
@@ -1502,7 +1513,6 @@ def hotkey(*args, **kwargs):
             c = c.lower()
         platformModule._keyUp(c)
         time.sleep(interval)
-
 
 
 def failSafeCheck():
