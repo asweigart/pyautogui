@@ -4,7 +4,6 @@
 # Al Sweigart al@inventwithpython.com (Send me feedback & suggestions!)
 
 
-
 # TODO - the following features are half-implemented right now:
 # snapshot logging
 # non-qwerty keyboard mapping
@@ -22,8 +21,10 @@ import datetime
 import os
 import platform
 import re
+import functools
 
 from .keynames import KEY_NAMES
+
 
 class PyAutoGUIException(Exception):
     """
@@ -31,16 +32,27 @@ class PyAutoGUIException(Exception):
     you should assume that this is caused by a bug in PyAutoGUI itself. (Including a failure to catch potential
     exceptions raised by PyAutoGUI.)
     """
+
     pass
 
 
 class FailSafeException(PyAutoGUIException):
     """
-    This exception is raised by PyAutoGUI functions when the user puts the mouse cursor into one of the"failsafe
+    This exception is raised by PyAutoGUI functions when the user puts the mouse cursor into one of the "failsafe
     points" (by default, one of the four corners of the primary monitor). This exception shouldn't be caught; it's
     meant to provide a way to terminate a misbehaving script.
     """
+
     pass
+
+
+class ImageNotFoundException(PyAutoGUIException):
+    """
+    This exception is the PyAutoGUI version of PyScreeze's `ImageNotFoundException`, which is raised when a locate*()
+    function call is unable to find an image.
+
+    Ideally, `pyscreeze.ImageNotFoundException` should never be raised by PyAutoGUI.
+    """
 
 
 if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3, 2)):
@@ -52,11 +64,10 @@ else:
     # Python 3.3+ uses collections.abc.Sequence
     import collections.abc
 
-    collectionsSequence = collections.abc.Sequence
+    collectionsSequence = collections.abc.Sequence  # type: ignore
 
 
 try:
-    import pytweening
     from pytweening import (
         easeInQuad,
         easeOutQuad,
@@ -103,6 +114,7 @@ except ImportError:
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import pytweening. Please install this module to enable the function you tried to call."
         )
+
     easeInQuad = couldNotImportPyTweening
     easeOutQuad = couldNotImportPyTweening
     easeInOutQuad = couldNotImportPyTweening
@@ -136,7 +148,6 @@ except ImportError:
 
 
 try:
-    import pymsgbox
     from pymsgbox import alert, confirm, prompt, password
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
@@ -154,18 +165,7 @@ except ImportError:
 
 try:
     import pyscreeze
-    from pyscreeze import (
-        center,
-        grab,
-        locate,
-        locateAll,
-        locateAllOnScreen,
-        locateCenterOnScreen,
-        locateOnScreen,
-        pixel,
-        pixelMatchesColor,
-        screenshot,
-    )
+    from pyscreeze import center, grab, pixel, pixelMatchesColor, screenshot
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def couldNotImportPyScreeze():
@@ -187,6 +187,64 @@ except ImportError:
     pixel = couldNotImportPyScreeze
     pixelMatchesColor = couldNotImportPyScreeze
     screenshot = couldNotImportPyScreeze
+
+
+def raisePyAutoGUIImageNotFoundException(wrappedFunction):
+    """
+    A decorator that wraps PyScreeze locate*() functions so that the PyAutoGUI user sees them raise PyAutoGUI's
+    ImageNotFoundException rather than PyScreeze's ImageNotFoundException. This is because PyScreeze should be
+    invisible to PyAutoGUI users.
+    """
+
+    @functools.wraps(wrappedFunction)
+    def wrapper(*args, **kwargs):
+        try:
+            return wrappedFunction(*args, **kwargs)
+        except pyscreeze.ImageNotFoundException:
+            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
+
+    return wrapper
+
+
+# Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
+@raisePyAutoGUIImageNotFoundException
+def _locate(*args, **kwargs):
+    return pyscreeze.locate(*args, **kwargs)
+
+
+locate = _locate
+
+
+@raisePyAutoGUIImageNotFoundException
+def _locateAll(*args, **kwargs):
+    return pyscreeze.locateAll(*args, **kwargs)
+
+
+locateAll = _locateAll
+
+
+@raisePyAutoGUIImageNotFoundException
+def _locateAllOnScreen(*args, **kwargs):
+    return pyscreeze.locateAllOnScreen(*args, **kwargs)
+
+
+locateAllOnScreen = _locateAllOnScreen
+
+
+@raisePyAutoGUIImageNotFoundException
+def _locateCenterOnScreen(*args, **kwargs):
+    return pyscreeze.locateCenterOnScreen(*args, **kwargs)
+
+
+locateCenterOnScreen = _locateCenterOnScreen
+
+
+@raisePyAutoGUIImageNotFoundException
+def _locateOnScreen(*args, **kwargs):
+    return pyscreeze.locateOnScreen(*args, **kwargs)
+
+
+locateOnScreen = _locateOnScreen
 
 
 try:
@@ -213,15 +271,24 @@ except ImportError:
 
 
 def useImageNotFoundException(value=None):
+    """
+    When called with no arguments, PyAutoGUI will raise ImageNotFoundException when the PyScreeze locate*() functions
+    can't find the image it was told to locate. The default behavior is to return None. Call this function with no
+    arguments (or with True as the argument) to have exceptions raised, which is a better practice.
+
+    You can also disable raising exceptions by passing False for the argument.
+    """
     if value is None:
         value = True
     # TODO - this will cause a NameError if PyScreeze couldn't be imported:
-    pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
+    try:
+        pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION = value
+    except NameError:
+        raise PyAutoGUIException("useImageNotFoundException() ws called but pyscreeze isn't installed.")
 
 
 if sys.platform == "win32":  # PyGetWindow currently only supports Windows.
     try:
-        import pygetwindow
         from pygetwindow import (
             Window,
             getActiveWindow,
@@ -300,7 +367,9 @@ MINIMUM_DURATION = 0.1
 # If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
-PAUSE = 0.1  # The number of seconds to pause after EVERY public function call. Useful for debugging.
+
+# The number of seconds to pause after EVERY public function call. Useful for debugging:
+PAUSE = 0.1  # Tenth-second pause by default.
 
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
@@ -310,7 +379,9 @@ FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 
 LOG_SCREENSHOTS = False  # If True, save screenshots for clicks and key presses.
-LOG_SCREENSHOTS_LIMIT = 10  # If not None, PyAutoGUI deletes old screenshots when this limit has been reached.
+
+# If not None, PyAutoGUI deletes old screenshots when this limit has been reached:
+LOG_SCREENSHOTS_LIMIT = 10
 G_LOG_SCREENSHOTS_FILENAMES = []  # TODO - make this a deque
 
 Point = collections.namedtuple("Point", "x y")
@@ -335,7 +406,8 @@ def getPointOnLine(x1, y1, x2, y2, n):
 
 def linear(n):
     """
-    Trivial linear tweening function.
+    Returns n, where n is the float argument between 0.0 and 1.0. This function is for the default linear tween for
+    mouse moving functions.
 
     This function was copied from pytweening module, so that it can be called even if PyTweening is not installed.
     """
@@ -346,17 +418,17 @@ def linear(n):
     return n
 
 
-def _autoPause(pause, _pause):
+def _handlePause(pause, _pause):
     """
     A helper function for performing a pause at the end of a PyAutoGUI function based on some settings.
 
     If `pause` is not `None`, then sleep for `pause` seconds.
-    If `_pause` is `True`, then sleep for `PAUSE` seconds (the global pause setting).
+    Otherwise, if `_pause` is `True`, then sleep for `PAUSE` seconds (the global pause setting).
 
     This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, `_pause`
     is set to `True` to add a short sleep so that the user can engage the failsafe. By default, this sleep
-    is as long as `PAUSE` settings. However, this can be override by setting `pause`, in which case the sleep
-    is as long as `pause` seconds.
+    is as long as `PAUSE` settings. However, this can be override by passing an argument for the `pause` parameter,
+    in which case the sleep is as long as `pause` seconds.
     """
     if pause is not None:
         time.sleep(pause)
@@ -365,56 +437,82 @@ def _autoPause(pause, _pause):
         time.sleep(PAUSE)
 
 
-def _unpackXY(x, y):
-    """If x is a sequence and y is None, returns x[0], y[0]. Else, returns x, y.
-
-    On functions that receive a pair of x,y coordinates, they can be passed as
-    separate arguments, or as a single two-element sequence.
+def _normalizeXYArgs(firstArg, secondArg):
     """
-    if isinstance(x, str):
-        # x parameter is the string of an image filename to find and click on:
-        x, y = center(locateOnScreen(x))
+    Returns a `Point` object based on `firstArg` and `secondArg`, which are the first two arguments passed to several
+    PyAutoGUI functions.
 
-    elif isinstance(x, collectionsSequence):
-        if len(x) == 2:
-            # x is a two-integer tuple: (x, y)
-            if y is None:
-                x, y = x
+    `firstArg` and `secondArg` can be integers, a sequence of integers, or a string representing an image filename
+    to find on the screen (and return the center coordinates of).
+    """
+    if isinstance(firstArg, str):
+        # If x is a string, we assume it's an image filename to locate on the screen:
+        try:
+            location = locateOnScreen(firstArg)
+            # The following code only runs if pyscreeze.USE_IMAGE_NOT_FOUND_EXCEPTION is not set to True, meaning that
+            # locateOnScreen() returns None if the image can't be found.
+            if location is not None:
+                return center(location)
+            else:
+                return None
+        except pyscreeze.ImageNotFoundException:
+            raise ImageNotFoundException
+
+        return center(locateOnScreen(firstArg))
+
+    elif isinstance(firstArg, collectionsSequence):
+        if len(firstArg) == 2:
+            # firstArg is a two-integer tuple: (x, y)
+            if secondArg is None:
+                return Point(firstArg[0], firstArg[1])
             else:
                 raise ValueError(
-                    "When passing a sequence as the x argument, the y argument must not be passed (received {0}).".format(
-                        repr(y)
+                    "When passing a sequence for firstArg, secondArg must not be passed (received {0}).".format(
+                        repr(secondArg)
                     )
                 )
-        elif len(x) == 4:
-            # x is a four-integer tuple: (left, top, width, height)
-            if y is None:
-                x, y = center(x)
+        elif len(firstArg) == 4:
+            # firstArg is a four-integer tuple, (left, top, width, height), we should return the center point
+            if secondArg is None:
+                return center(firstArg)
             else:
                 raise ValueError(
-                    "When passing a sequence as the x argument, the y argument must not be passed (received {0}).".format(
-                        repr(y)
+                    "When passing a sequence for firstArg, secondArg must not be passed and default to None (received {0}).".format(
+                        repr(secondArg)
                     )
                 )
         else:
             raise ValueError(
-                "The supplied sequence must have exactly 2 or exactly 4 elements ({0} were received).".format(len(x))
+                "The supplied sequence must have exactly 2 or exactly 4 elements ({0} were received).".format(
+                    len(firstArg)
+                )
             )
     else:
-        pass  # x and y are just number values
-
-    return x, y
+        return Point(firstArg, secondArg)  # firstArg and secondArg are just x and y number values
 
 
-def _logScreenshot(logScreenshot, action, specifics, folder="."):
+def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
+    """
+    A helper function that creates a screenshot to act as a logging mechanism. When a PyAutoGUI function is called,
+    this function is also called to capture the state of the screen when that function was called.
+
+    If `logScreenshot` is `False` (or None and the `LOG_SCREENSHOTS` constant is `False`), no screenshot is taken.
+
+    The `funcName` argument is a string of the calling function's name. It's used in the screenshot's filename.
+
+    The `funcArgs` argument is a string describing the arguments passed to the calling function. It's limited to
+    tweleve characters to keep it short.
+
+    The `folder` argument is the folder to place the screenshot file in, and defaults to the current working directory.
+    """
     if logScreenshot == False:
         return  # Don't take a screenshot.
     if logScreenshot is None and LOG_SCREENSHOTS == False:
         return  # Don't take a screenshot.
 
     # Ensure that the "specifics" string isn't too long for the filename:
-    if len(specifics) > 12:
-        specifics = specifics[:12] + "..."
+    if len(funcArgs) > 12:
+        funcArgs = funcArgs[:12] + "..."
 
     now = datetime.datetime.now()
     filename = "%s-%s-%s_%s-%s-%s-%s_%s_%s.png" % (
@@ -425,8 +523,8 @@ def _logScreenshot(logScreenshot, action, specifics, folder="."):
         now.minute,
         now.second,
         str(now.microsecond)[:3],
-        action,
-        specifics,
+        funcName,
+        funcArgs,
     )
     filepath = os.path.join(folder, filename)
 
@@ -488,7 +586,7 @@ def onScreen(x, y=None):
       bool: True if the xy coordinates are on the screen at its current
         resolution, otherwise False.
     """
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
     x = int(x)
     y = int(y)
 
@@ -586,7 +684,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
     """
     button = _translateButton(button)
     failSafeCheck()
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
 
@@ -594,7 +692,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
     _logScreenshot(logScreenshot, "mouseDown", "%s,%s" % (x, y), folder=".")
     platformModule._mouseDown(x, y, button)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -622,7 +720,7 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
     """
     button = _translateButton(button)
     failSafeCheck()
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
 
@@ -630,7 +728,7 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
     _logScreenshot(logScreenshot, "mouseUp", "%s,%s" % (x, y), folder=".")
     platformModule._mouseUp(x, y, button)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def click(
@@ -674,7 +772,7 @@ def click(
     """
     button = _translateButton(button)
     failSafeCheck()
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration, tween)
 
@@ -692,7 +790,7 @@ def click(
 
             time.sleep(interval)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -721,7 +819,7 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
     """
     failSafeCheck()
     click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -750,7 +848,7 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
     """
     failSafeCheck()
     click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
@@ -776,7 +874,7 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
     """
     failSafeCheck()
     click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def doubleClick(
@@ -814,7 +912,7 @@ def doubleClick(
 
     # Multiple clicks work different in OSX
     if sys.platform == "darwin":
-        x, y = _unpackXY(x, y)
+        x, y = _normalizeXYArgs(x, y)
         _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
         _logScreenshot(logScreenshot, "click", "%s,2,%s,%s" % (button, x, y), folder=".")
@@ -823,13 +921,13 @@ def doubleClick(
         # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def tripleClick(
     x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True
 ):
-    """Performs a triple click..
+    """Performs a triple click.
 
     This is a wrapper function for click('left', x, y, 3, interval).
 
@@ -861,7 +959,7 @@ def tripleClick(
 
     # Multiple clicks work different in OSX
     if sys.platform == "darwin":
-        x, y = _unpackXY(x, y)
+        x, y = _normalizeXYArgs(x, y)
         _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
         _logScreenshot(logScreenshot, "click", "%s,3,%s,%s" % (x, y), folder=".")
@@ -869,7 +967,7 @@ def tripleClick(
     else:
         # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
@@ -901,7 +999,7 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "scroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._scroll(clicks, x, y)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
@@ -931,7 +1029,7 @@ def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     _logScreenshot(logScreenshot, "hscroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._hscroll(clicks, x, y)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
@@ -961,7 +1059,7 @@ def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     _logScreenshot(logScreenshot, "vscroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._vscroll(clicks, x, y)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
@@ -989,12 +1087,12 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot
       None
     """
     failSafeCheck()
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
 
     _logScreenshot(logScreenshot, "moveTo", "%s,%s" % (x, y), folder=".")
     _mouseMoveDrag("move", x, y, 0, 0, duration, tween)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
@@ -1023,12 +1121,12 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
 
     failSafeCheck()
 
-    xOffset, yOffset = _unpackXY(xOffset, yOffset)
+    xOffset, yOffset = _normalizeXYArgs(xOffset, yOffset)
 
     _logScreenshot(logScreenshot, "moveRel", "%s,%s" % (xOffset, yOffset), folder=".")
     _mouseMoveDrag("move", None, None, xOffset, yOffset, duration, tween)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 move = moveRel  # For PyAutoGUI 1.0, move() replaces moveRel().
@@ -1073,7 +1171,7 @@ def dragTo(
       None
     """
     failSafeCheck()
-    x, y = _unpackXY(x, y)
+    x, y = _normalizeXYArgs(x, y)
 
     _logScreenshot(logScreenshot, "dragTo", "%s,%s" % (x, y), folder=".")
     if mouseDownUp:
@@ -1082,7 +1180,7 @@ def dragTo(
     if mouseDownUp:
         mouseUp(button=button, logScreenshot=False, _pause=False)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def dragRel(
@@ -1142,7 +1240,7 @@ def dragRel(
     if mouseDownUp:
         mouseUp(button=button, logScreenshot=False, _pause=False)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 drag = dragRel  # For PyAutoGUI 1.0, we want drag() to replace dragRel().
@@ -1293,7 +1391,7 @@ def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "keyDown", key, folder=".")
     platformModule._keyDown(key)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def keyUp(key, pause=None, logScreenshot=None, _pause=True):
@@ -1313,7 +1411,7 @@ def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "keyUp", key, folder=".")
     platformModule._keyUp(key)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
@@ -1351,7 +1449,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
             platformModule._keyUp(k)
         time.sleep(interval)
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
@@ -1387,7 +1485,7 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
         time.sleep(interval)
         failSafeCheck()
 
-    _autoPause(pause, _pause)
+    _handlePause(pause, _pause)
 
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
@@ -1425,7 +1523,7 @@ def hotkey(*args, **kwargs):
         platformModule._keyUp(c)
         time.sleep(interval)
 
-    _autoPause(kwargs.get("pause", None), kwargs.get("_pause", True))
+    _handlePause(kwargs.get("pause", None), kwargs.get("_pause", True))
 
 
 def failSafeCheck():
