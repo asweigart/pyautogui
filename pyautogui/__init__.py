@@ -22,6 +22,7 @@ import os
 import platform
 import re
 import functools
+import inspect
 
 from .keynames import KEY_NAMES
 
@@ -388,6 +389,22 @@ Point = collections.namedtuple("Point", "x y")
 Size = collections.namedtuple("Size", "width height")
 
 
+def _genericPyAutoGUIChecks(wrappedFunction):
+    """
+    A decorator that calls failSafeCheck() before the decorated function and
+    _handlePause() after it.
+    """
+    @functools.wraps(wrappedFunction)
+    def wrapper(*args, **kwargs):
+        funcArgs = inspect.getcallargs(wrappedFunction, *args, **kwargs)
+
+        failSafeCheck()
+        returnVal = wrappedFunction(*args, **kwargs)
+        _handlePause(funcArgs.get('pause'), funcArgs.get('_pause'))
+        return returnVal
+    return wrapper
+
+
 # General Functions
 # =================
 
@@ -658,7 +675,7 @@ def _translateButton(button):
     # Return a mouse button integer value, not a string like 'left':
     return {LEFT: LEFT, MIDDLE: MIDDLE, RIGHT: RIGHT, 1: LEFT, 2: MIDDLE, 3: RIGHT, 4: 4, 5: 5, 6: 6, 7: 7}[button]
 
-
+@_genericPyAutoGUIChecks
 def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
@@ -683,7 +700,6 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
     button = _translateButton(button)
-    failSafeCheck()
     x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
@@ -692,9 +708,8 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
     _logScreenshot(logScreenshot, "mouseDown", "%s,%s" % (x, y), folder=".")
     platformModule._mouseDown(x, y, button)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
@@ -719,7 +734,6 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, or 3
     """
     button = _translateButton(button)
-    failSafeCheck()
     x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
@@ -728,9 +742,8 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=No
     _logScreenshot(logScreenshot, "mouseUp", "%s,%s" % (x, y), folder=".")
     platformModule._mouseUp(x, y, button)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def click(
     x=None,
     y=None,
@@ -771,7 +784,6 @@ def click(
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3
     """
     button = _translateButton(button)
-    failSafeCheck()
     x, y = _normalizeXYArgs(x, y)
 
     _mouseMoveDrag("move", x, y, 0, 0, duration, tween)
@@ -790,9 +802,9 @@ def click(
 
             time.sleep(interval)
 
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
@@ -817,11 +829,12 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
     Returns:
       None
     """
-    failSafeCheck()
+
+    # TODO - Do we need the decorator for this function? Should click() handle this? (Also applies to other alias functions.)
     click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
@@ -846,11 +859,10 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
     Returns:
       None
     """
-    failSafeCheck()
     click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
     """Performs a middle mouse button click.
 
@@ -872,11 +884,10 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
     Returns:
       None
     """
-    failSafeCheck()
     click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def doubleClick(
     x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True
 ):
@@ -908,7 +919,6 @@ def doubleClick(
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    failSafeCheck()
 
     # Multiple clicks work different in OSX
     if sys.platform == "darwin":
@@ -921,9 +931,8 @@ def doubleClick(
         # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def tripleClick(
     x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True
 ):
@@ -955,8 +964,6 @@ def tripleClick(
       ValueError: If button is not one of 'left', 'middle', 'right', 1, 2, 3, 4,
         5, 6, or 7
     """
-    failSafeCheck()
-
     # Multiple clicks work different in OSX
     if sys.platform == "darwin":
         x, y = _normalizeXYArgs(x, y)
@@ -967,9 +974,9 @@ def tripleClick(
     else:
         # Click for Windows or Linux:
         click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
@@ -991,7 +998,6 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     Returns:
       None
     """
-    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -999,9 +1005,8 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "scroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._scroll(clicks, x, y)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
@@ -1021,7 +1026,6 @@ def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     Returns:
       None
     """
-    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -1029,9 +1033,8 @@ def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     _logScreenshot(logScreenshot, "hscroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._hscroll(clicks, x, y)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
@@ -1051,7 +1054,6 @@ def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     Returns:
       None
     """
-    failSafeCheck()
     if type(x) in (tuple, list):
         x, y = x[0], x[1]
     x, y = position(x, y)
@@ -1059,9 +1061,8 @@ def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
     _logScreenshot(logScreenshot, "vscroll", "%s,%s,%s" % (clicks, x, y), folder=".")
     platformModule._vscroll(clicks, x, y)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
@@ -1086,15 +1087,13 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot
     Returns:
       None
     """
-    failSafeCheck()
     x, y = _normalizeXYArgs(x, y)
 
     _logScreenshot(logScreenshot, "moveTo", "%s,%s" % (x, y), folder=".")
     _mouseMoveDrag("move", x, y, 0, 0, duration, tween)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
@@ -1118,20 +1117,16 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, 
     Returns:
       None
     """
-
-    failSafeCheck()
-
     xOffset, yOffset = _normalizeXYArgs(xOffset, yOffset)
 
     _logScreenshot(logScreenshot, "moveRel", "%s,%s" % (xOffset, yOffset), folder=".")
     _mouseMoveDrag("move", None, None, xOffset, yOffset, duration, tween)
 
-    _handlePause(pause, _pause)
 
 
 move = moveRel  # For PyAutoGUI 1.0, move() replaces moveRel().
 
-
+@_genericPyAutoGUIChecks
 def dragTo(
     x=None,
     y=None,
@@ -1170,7 +1165,6 @@ def dragTo(
     Returns:
       None
     """
-    failSafeCheck()
     x, y = _normalizeXYArgs(x, y)
 
     _logScreenshot(logScreenshot, "dragTo", "%s,%s" % (x, y), folder=".")
@@ -1180,9 +1174,8 @@ def dragTo(
     if mouseDownUp:
         mouseUp(button=button, logScreenshot=False, _pause=False)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def dragRel(
     xOffset=0,
     yOffset=0,
@@ -1230,8 +1223,6 @@ def dragRel(
     if xOffset == 0 and yOffset == 0:
         return  # no-op case
 
-    failSafeCheck()
-
     mousex, mousey = platformModule._position()
     _logScreenshot(logScreenshot, "dragRel", "%s,%s" % (xOffset, yOffset), folder=".")
     if mouseDownUp:
@@ -1240,7 +1231,6 @@ def dragRel(
     if mouseDownUp:
         mouseUp(button=button, logScreenshot=False, _pause=False)
 
-    _handlePause(pause, _pause)
 
 
 drag = dragRel  # For PyAutoGUI 1.0, we want drag() to replace dragRel().
@@ -1370,6 +1360,7 @@ def isValidKey(key):
     return platformModule.keyboardMapping.get(key, None) != None
 
 
+@_genericPyAutoGUIChecks
 def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
@@ -1387,13 +1378,11 @@ def keyDown(key, pause=None, logScreenshot=None, _pause=True):
     if len(key) > 1:
         key = key.lower()
 
-    failSafeCheck()
     _logScreenshot(logScreenshot, "keyDown", key, folder=".")
     platformModule._keyDown(key)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
@@ -1407,13 +1396,11 @@ def keyUp(key, pause=None, logScreenshot=None, _pause=True):
     if len(key) > 1:
         key = key.lower()
 
-    failSafeCheck()
     _logScreenshot(logScreenshot, "keyUp", key, folder=".")
     platformModule._keyUp(key)
 
-    _handlePause(pause, _pause)
 
-
+@_genericPyAutoGUIChecks
 def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
@@ -1429,8 +1416,6 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
     Returns:
       None
     """
-    failSafeCheck()
-
     if type(keys) == str:
         keys = [keys]  # If keys is 'enter', convert it to ['enter'].
     else:
@@ -1449,9 +1434,9 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
             platformModule._keyUp(k)
         time.sleep(interval)
 
-    _handlePause(pause, _pause)
 
 
+@_genericPyAutoGUIChecks
 def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
@@ -1475,8 +1460,6 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
     """
     interval = float(interval)  # TODO - this should be taken out.
 
-    failSafeCheck()
-
     _logScreenshot(logScreenshot, "write", message, folder=".")
     for c in message:
         if len(c) > 1:
@@ -1485,12 +1468,11 @@ def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True
         time.sleep(interval)
         failSafeCheck()
 
-    _handlePause(pause, _pause)
-
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
+@_genericPyAutoGUIChecks
 def hotkey(*args, **kwargs):
     """Performs key down presses on the arguments passed in order, then performs
     key releases in reverse order.
@@ -1509,8 +1491,6 @@ def hotkey(*args, **kwargs):
     """
     interval = float(kwargs.get("interval", 0.0))  # TODO - this should be taken out.
 
-    failSafeCheck()
-
     _logScreenshot(kwargs.get("logScreenshot"), "hotkey", ",".join(args), folder=".")
     for c in args:
         if len(c) > 1:
@@ -1523,7 +1503,6 @@ def hotkey(*args, **kwargs):
         platformModule._keyUp(c)
         time.sleep(interval)
 
-    _handlePause(kwargs.get("pause", None), kwargs.get("_pause", True))
 
 
 def failSafeCheck():
