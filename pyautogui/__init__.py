@@ -24,8 +24,6 @@ import re
 import functools
 import inspect
 
-from .keynames import KEY_NAMES
-
 
 class PyAutoGUIException(Exception):
     """
@@ -107,7 +105,7 @@ try:
     # linear has also been redefined in this file.
 except ImportError:
 
-    def couldNotImportPyTweening():
+    def _couldNotImportPyTweening():
         """
         This function raises ``PyAutoGUIException``. It's used for the PyTweening function names if the PyTweening
         module failed to be imported.
@@ -116,43 +114,43 @@ except ImportError:
             "PyAutoGUI was unable to import pytweening. Please install this module to enable the function you tried to call."
         )
 
-    easeInQuad = couldNotImportPyTweening
-    easeOutQuad = couldNotImportPyTweening
-    easeInOutQuad = couldNotImportPyTweening
-    easeInCubic = couldNotImportPyTweening
-    easeOutCubic = couldNotImportPyTweening
-    easeInOutCubic = couldNotImportPyTweening
-    easeInQuart = couldNotImportPyTweening
-    easeOutQuart = couldNotImportPyTweening
-    easeInOutQuart = couldNotImportPyTweening
-    easeInQuint = couldNotImportPyTweening
-    easeOutQuint = couldNotImportPyTweening
-    easeInOutQuint = couldNotImportPyTweening
-    easeInSine = couldNotImportPyTweening
-    easeOutSine = couldNotImportPyTweening
-    easeInOutSine = couldNotImportPyTweening
-    easeInExpo = couldNotImportPyTweening
-    easeOutExpo = couldNotImportPyTweening
-    easeInOutExpo = couldNotImportPyTweening
-    easeInCirc = couldNotImportPyTweening
-    easeOutCirc = couldNotImportPyTweening
-    easeInOutCirc = couldNotImportPyTweening
-    easeInElastic = couldNotImportPyTweening
-    easeOutElastic = couldNotImportPyTweening
-    easeInOutElastic = couldNotImportPyTweening
-    easeInBack = couldNotImportPyTweening
-    easeOutBack = couldNotImportPyTweening
-    easeInOutBack = couldNotImportPyTweening
-    easeInBounce = couldNotImportPyTweening
-    easeOutBounce = couldNotImportPyTweening
-    easeInOutBounce = couldNotImportPyTweening
+    easeInQuad = _couldNotImportPyTweening
+    easeOutQuad = _couldNotImportPyTweening
+    easeInOutQuad = _couldNotImportPyTweening
+    easeInCubic = _couldNotImportPyTweening
+    easeOutCubic = _couldNotImportPyTweening
+    easeInOutCubic = _couldNotImportPyTweening
+    easeInQuart = _couldNotImportPyTweening
+    easeOutQuart = _couldNotImportPyTweening
+    easeInOutQuart = _couldNotImportPyTweening
+    easeInQuint = _couldNotImportPyTweening
+    easeOutQuint = _couldNotImportPyTweening
+    easeInOutQuint = _couldNotImportPyTweening
+    easeInSine = _couldNotImportPyTweening
+    easeOutSine = _couldNotImportPyTweening
+    easeInOutSine = _couldNotImportPyTweening
+    easeInExpo = _couldNotImportPyTweening
+    easeOutExpo = _couldNotImportPyTweening
+    easeInOutExpo = _couldNotImportPyTweening
+    easeInCirc = _couldNotImportPyTweening
+    easeOutCirc = _couldNotImportPyTweening
+    easeInOutCirc = _couldNotImportPyTweening
+    easeInElastic = _couldNotImportPyTweening
+    easeOutElastic = _couldNotImportPyTweening
+    easeInOutElastic = _couldNotImportPyTweening
+    easeInBack = _couldNotImportPyTweening
+    easeOutBack = _couldNotImportPyTweening
+    easeInOutBack = _couldNotImportPyTweening
+    easeInBounce = _couldNotImportPyTweening
+    easeOutBounce = _couldNotImportPyTweening
+    easeInOutBounce = _couldNotImportPyTweening
 
 
 try:
     from pymsgbox import alert, confirm, prompt, password
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
-    def couldNotImportPyMsgBox():
+    def _couldNotImportPyMsgBox():
         """
         This function raises ``PyAutoGUIException``. It's used for the PyMsgBox function names if the PyMsgbox module
         failed to be imported.
@@ -161,7 +159,7 @@ except ImportError:
             "PyAutoGUI was unable to import pymsgbox. Please install this module to enable the function you tried to call."
         )
 
-    alert = confirm = prompt = password = couldNotImportPyMsgBox
+    alert = confirm = prompt = password = _couldNotImportPyMsgBox
 
 
 try:
@@ -169,7 +167,7 @@ try:
     from pyscreeze import center, grab, pixel, pixelMatchesColor, screenshot
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
-    def couldNotImportPyScreeze():
+    def _couldNotImportPyScreeze():
         """
         This function raises ``PyAutoGUIException``. It's used for the PyScreeze function names if the PyScreeze module
         failed to be imported.
@@ -178,16 +176,16 @@ except ImportError:
             "PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."
         )
 
-    center = couldNotImportPyScreeze
-    grab = couldNotImportPyScreeze
-    locate = couldNotImportPyScreeze
-    locateAll = couldNotImportPyScreeze
-    locateAllOnScreen = couldNotImportPyScreeze
-    locateCenterOnScreen = couldNotImportPyScreeze
-    locateOnScreen = couldNotImportPyScreeze
-    pixel = couldNotImportPyScreeze
-    pixelMatchesColor = couldNotImportPyScreeze
-    screenshot = couldNotImportPyScreeze
+    center = _couldNotImportPyScreeze
+    grab = _couldNotImportPyScreeze
+    locate = _couldNotImportPyScreeze
+    locateAll = _couldNotImportPyScreeze
+    locateAllOnScreen = _couldNotImportPyScreeze
+    locateCenterOnScreen = _couldNotImportPyScreeze
+    locateOnScreen = _couldNotImportPyScreeze
+    pixel = _couldNotImportPyScreeze
+    pixelMatchesColor = _couldNotImportPyScreeze
+    screenshot = _couldNotImportPyScreeze
 
 
 def raisePyAutoGUIImageNotFoundException(wrappedFunction):
@@ -301,7 +299,7 @@ if sys.platform == "win32":  # PyGetWindow currently only supports Windows.
         )
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
-        def couldNotImportPyGetWindow():
+        def _couldNotImportPyGetWindow():
             """
             This function raises PyAutoGUIException. It's used for the PyGetWindow function names if the PyGetWindow
             module failed to be imported.
@@ -310,15 +308,210 @@ if sys.platform == "win32":  # PyGetWindow currently only supports Windows.
                 "PyAutoGUI was unable to import pygetwindow. Please install this module to enable the function you tried to call."
             )
 
-        Window = couldNotImportPyGetWindow
-        getActiveWindow = couldNotImportPyGetWindow
-        getActiveWindowTitle = couldNotImportPyGetWindow
-        getWindowsAt = couldNotImportPyGetWindow
-        getWindowsWithTitle = couldNotImportPyGetWindow
-        getAllWindows = couldNotImportPyGetWindow
-        getAllTitles = couldNotImportPyGetWindow
+        Window = _couldNotImportPyGetWindow
+        getActiveWindow = _couldNotImportPyGetWindow
+        getActiveWindowTitle = _couldNotImportPyGetWindow
+        getWindowsAt = _couldNotImportPyGetWindow
+        getWindowsWithTitle = _couldNotImportPyGetWindow
+        getAllWindows = _couldNotImportPyGetWindow
+        getAllTitles = _couldNotImportPyGetWindow
 
-
+KEY_NAMES = [
+    "\t",
+    "\n",
+    "\r",
+    " ",
+    "!",
+    '"',
+    "#",
+    "$",
+    "%",
+    "&",
+    "'",
+    "(",
+    ")",
+    "*",
+    "+",
+    ",",
+    "-",
+    ".",
+    "/",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    ":",
+    ";",
+    "<",
+    "=",
+    ">",
+    "?",
+    "@",
+    "[",
+    "\\",
+    "]",
+    "^",
+    "_",
+    "`",
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+    "{",
+    "|",
+    "}",
+    "~",
+    "accept",
+    "add",
+    "alt",
+    "altleft",
+    "altright",
+    "apps",
+    "backspace",
+    "browserback",
+    "browserfavorites",
+    "browserforward",
+    "browserhome",
+    "browserrefresh",
+    "browsersearch",
+    "browserstop",
+    "capslock",
+    "clear",
+    "convert",
+    "ctrl",
+    "ctrlleft",
+    "ctrlright",
+    "decimal",
+    "del",
+    "delete",
+    "divide",
+    "down",
+    "end",
+    "enter",
+    "esc",
+    "escape",
+    "execute",
+    "f1",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14",
+    "f15",
+    "f16",
+    "f17",
+    "f18",
+    "f19",
+    "f2",
+    "f20",
+    "f21",
+    "f22",
+    "f23",
+    "f24",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9",
+    "final",
+    "fn",
+    "hanguel",
+    "hangul",
+    "hanja",
+    "help",
+    "home",
+    "insert",
+    "junja",
+    "kana",
+    "kanji",
+    "launchapp1",
+    "launchapp2",
+    "launchmail",
+    "launchmediaselect",
+    "left",
+    "modechange",
+    "multiply",
+    "nexttrack",
+    "nonconvert",
+    "num0",
+    "num1",
+    "num2",
+    "num3",
+    "num4",
+    "num5",
+    "num6",
+    "num7",
+    "num8",
+    "num9",
+    "numlock",
+    "pagedown",
+    "pageup",
+    "pause",
+    "pgdn",
+    "pgup",
+    "playpause",
+    "prevtrack",
+    "print",
+    "printscreen",
+    "prntscrn",
+    "prtsc",
+    "prtscr",
+    "return",
+    "right",
+    "scrolllock",
+    "select",
+    "separator",
+    "shift",
+    "shiftleft",
+    "shiftright",
+    "sleep",
+    "space",
+    "stop",
+    "subtract",
+    "tab",
+    "up",
+    "volumedown",
+    "volumemute",
+    "volumeup",
+    "win",
+    "winleft",
+    "winright",
+    "yen",
+    "command",
+    "option",
+    "optionleft",
+    "optionright",
+]
 KEYBOARD_KEYS = KEY_NAMES  # keeping old KEYBOARD_KEYS for backwards compatibility
 
 # Constants for the mouse button names:
