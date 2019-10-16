@@ -401,7 +401,7 @@ def _genericPyAutoGUIChecks(wrappedFunction):
 
         failSafeCheck()
         returnVal = wrappedFunction(*args, **kwargs)
-        _handlePause(funcArgs.get("pause"), funcArgs.get("_pause"))
+        _handlePause(funcArgs.get("_pause"))
         return returnVal
 
     return wrapper
@@ -437,21 +437,13 @@ def linear(n):
     return n
 
 
-def _handlePause(pause, _pause):
+def _handlePause(_pause):
     """
     A helper function for performing a pause at the end of a PyAutoGUI function based on some settings.
 
-    If `pause`` is not ``None``, then sleep for ``pause`` seconds.
-    Otherwise, if ``_pause`` is ``True``, then sleep for ``PAUSE`` seconds (the global pause setting).
-
-    This function is called at the end of all of PyAutoGUI's mouse and keyboard functions. Normally, ``_pause``
-    is set to ``True`` to add a short sleep so that the user can engage the failsafe. By default, this sleep
-    is as long as ``PAUSE`` settings. However, this can be override by passing an argument for the ``pause`` parameter,
-    in which case the sleep is as long as ``pause`` seconds.
+    If ``_pause`` is ``True``, then sleep for ``PAUSE`` seconds (the global pause setting).
     """
-    if pause is not None:
-        time.sleep(pause)
-    elif _pause:
+    if _pause:
         assert isinstance(PAUSE, int) or isinstance(PAUSE, float)
         time.sleep(PAUSE)
 
@@ -688,7 +680,7 @@ def _normalizeButton(button):
 
 
 @_genericPyAutoGUIChecks
-def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs pressing a mouse button down (but not up).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -721,7 +713,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=
 
 
 @_genericPyAutoGUIChecks
-def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs releasing a mouse button up (but not down beforehand).
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -762,7 +754,6 @@ def click(
     button=PRIMARY,
     duration=0.0,
     tween=linear,
-    pause=None,
     logScreenshot=None,
     _pause=True,
 ):
@@ -818,7 +809,7 @@ def click(
 
 
 @_genericPyAutoGUIChecks
-def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -844,11 +835,11 @@ def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=No
     """
 
     # TODO - Do we need the decorator for this function? Should click() handle this? (Also applies to other alias functions.)
-    click(x, y, 1, interval, LEFT, duration, tween, pause, logScreenshot, _pause=_pause)
+    click(x, y, 1, interval, LEFT, duration, tween, logScreenshot, _pause=_pause)
 
 
 @_genericPyAutoGUIChecks
-def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a right mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -872,11 +863,11 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=N
     Returns:
       None
     """
-    click(x, y, 1, interval, RIGHT, duration, tween, pause, logScreenshot, _pause=_pause)
+    click(x, y, 1, interval, RIGHT, duration, tween, logScreenshot, _pause=_pause)
 
 
 @_genericPyAutoGUIChecks
-def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True):
+def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a middle mouse button click.
 
     This is a wrapper function for click('right', x, y).
@@ -897,12 +888,12 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, pause=
     Returns:
       None
     """
-    click(x, y, 1, interval, MIDDLE, duration, tween, pause, logScreenshot, _pause=_pause)
+    click(x, y, 1, interval, MIDDLE, duration, tween, logScreenshot, _pause=_pause)
 
 
 @_genericPyAutoGUIChecks
 def doubleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True
+    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
 ):
     """Performs a double click.
 
@@ -942,12 +933,12 @@ def doubleClick(
         platformModule._multiClick(x, y, button, 2)
     else:
         # Click for Windows or Linux:
-        click(x, y, 2, interval, button, duration, tween, pause, logScreenshot, _pause=False)
+        click(x, y, 2, interval, button, duration, tween, logScreenshot, _pause=False)
 
 
 @_genericPyAutoGUIChecks
 def tripleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, pause=None, logScreenshot=None, _pause=True
+    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
 ):
     """Performs a triple click.
 
@@ -986,11 +977,11 @@ def tripleClick(
         platformModule._multiClick(x, y, button, 3)
     else:
         # Click for Windows or Linux:
-        click(x, y, 3, interval, button, duration, tween, pause, logScreenshot, _pause=False)
+        click(x, y, 3, interval, button, duration, tween, logScreenshot, _pause=False)
 
 
 @_genericPyAutoGUIChecks
-def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
+def scroll(clicks, x=None, y=None, logScreenshot=None, _pause=True):
     """Performs a scroll of the mouse scroll wheel.
 
     Whether this is a vertical or horizontal scroll depends on the underlying
@@ -1020,7 +1011,7 @@ def scroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
 
 
 @_genericPyAutoGUIChecks
-def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
+def hscroll(clicks, x=None, y=None, logScreenshot=None, _pause=True):
     """Performs an explicitly horizontal scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -1048,7 +1039,7 @@ def hscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
 
 
 @_genericPyAutoGUIChecks
-def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True):
+def vscroll(clicks, x=None, y=None, logScreenshot=None, _pause=True):
     """Performs an explicitly vertical scroll of the mouse scroll wheel,
     if this is supported by the operating system. (Currently just Linux.)
 
@@ -1076,7 +1067,7 @@ def vscroll(clicks, x=None, y=None, pause=None, logScreenshot=None, _pause=True)
 
 
 @_genericPyAutoGUIChecks
-def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
+def moveTo(x=None, y=None, duration=0.0, tween=linear, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen.
 
     The x and y parameters detail where the mouse event happens. If None, the
@@ -1107,7 +1098,7 @@ def moveTo(x=None, y=None, duration=0.0, tween=linear, pause=None, logScreenshot
 
 
 @_genericPyAutoGUIChecks
-def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, pause=None, logScreenshot=False, _pause=True):
+def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, logScreenshot=False, _pause=True):
     """Moves the mouse cursor to a point on the screen, relative to its current
     position.
 
@@ -1146,7 +1137,6 @@ def dragTo(
     duration=0.0,
     tween=linear,
     button=PRIMARY,
-    pause=None,
     logScreenshot=None,
     _pause=True,
     mouseDownUp=True,
@@ -1195,7 +1185,6 @@ def dragRel(
     duration=0.0,
     tween=linear,
     button=PRIMARY,
-    pause=None,
     logScreenshot=None,
     _pause=True,
     mouseDownUp=True,
@@ -1373,7 +1362,7 @@ def isValidKey(key):
 
 
 @_genericPyAutoGUIChecks
-def keyDown(key, pause=None, logScreenshot=None, _pause=True):
+def keyDown(key, logScreenshot=None, _pause=True):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -1395,7 +1384,7 @@ def keyDown(key, pause=None, logScreenshot=None, _pause=True):
 
 
 @_genericPyAutoGUIChecks
-def keyUp(key, pause=None, logScreenshot=None, _pause=True):
+def keyUp(key, logScreenshot=None, _pause=True):
     """Performs a keyboard key release (without the press down beforehand).
 
     Args:
@@ -1413,7 +1402,7 @@ def keyUp(key, pause=None, logScreenshot=None, _pause=True):
 
 
 @_genericPyAutoGUIChecks
-def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=True):
+def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release.
 
     Args:
@@ -1448,7 +1437,7 @@ def press(keys, presses=1, interval=0.0, pause=None, logScreenshot=None, _pause=
 
 
 @_genericPyAutoGUIChecks
-def typewrite(message, interval=0.0, pause=None, logScreenshot=None, _pause=True):
+def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
