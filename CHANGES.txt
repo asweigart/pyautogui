@@ -1,3 +1,11 @@
+v0.9.46, 2019/07/09 -- Added mouseinfo module.
+v0.9.45, 2019/06/18 -- Added left-click, made mouse buttons more explicit and fixed it so that the right mouse button is 2 and middle mouse button is 3. Added failsafe points in all corners. Added screenshot logging. Fixed _autoPause().
+v0.9.44, 2019/05/30 -- Adding ability to pass 4-integer box tuples to click() and other functions.
+v0.9.43, 2019/05/27 -- Renamed getFocusedWindow to getActiveWindow to keep it up to date with pygetwindow.
+v0.9.40, 2018/12/26 -- Created FAILSAFE_POINT constant instead of hard coding (0, 0), add move(), drag(), write() names. Adding PyGetWindow.
+v0.9.39, 2018/09/05 -- Added tox and fixed setup.py for Python 2 compatibility.
+v0.9.38, 2018/07/21 -- Removing non-ascii characters from readme because it causes failures when displaying on Windows.
+v0.9.37, 2018/07/18 -- Updating setup.py
 v0.9.36, 2017/04/20 -- Fixed Windows XP problem with the DPI scaling API call.
 v0.9.35, 2017/03/19 -- Fixed Windows DPI scaling issue.
 v0.9.34, 2017/03/18 -- Fixed several bugs after the Sentry OSS sprint, including Windows permission errors.

@@ -1,4 +1,5 @@
 include *.md
+include LICENSE.txt
 recursive-include docs *.bat
 recursive-include docs *.py
 recursive-include docs *.rst

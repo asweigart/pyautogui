@@ -4,29 +4,44 @@
 Installation
 ============
 
-To install PyAutoGUI, install the `pyautogui` package from PyPI and dependencies.
+To install PyAutoGUI, install the `pyautogui` package from PyPI by running `pip install pyautogui` (on Windows) or `pip3 install pyautogui` (on macOS and Linux). (On macOS and Linux, `pip` refers to Python 2's pip tool.)
 
-On Windows, this is:
+OS-specific instructions are below.
 
-    ``C:\Python34\pip.exe install pyautogui``
+**NOTE: As of October 2019, the Pillow module doesn't support Python 3.8. PyAutoGUI currently depends on this module for its screenshot capabilities.**
 
-(Though you may have a different version of Python installed other than 3.4)
+Windows
+-------
 
-On OS X, this is:
+On Windows, you can use the ``py.exe`` program to run the latest version of Python:
 
-    ``pip3 install pyobjc-core``
+    ``py -m pip install pyautogui``
 
-    ``pip3 install pyobjc``
+If you have multiply versions of Python installed, you can select which one with a command line argument to ``py``. For example, for Python 3.8, run:
 
-    ``pip3 install pyautogui``
+    ``py -3.8 -m pip install pyautogui``
+
+(This is the same as running ``pip install pyautogui``.)
+
+macOS
+-----
+
+On macOS and Linux, you need to run ``python3``:
+
+    ``python3 -m pip install pyautogui``
 
 If you are running El Capitan and have problems installing pyobjc try:
 
     ``MACOSX_DEPLOYMENT_TARGET=10.11 pip install pyobjc``
 
-On Linux, this is:
+Linux
+-----
 
-    ``pip3 install python3-xlib``
+On macOS and Linux, you need to run ``python3``:
+
+    ``python3 -m pip install pyautogui``
+
+On Linux, additionally you need to install the ``scrot`` application, as well as Tkinter:
 
     ``sudo apt-get install scrot``
 
@@ -34,6 +49,4 @@ On Linux, this is:
 
     ``sudo apt-get install python3-dev``
 
-    ``pip3 install pyautogui``
-
-PyAutoGUI will try to install Pillow (for its screenshot capabilities). This happens when pip installs PyAutoGUI.
+PyAutoGUI install the modules it depends on, including PyTweening, PyScreeze, PyGetWindow, PymsgBox, and MouseInfo.
