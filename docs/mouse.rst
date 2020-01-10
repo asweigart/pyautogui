@@ -162,7 +162,7 @@ To combine a ``moveTo()`` call before the click, pass integers for the ``x`` and
 
     >>> pyautogui.click(x=100, y=200)  # move to 100, 200, then click the left mouse button.
 
-To specify a different mouse button to click, pass ``'left'``, ``'middle'``, or  ``'right'``for the ``button`` keyword argument:
+To specify a different mouse button to click, pass ``'left'``, ``'middle'``, or  ``'right'`` for the ``button`` keyword argument:
 
 .. code:: python
 

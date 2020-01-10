@@ -7,7 +7,7 @@ Keyboard Control Functions
 The write() Function
 ========================
 
-The primary keyboard function is ``write()``. This function will type the characters in the string is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
+The primary keyboard function is ``write()``. This function will type the characters in the string that is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
 
 For example:
 
