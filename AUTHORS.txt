@@ -30,6 +30,7 @@ Fornost461 https://github.com/Fornost461
 Harrison https://github.com/Sentdex
 Hugo Salvador https://github.com/hugoesb
 jakibaki https://github.com/
+Jeff Triplett https://github.com/jefftriplett
 Jeremy R. Gray https://github.com/jeremygray
 Jeromie Kirchoff https://github.com/JayRizzo
 Joel Gomes da Silva https://github.com/joelgomes1994
@@ -43,6 +44,7 @@ liberme https://github.com/liberme
 Matt Olsen https://github.com/digwanderlust
 mvbentes https://github.com/mvbentes
 nexcvon https://github.com/nexcvon
+Oleg Höfling https://github.com/hoefling
 optroot https://github.com/optroot
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
@@ -51,6 +53,7 @@ Scott Noyes https://github.com/snoyes
 Sergio Encarnación https://github.com/Sergioenc28
 sneakypete81 https://github.com/sneakypete81
 Stefan Hoelzl https://github.com/stefanhoelzl
+Stephen Ellis https://github.com/saellis
 Steven Shave https://github.com/stevenshave
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
