@@ -8,7 +8,7 @@ except:
 import AppKit
 
 import pyautogui
-
+from pyautogui import LEFT, MIDDLE, RIGHT
 
 if sys.platform !=  'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
@@ -353,35 +353,35 @@ def _hscroll(clicks, x=None, y=None):
 
 
 def _mouseDown(x, y, button):
-    if button == 'left':
+    if button == LEFT:
         _sendMouseEvent(Quartz.kCGEventLeftMouseDown, x, y, Quartz.kCGMouseButtonLeft)
-    elif button == 'middle':
+    elif button == MIDDLE:
         _sendMouseEvent(Quartz.kCGEventOtherMouseDown, x, y, Quartz.kCGMouseButtonCenter)
-    elif button == 'right':
+    elif button == RIGHT:
         _sendMouseEvent(Quartz.kCGEventRightMouseDown, x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _mouseUp(x, y, button):
-    if button == 'left':
+    if button == LEFT:
         _sendMouseEvent(Quartz.kCGEventLeftMouseUp, x, y, Quartz.kCGMouseButtonLeft)
-    elif button == 'middle':
+    elif button == MIDDLE:
         _sendMouseEvent(Quartz.kCGEventOtherMouseUp, x, y, Quartz.kCGMouseButtonCenter)
-    elif button == 'right':
+    elif button == RIGHT:
         _sendMouseEvent(Quartz.kCGEventRightMouseUp, x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
 
 def _click(x, y, button):
-    if button == 'left':
+    if button == LEFT:
         _sendMouseEvent(Quartz.kCGEventLeftMouseDown, x, y, Quartz.kCGMouseButtonLeft)
         _sendMouseEvent(Quartz.kCGEventLeftMouseUp, x, y, Quartz.kCGMouseButtonLeft)
-    elif button == 'middle':
+    elif button == MIDDLE:
         _sendMouseEvent(Quartz.kCGEventOtherMouseDown, x, y, Quartz.kCGMouseButtonCenter)
         _sendMouseEvent(Quartz.kCGEventOtherMouseUp, x, y, Quartz.kCGMouseButtonCenter)
-    elif button == 'right':
+    elif button == RIGHT:
         _sendMouseEvent(Quartz.kCGEventRightMouseDown, x, y, Quartz.kCGMouseButtonRight)
         _sendMouseEvent(Quartz.kCGEventRightMouseUp, x, y, Quartz.kCGMouseButtonRight)
     else:
@@ -391,23 +391,23 @@ def _multiClick(x, y, button, num):
     btn    = None
     down   = None
     up     = None
-    
-    if button == 'left':
+
+    if button == LEFT:
         btn  = Quartz.kCGMouseButtonLeft
         down = Quartz.kCGEventLeftMouseDown
         up   = Quartz.kCGEventLeftMouseUp
-    elif button == 'middle':
+    elif button == MIDDLE:
         btn  = Quartz.kCGMouseButtonCenter
         down = Quartz.kCGEventOtherMouseDown
-        up   = Quartz.kCGEventOtherMouseUp        
-    elif button == 'right':
+        up   = Quartz.kCGEventOtherMouseUp
+    elif button == RIGHT:
         btn  = Quartz.kCGMouseButtonRight
         down = Quartz.kCGEventRightMouseDown
-        up   = Quartz.kCGEventRightMouseUp     
+        up   = Quartz.kCGEventRightMouseUp
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
         return
-    
+
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, down, (x, y), btn)
     Quartz.CGEventSetIntegerValueField(mouseEvent, Quartz.kCGMouseEventClickState, num)
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
@@ -416,7 +416,7 @@ def _multiClick(x, y, button, num):
     for i in range(0, num-1):
         Quartz.CGEventSetType(mouseEvent, down)
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
-        Quartz.CGEventSetType(mouseEvent, up) 
+        Quartz.CGEventSetType(mouseEvent, up)
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
 
 
@@ -426,11 +426,11 @@ def _sendMouseEvent(ev, x, y, button):
 
 
 def _dragTo(x, y, button):
-    if button == 'left':
+    if button == LEFT:
         _sendMouseEvent(Quartz.kCGEventLeftMouseDragged , x, y, Quartz.kCGMouseButtonLeft)
-    elif button == 'middle':
+    elif button == MIDDLE:
         _sendMouseEvent(Quartz.kCGEventOtherMouseDragged , x, y, Quartz.kCGMouseButtonCenter)
-    elif button == 'right':
+    elif button == RIGHT:
         _sendMouseEvent(Quartz.kCGEventRightMouseDragged , x, y, Quartz.kCGMouseButtonRight)
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"

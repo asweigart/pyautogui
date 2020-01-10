@@ -5,6 +5,7 @@ answer newbie questions, and generally made PyAutoGUI that much better:
 Al Sweigart https://github.com/asweigart/
 Alexandr Orlov https://github.com/hey-sancho
 Andrew Selzer https://github.com/afs2015
+Andy Dam https://github.com/andydam
 Anwar A. Ruff https://github.com/aaruff
 Ari Lacenski https://github.com/tensory
 Ashok Fernandez https://github.com/ashokfernandez/
@@ -17,12 +18,14 @@ Daniel D. Beck https://github.com/ddbeck
 danielboone https://github.com/danielboone
 David Siah https://github.com/dsiah
 Denilson Figueiredo de Sá https://github.com/denilsonsa
+Dominik Schmelz https://github.com/DIDoS
 dragon778 https://github.com/dragon788
 Eric https://github.com/bleuetnoir
 Harrison https://github.com/Sentdex
 Hugo Salvador https://github.com/hugoesb
 jakibaki https://github.com/
 Jeremy R. Gray https://github.com/jeremygray
+Jeromie Kirchoff https://github.com/JayRizzo
 Jon Winsley https://github.com/glitchassassin
 Jose Riha https://github.com/jose1711
 Julien Schueller https://github.com/jschueller
@@ -36,5 +39,10 @@ nexcvon https://github.com/nexcvon
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
+Scott Noyes https://github.com/snoyes
+sneakypete81 https://github.com/sneakypete81
+Stefan Hoelzl https://github.com/stefanhoelzl
+Steven Shave https://github.com/stevenshave
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
+Stefan Hoelzl https://github.com/stefanhoelzl

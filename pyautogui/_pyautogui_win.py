@@ -5,6 +5,7 @@
 import ctypes
 import ctypes.wintypes
 import pyautogui
+from pyautogui import LEFT, MIDDLE, RIGHT
 
 import sys
 if sys.platform !=  'win32':
@@ -31,6 +32,7 @@ UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mou
 
 # Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 MOUSEEVENTF_LEFTCLICK = MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP
@@ -41,6 +43,7 @@ MOUSEEVENTF_MIDDLEDOWN = 0x0020
 MOUSEEVENTF_MIDDLEUP = 0x0040
 MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
+MOUSEEVENTF_ABSOLUTE = 0x8000
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
 
@@ -260,6 +263,7 @@ keyboardMapping.update({
 })
 
 # Populate the basic printable ascii characters.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
@@ -383,7 +387,7 @@ def _moveTo(x, y):
     Returns:
       None
     """
-    ctypes.windll.user32.SetCursorPos(x, y)
+    _sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
 
 
 def _mouseDown(x, y, button):
@@ -398,23 +402,21 @@ def _mouseDown(x, y, button):
     Returns:
       None
     """
-    if button == 'left':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_LEFTDOWN, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'middle':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_MIDDLEDOWN, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'right':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_RIGHTDOWN, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    else:
-        assert False, "button argument not in ('left', 'middle', 'right')"
+    if button not in (LEFT, MIDDLE, RIGHT):
+        raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
+
+    if button == LEFT:
+        EV = MOUSEEVENTF_LEFTDOWN
+    elif button == MIDDLE:
+        EV = MOUSEEVENTF_MIDDLEDOWN
+    elif button == RIGHT:
+        EV = MOUSEEVENTF_RIGHTDOWN
+
+    try:
+        _sendMouseEvent(EV, x, y)
+    except (PermissionError, OSError):
+        # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+        pass
 
 
 def _mouseUp(x, y, button):
@@ -429,23 +431,20 @@ def _mouseUp(x, y, button):
     Returns:
       None
     """
-    if button == 'left':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_LEFTUP, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'middle':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_MIDDLEUP, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'right':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_RIGHTUP, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    else:
-        assert False, "button argument not in ('left', 'middle', 'right')"
+    if button not in (LEFT, MIDDLE, RIGHT):
+        raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
+
+    if button == LEFT:
+        EV = MOUSEEVENTF_LEFTUP
+    elif button == MIDDLE:
+        EV = MOUSEEVENTF_MIDDLEUP
+    elif button == RIGHT:
+        EV = MOUSEEVENTF_RIGHTUP
+
+    try:
+        _sendMouseEvent(EV, x, y)
+    except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+        pass
 
 
 def _click(x, y, button):
@@ -460,23 +459,21 @@ def _click(x, y, button):
     Returns:
       None
     """
-    if button == 'left':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_LEFTCLICK, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'middle':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_MIDDLECLICK, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    elif button == 'right':
-        try:
-            _sendMouseEvent(MOUSEEVENTF_RIGHTCLICK, x, y)
-        except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
-            pass
-    else:
-        assert False, "button argument not in ('left', 'middle', 'right')"
+    if button not in (LEFT, MIDDLE, RIGHT):
+        raise ValueError('button arg to _click() must be one of "left", "middle", or "right", not %s' % button)
+
+    if button == LEFT:
+        EV = MOUSEEVENTF_LEFTCLICK
+    elif button == MIDDLE:
+        EV = MOUSEEVENTF_MIDDLECLICK
+    elif button ==RIGHT:
+        EV = MOUSEEVENTF_RIGHTCLICK
+
+    try:
+        _sendMouseEvent(EV, x, y)
+    except (PermissionError, OSError):
+        # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
+        pass
 
 
 def _sendMouseEvent(ev, x, y, dwData=0):
@@ -506,6 +503,9 @@ def _sendMouseEvent(ev, x, y, dwData=0):
     #inputStruct.mi = mouseStruct
     #inputStruct.type = INPUT_MOUSE
     #ctypes.windll.user32.SendInput(1, ctypes.pointer(inputStruct), ctypes.sizeof(inputStruct))
+
+    # TODO Note: We need to handle additional buttons, which I believe is documented here:
+    # https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-mouse_event
 
     width, height = _size()
     convertedX = 65536 * x // width + 1
