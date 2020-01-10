@@ -2,8 +2,10 @@ Here is an inevitably incomplete list of MUCH-APPRECIATED CONTRIBUTORS --
 people who have submitted patches, reported bugs, added translations, helped
 answer newbie questions, and generally made PyAutoGUI that much better:
 
+Abhijeet Singh https://github.com/cseas
 Al Sweigart https://github.com/asweigart/
 Alexandr Orlov https://github.com/hey-sancho
+alphaCTzo7G https://github.com/alphaCTzo7G
 Andrew Selzer https://github.com/afs2015
 Andy Dam https://github.com/andydam
 Anwar A. Ruff https://github.com/aaruff
@@ -16,11 +18,15 @@ Clayton A. Alves https://github.com/claytonaalves
 cryzed https://github.com/cryzed
 Daniel D. Beck https://github.com/ddbeck
 danielboone https://github.com/danielboone
+Davee Nguyen https://github.com/daveenguyen
 David Siah https://github.com/dsiah
 Denilson Figueiredo de Sá https://github.com/denilsonsa
 Dominik Schmelz https://github.com/DIDoS
 dragon778 https://github.com/dragon788
+Duxxi https://github.com/sjhhh3
 Eric https://github.com/bleuetnoir
+ErtugrulSener https://github.com/ErtugrulSener
+Fornost461 https://github.com/Fornost461
 Harrison https://github.com/Sentdex
 Hugo Salvador https://github.com/hugoesb
 jakibaki https://github.com/
@@ -37,6 +43,7 @@ liberme https://github.com/liberme
 Matt Olsen https://github.com/digwanderlust
 mvbentes https://github.com/mvbentes
 nexcvon https://github.com/nexcvon
+optroot https://github.com/optroot
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
