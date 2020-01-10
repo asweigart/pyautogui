@@ -387,7 +387,10 @@ def _moveTo(x, y):
     Returns:
       None
     """
-    _sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
+    ctypes.windll.user32.SetCursorPos(x, y)
+    # This was a possible solution to issue #314 https://github.com/asweigart/pyautogui/issues/314
+    # but I'd like to hang on to SetCursorPos because mouse_event() has been superceded.
+    #_sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
 
 
 def _mouseDown(x, y, button):
