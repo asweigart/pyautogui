@@ -74,6 +74,8 @@ The optional `confidence` keyword argument specifies the accuracy with which the
     >>> button7location
     Box(left=1416, top=562, width=50, height=41)
 
+**Note**: You need to have `OpenCV <https://pypi.org/project/opencv-python/>`_ installed for the `confidence` keyword to work.
+
 The `locateCenterOnScreen()` function combines `locateOnScreen()` and `center()`:
 
     >>> import pyautogui
