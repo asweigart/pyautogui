@@ -120,6 +120,8 @@ Contents:
    tests.rst
    roadmap.rst
 
+   source/modules.rst
+
 This documentation is still a work in progress.
 
 

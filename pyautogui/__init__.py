@@ -162,9 +162,58 @@ except ImportError:
     alert = confirm = prompt = password = _couldNotImportPyMsgBox
 
 
+def raisePyAutoGUIImageNotFoundException(wrappedFunction):
+    """
+    A decorator that wraps PyScreeze locate*() functions so that the PyAutoGUI user sees them raise PyAutoGUI's
+    ImageNotFoundException rather than PyScreeze's ImageNotFoundException. This is because PyScreeze should be
+    invisible to PyAutoGUI users.
+    """
+
+    @functools.wraps(wrappedFunction)
+    def wrapper(*args, **kwargs):
+        try:
+            return wrappedFunction(*args, **kwargs)
+        except pyscreeze.ImageNotFoundException:
+            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
+
+    return wrapper
+
+
 try:
     import pyscreeze
     from pyscreeze import center, grab, pixel, pixelMatchesColor, screenshot
+
+    # Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
+    @raisePyAutoGUIImageNotFoundException
+    def locate(*args, **kwargs):
+        return pyscreeze.locate(*args, **kwargs)
+
+    locate.__doc__ = pyscreeze.locate.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateAll(*args, **kwargs):
+        return pyscreeze.locateAll(*args, **kwargs)
+
+    locateAll.__doc__ = pyscreeze.locateAll.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateAllOnScreen(*args, **kwargs):
+        return pyscreeze.locateAllOnScreen(*args, **kwargs)
+
+    locateAllOnScreen.__doc__ = pyscreeze.locateAllOnScreen.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateCenterOnScreen(*args, **kwargs):
+        return pyscreeze.locateCenterOnScreen(*args, **kwargs)
+
+    locateCenterOnScreen.__doc__ = pyscreeze.locateCenterOnScreen.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateOnScreen(*args, **kwargs):
+        return pyscreeze.locateOnScreen(*args, **kwargs)
+
+    locateOnScreen.__doc__ = pyscreeze.locateOnScreen.__doc__
+
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def _couldNotImportPyScreeze():
@@ -186,64 +235,6 @@ except ImportError:
     pixel = _couldNotImportPyScreeze
     pixelMatchesColor = _couldNotImportPyScreeze
     screenshot = _couldNotImportPyScreeze
-
-
-def raisePyAutoGUIImageNotFoundException(wrappedFunction):
-    """
-    A decorator that wraps PyScreeze locate*() functions so that the PyAutoGUI user sees them raise PyAutoGUI's
-    ImageNotFoundException rather than PyScreeze's ImageNotFoundException. This is because PyScreeze should be
-    invisible to PyAutoGUI users.
-    """
-
-    @functools.wraps(wrappedFunction)
-    def wrapper(*args, **kwargs):
-        try:
-            return wrappedFunction(*args, **kwargs)
-        except pyscreeze.ImageNotFoundException:
-            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
-
-    return wrapper
-
-
-# Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
-@raisePyAutoGUIImageNotFoundException
-def _locate(*args, **kwargs):
-    return pyscreeze.locate(*args, **kwargs)
-
-
-locate = _locate
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateAll(*args, **kwargs):
-    return pyscreeze.locateAll(*args, **kwargs)
-
-
-locateAll = _locateAll
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateAllOnScreen(*args, **kwargs):
-    return pyscreeze.locateAllOnScreen(*args, **kwargs)
-
-
-locateAllOnScreen = _locateAllOnScreen
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateCenterOnScreen(*args, **kwargs):
-    return pyscreeze.locateCenterOnScreen(*args, **kwargs)
-
-
-locateCenterOnScreen = _locateCenterOnScreen
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateOnScreen(*args, **kwargs):
-    return pyscreeze.locateOnScreen(*args, **kwargs)
-
-
-locateOnScreen = _locateOnScreen
 
 
 try:
@@ -940,15 +931,7 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScree
 
 @_genericPyAutoGUIChecks
 def click(
-    x=None,
-    y=None,
-    clicks=1,
-    interval=0.0,
-    button=PRIMARY,
-    duration=0.0,
-    tween=linear,
-    logScreenshot=None,
-    _pause=True,
+    x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True
 ):
     """
     Performs pressing a mouse button down and then immediately releasing it. Returns ``None``.
@@ -1085,9 +1068,7 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScr
 
 
 @_genericPyAutoGUIChecks
-def doubleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
-):
+def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -1130,9 +1111,7 @@ def doubleClick(
 
 
 @_genericPyAutoGUIChecks
-def tripleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
-):
+def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a triple click.
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -1325,14 +1304,7 @@ move = moveRel  # For PyAutoGUI 1.0, move() replaces moveRel().
 
 @_genericPyAutoGUIChecks
 def dragTo(
-    x=None,
-    y=None,
-    duration=0.0,
-    tween=linear,
-    button=PRIMARY,
-    logScreenshot=None,
-    _pause=True,
-    mouseDownUp=True,
+    x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, logScreenshot=None, _pause=True, mouseDownUp=True
 ):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
@@ -1373,14 +1345,7 @@ def dragTo(
 
 @_genericPyAutoGUIChecks
 def dragRel(
-    xOffset=0,
-    yOffset=0,
-    duration=0.0,
-    tween=linear,
-    button=PRIMARY,
-    logScreenshot=None,
-    _pause=True,
-    mouseDownUp=True,
+    xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, logScreenshot=None, _pause=True, mouseDownUp=True
 ):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
@@ -2113,6 +2078,23 @@ def run(commandStr, _ssCount=None):
     originalPAUSE = PAUSE
     _runCommandList(commandList, _ssCount)
     PAUSE = originalPAUSE
+
+
+def printInfo(dontPrint=False):
+    msg = '''
+         Platform: {}
+   Python Version: {}
+PyAutoGUI Version: {}
+       Executable: {}
+       Resolution: {}
+        Timestamp: {}'''.format(*getInfo())
+    if not dontPrint:
+        print(msg)
+    return msg
+
+
+def getInfo():
+    return (sys.platform, sys.version, __version__, sys.executable, size(), datetime.datetime.now())
 
 
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.

@@ -17,6 +17,7 @@ Daniel D. Beck https://github.com/ddbeck
 danielboone https://github.com/danielboone
 David Siah https://github.com/dsiah
 Denilson Figueiredo de Sá https://github.com/denilsonsa
+Dominik Schmelz https://github.com/DIDoS
 dragon778 https://github.com/dragon788
 Eric https://github.com/bleuetnoir
 Harrison https://github.com/Sentdex
@@ -36,5 +37,6 @@ nexcvon https://github.com/nexcvon
 pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
+Scott Noyes https://github.com/snoyes
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
