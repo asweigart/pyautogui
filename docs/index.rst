@@ -75,7 +75,7 @@ The benefit of using PyAutoGUI, as opposed to a script that directly generates t
 FAQ: Frequently Asked Questions
 ===============================
 
-Send questions to <a href="mailto:al@inventwithpython.com">al@inventwithpython.com</a>
+Send questions to al@inventwithpython.com
 
 **Q: Can PyAutoGUI work on Android, iOS, or tablet/smartphone apps.**
 
