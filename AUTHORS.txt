@@ -26,6 +26,7 @@ Hugo Salvador https://github.com/hugoesb
 jakibaki https://github.com/
 Jeremy R. Gray https://github.com/jeremygray
 Jeromie Kirchoff https://github.com/JayRizzo
+Joel Gomes da Silva https://github.com/joelgomes1994
 Jon Winsley https://github.com/glitchassassin
 Jose Riha https://github.com/jose1711
 Julien Schueller https://github.com/jschueller
@@ -40,6 +41,7 @@ pgkos https://github.com/pgkos
 qiujieqiong https://github.com/qiujieqiong
 Ricardo Amendoeira https://github.com/ric2b
 Scott Noyes https://github.com/snoyes
+Sergio Encarnación https://github.com/Sergioenc28
 sneakypete81 https://github.com/sneakypete81
 Stefan Hoelzl https://github.com/stefanhoelzl
 Steven Shave https://github.com/stevenshave
