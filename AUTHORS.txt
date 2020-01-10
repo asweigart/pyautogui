@@ -45,3 +45,4 @@ Stefan Hoelzl https://github.com/stefanhoelzl
 Steven Shave https://github.com/stevenshave
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
+Stefan Hoelzl https://github.com/stefanhoelzl
