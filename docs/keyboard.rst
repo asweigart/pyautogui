@@ -4,19 +4,19 @@
 Keyboard Control Functions
 ==========================
 
-The typewrite() Function
+The write() Function
 ========================
 
-The primary keyboard function is ``typewrite()``. This function will type the characters in the string is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
+The primary keyboard function is ``write()``. This function will type the characters in the string that is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
 
 For example:
 
 .. code:: python
 
-    >>> pyautogui.typewrite('Hello world!')                 # prints out "Hello world!" instantly
-    >>> pyautogui.typewrite('Hello world!', interval=0.25)  # prints out "Hello world!" with a quarter second delay after each character
+    >>> pyautogui.write('Hello world!')                 # prints out "Hello world!" instantly
+    >>> pyautogui.write('Hello world!', interval=0.25)  # prints out "Hello world!" with a quarter second delay after each character
 
-You can only press single-character keys with ``typewrite()``, so you can't press the Shift or F1 keys, for example.
+You can only press single-character keys with ``write()``, so you can't press the Shift or F1 keys, for example.
 
 The press(), keyDown(), and keyUp() Functions
 =============================================
@@ -41,7 +41,7 @@ The ``press()`` function is really just a wrapper for the ``keyDown()`` and ``ke
     >>> pyautogui.press('left')     # press the left arrow key
     >>> pyautogui.keyUp('shift')    # release the shift key
 
-To press multiple keys similar to what ``typewrite()`` does, pass a list of strings to ``press()``. For example:
+To press multiple keys similar to what ``write()`` does, pass a list of strings to ``press()``. For example:
 
 .. code:: python
 
@@ -53,8 +53,7 @@ Or you can set how many presses `left`:
 
     >>> pyautogui.press('left', presses=3)
 
-
-
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 The hotkey() Function
 =====================
@@ -76,6 +75,7 @@ To make pressing hotkeys or keyboard shortcuts convenient, the ``hotkey()`` can 
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.keyUp('ctrl')
 
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 KEYBOARD_KEYS
 =============

@@ -103,25 +103,25 @@ Normally the mouse cursor will instantly move to the new coordinates. If you wan
 
 (If the duration is less than ``pyautogui.MINIMUM_DURATION`` the movement will be instant. By default, ``pyautogui.MINIMUM_DURATION`` is 0.1.)
 
-If you want to move the mouse cursor over a few pixels *relative* to its current position, use the ``moveRel()`` function. This function has similar parameters as ``moveTo()``. For example:
+If you want to move the mouse cursor over a few pixels *relative* to its current position, use the ``move()`` function. This function has similar parameters as ``moveTo()``. For example:
 
 .. code:: python
 
-    >>> pyautogui.moveTo(100, 200)   # moves mouse to X of 100, Y of 200.
-    >>> pyautogui.moveRel(0, 50)     # move the mouse down 50 pixels.
-    >>> pyautogui.moveRel(-30, 0)     # move the mouse left 30 pixels.
-    >>> pyautogui.moveRel(-30, None)  # move the mouse left 30 pixels.
+    >>> pyautogui.moveTo(100, 200)  # moves mouse to X of 100, Y of 200.
+    >>> pyautogui.move(0, 50)       # move the mouse down 50 pixels.
+    >>> pyautogui.move(-30, 0)      # move the mouse left 30 pixels.
+    >>> pyautogui.move(-30, None)   # move the mouse left 30 pixels.
 
 Mouse Drags
 ===========
 
-PyAutoGUI's ``dragTo()`` and ``dragRel()`` functions have similar parameters as the ``moveTo()`` and ``moveRel()`` functions. In addition, they have a ``button`` keyword which can be set to ``'left'``, ``'middle'``, and ``'right'`` for which mouse button to hold down while dragging. For example:
+PyAutoGUI's ``dragTo()`` and ``drag()`` functions have similar parameters as the ``moveTo()`` and ``move()`` functions. In addition, they have a ``button`` keyword which can be set to ``'left'``, ``'middle'``, and ``'right'`` for which mouse button to hold down while dragging. For example:
 
 .. code:: python
 
     >>> pyautogui.dragTo(100, 200, button='left')     # drag mouse to X of 100, Y of 200 while holding down left mouse button
     >>> pyautogui.dragTo(300, 400, 2, button='left')  # drag mouse to X of 300, Y of 400 over 2 seconds while holding down left mouse button
-    >>> pyautogui.dragRel(30, 0, 2, button='right')   # drag the mouse left 30 pixels over 2 seconds while holding down the right mouse button
+    >>> pyautogui.drag(30, 0, 2, button='right')   # drag the mouse left 30 pixels over 2 seconds while holding down the right mouse button
 
 
 Tween / Easing Functions
@@ -131,7 +131,7 @@ Tweening is an extra feature to make the mouse movements fancy. You can probably
 
 A tween or easing function dictates the progress of the mouse as it moves to its destination. Normally when moving the mouse over a duration of time, the mouse moves directly towards the destination in a straight line at a constant speed. This is known as a *linear tween* or *linear easing* function.
 
-PyAutoGUI has other tweening functions available in the ``pyautogui`` module. The ``pyautogui.easeInQuad`` function can be passed for the 4th argument to ``moveTo()``, ``moveRel()``, ``dragTo()``, and ``dragRel()`` functions to have the mouse cursor start off moving slowly and then speeding up towards the destination. The total duration is still the same as the argument passed to the function. The ``pyautogui.easeOutQuad`` is the reverse: the mouse cursor starts moving fast but slows down as it approaches the destination. The ``pyautogui.easeOutElastic`` will overshoot the destination and "rubber band" back and forth until it settles at the destination.
+PyAutoGUI has other tweening functions available in the ``pyautogui`` module. The ``pyautogui.easeInQuad`` function can be passed for the 4th argument to ``moveTo()``, ``move()``, ``dragTo()``, and ``drag()`` functions to have the mouse cursor start off moving slowly and then speeding up towards the destination. The total duration is still the same as the argument passed to the function. The ``pyautogui.easeOutQuad`` is the reverse: the mouse cursor starts moving fast but slows down as it approaches the destination. The ``pyautogui.easeOutElastic`` will overshoot the destination and "rubber band" back and forth until it settles at the destination.
 
 For example:
 
@@ -162,7 +162,7 @@ To combine a ``moveTo()`` call before the click, pass integers for the ``x`` and
 
     >>> pyautogui.click(x=100, y=200)  # move to 100, 200, then click the left mouse button.
 
-To specify a different mouse button to click, pass ``'left'``, ``'middle'``, or  ``'right'``for the ``button`` keyword argument:
+To specify a different mouse button to click, pass ``'left'``, ``'middle'``, or  ``'right'`` for the ``button`` keyword argument:
 
 .. code:: python
 
