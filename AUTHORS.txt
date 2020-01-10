@@ -40,3 +40,4 @@ Ricardo Amendoeira https://github.com/ric2b
 Scott Noyes https://github.com/snoyes
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
+Stefan Hoelzl https://github.com/stefanhoelzl
