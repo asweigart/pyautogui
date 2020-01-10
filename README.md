@@ -49,7 +49,7 @@ All keyboard presses done by PyAutoGUI are sent to the window that currently has
 ```python
     >>> import pyautogui
     >>> screenWidth, screenHeight = pyautogui.size() # Returns two integers, the width and height of the screen. (The primary monitor, in multi-monitor setups.)
-    >>> currentMouseX, currentMouseY = pyautogui.position() # Retursn two integes, the x and y of the mouse cursor's current position.
+    >>> currentMouseX, currentMouseY = pyautogui.position() # Returns two integers, the x and y of the mouse cursor's current position.
     >>> pyautogui.moveTo(100, 150) # Move the mouse to the x, y coordinates 100, 150.
     >>> pyautogui.click() # Click the mouse at its current location.
     >>> pyautogui.click(200, 220) # Click the mouse at the x, y coordinates 200, 220.
@@ -113,7 +113,7 @@ The locateCenterOnScreen() function returns the center of this match region:
 How Does PyAutoGUI Work?
 ========================
 
-The three major operating systems (Windows, macOS, and Linux) each have different ways to programmatically control the mouse and keyboard. This can often involve confusing, obscure, and deeply techincal details. The job of PyAutoGUI is to hide all of this complexity behind a simple API.
+The three major operating systems (Windows, macOS, and Linux) each have different ways to programmatically control the mouse and keyboard. This can often involve confusing, obscure, and deeply technical details. The job of PyAutoGUI is to hide all of this complexity behind a simple API.
 
 * On Windows, PyAutoGUI accesses the Windows API (also called the WinAPI or win32 API) through the built-in `ctypes` module. The `nicewin` module at https://github.com/asweigart/nicewin provides a demonstration for how Windows API calls can be made through Python.
 
