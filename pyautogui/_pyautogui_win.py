@@ -261,6 +261,7 @@ keyboardMapping.update({
 })
 
 # Populate the basic printable ascii characters.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
