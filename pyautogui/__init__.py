@@ -1576,7 +1576,9 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
       None
     """
     if type(keys) == str:
-        keys = [keys]  # If keys is 'enter', convert it to ['enter'].
+        if len(keys) > 1:
+            keys = keys.lower()
+        keys = [keys] # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1584,6 +1586,7 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
                 lowerKeys.append(s.lower())
             else:
                 lowerKeys.append(s)
+        keys = lowerKeys
     interval = float(interval)
     _logScreenshot(logScreenshot, "press", ",".join(keys), folder=".")
     for i in range(presses):
