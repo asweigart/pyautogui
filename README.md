@@ -1,13 +1,15 @@
 PyAutoGUI
 =========
 
-PyAutoGUI is a  cross-platform GUI automation Python module for human beings. Used to programmatically control the mouse & keyboard.
+PyAutoGUI is a cross-platform GUI automation Python module for human beings.
+Used to programmatically control the mouse & keyboard.
 
 `pip install pyautogui`
 
 Full documentation available at https://pyautogui.readthedocs.org
 
-Simplified Chinese documentation available at https://muxuezi.github.io/posts/doc-pyautogui.html
+Simplified Chinese documentation（简体中文版文档）available at
+https://muxuezi.github.io/posts/doc-pyautogui.html
 
 Source code available at https://github.com/asweigart/pyautogui
 
@@ -18,17 +20,19 @@ PyAutoGUI supports Python 2 and 3. If you are installing PyAutoGUI from PyPI usi
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
-OS X needs the pyobjc-core and pyobjc module installed (in that order).
+macOS needs the rubicon-objc module installed.
 
-Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
+Linux needs the python3-xlib module installed.
 
-Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
+Pillow needs to be installed, and on Linux you may need to install additional
+libraries to make sure Pillow's PNG/JPEG works correctly. See:
 
     https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
 
     http://ubuntuforums.org/showthread.php?t=1751455
 
-If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
+If you want to do development and contribute to PyAutoGUI, you will need to
+install these modules from PyPI:
 
 * pyscreeze
 * pymsgbox
@@ -117,7 +121,7 @@ The three major operating systems (Windows, macOS, and Linux) each have differen
 
 * On Windows, PyAutoGUI accesses the Windows API (also called the WinAPI or win32 API) through the built-in `ctypes` module. The `nicewin` module at https://github.com/asweigart/nicewin provides a demonstration for how Windows API calls can be made through Python.
 
-* On macOS, PyAutoGUI uses the `pyobjc` module to access the Cocoa API.
+* On macOS, PyAutoGUI uses the `rubicon-objc` module to access the Cocoa API.
 
 * On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
 

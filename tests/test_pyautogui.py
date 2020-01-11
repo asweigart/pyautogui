@@ -22,7 +22,6 @@ if runningOnPython2:
 else:
     INPUT_FUNC = input
 
-
 try:
     import pytweening
 except:
@@ -85,7 +84,7 @@ class P(namedtuple("P", ["x", "y"])):
     def __pos__(self):
         return self
 
-    def __neg__(self):
+    def __abs__(self):
         return P(abs(self.x), abs(self.y))
 
 
@@ -144,7 +143,8 @@ class TestGeneral(unittest.TestCase):
         pyautogui.screenshot
         pyautogui.grab
 
-        # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
+        # TODO(denilsonsa): I believe we should get rid of these symbols.
+        # If someone wants tweening, import pytweening module instead!
         # Tweening-related API
         pyautogui.getPointOnLine
         pyautogui.linear
@@ -703,12 +703,16 @@ class TestKeyboard(unittest.TestCase):
             response = INPUT_FUNC()
             self.assertEqual(response, "abxc")
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_typewrite_editable_del(self):
         # Del key test
         t = TypewriteThread(["a", "b", "c", "left", "left", "left", "del", "delete", "\n"])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, "c")
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_typewrite_editable_home_end(self):
         # Home and end key test
         t = TypewriteThread(["a", "b", "c", "home", "x", "end", "z", "\n"])
         t.start()
@@ -722,12 +726,15 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, "")
 
+    def test_press_strings(self):
         # 'a' test, also test sending list of 1- and multi-length strings
         t = PressThread(["a", "enter"])
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, "a")
 
+    @unittest.skipIf(sys.platform == 'darwin', "Arrow keys don't currently work on macOS")
+    def test_press_arrows(self):
         # 'ba' test, also test sending list of 1- and multi-length strings
         t = PressThread(["a", "left", "b", "enter"])
         t.start()

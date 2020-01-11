@@ -260,6 +260,7 @@ except ImportError:
         )
 
 
+
 def useImageNotFoundException(value=None):
     """
     When called with no arguments, PyAutoGUI will raise ImageNotFoundException when the PyScreeze locate*() functions
@@ -519,6 +520,7 @@ QWERTY = r"""`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYU
 QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZUIOP*(_ASDFGHJKL<|YXCVBNM<>&"""
 
 
+
 def isShiftCharacter(character):
     """
     Returns True if the ``character`` is a keyboard key that would require the shift key to be held down, such as
@@ -550,7 +552,8 @@ else:
 # In seconds. Any duration less than this is rounded to 0.0 to instantly move
 # the mouse.
 MINIMUM_DURATION = 0.1
-# If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
+# If sleep_amount is less than MINIMUM_DURATION, time.sleep()
+# will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
 
@@ -558,9 +561,12 @@ MINIMUM_SLEEP = 0.05
 PAUSE = 0.1  # Tenth-second pause by default.
 
 
-# If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
-# The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
-# The points are for the corners of the screen, but note that these points don't automatically change if the screen resolution changes.
+# If the mouse is over a coordinate in FAILSAFE_POINTS and
+# FAILSAFE is True, the FailSafeException is raised.
+# The rest of the points are added to the FAILSAFE_POINTS list
+# at the bottom of this file, after size() has been defined.
+# The points are for the corners of the screen, but note that
+# these points don't automatically change if the screen resolution changes.
 FAILSAFE = True
 FAILSAFE_POINTS = [(0, 0)]
 
@@ -1517,7 +1523,7 @@ def isValidKey(key):
     Returns:
       bool: True if key is a valid value, False if not.
     """
-    return platformModule.keyboardMapping.get(key, None) != None
+    return platformModule.keyboardMapping.get(key, None) is not None
 
 
 @_genericPyAutoGUIChecks
