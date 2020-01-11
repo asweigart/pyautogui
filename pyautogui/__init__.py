@@ -13,7 +13,7 @@
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = "0.9.48"
+__version__ = "0.9.49"
 
 import sys
 import time
@@ -162,9 +162,58 @@ except ImportError:
     alert = confirm = prompt = password = _couldNotImportPyMsgBox
 
 
+def raisePyAutoGUIImageNotFoundException(wrappedFunction):
+    """
+    A decorator that wraps PyScreeze locate*() functions so that the PyAutoGUI user sees them raise PyAutoGUI's
+    ImageNotFoundException rather than PyScreeze's ImageNotFoundException. This is because PyScreeze should be
+    invisible to PyAutoGUI users.
+    """
+
+    @functools.wraps(wrappedFunction)
+    def wrapper(*args, **kwargs):
+        try:
+            return wrappedFunction(*args, **kwargs)
+        except pyscreeze.ImageNotFoundException:
+            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
+
+    return wrapper
+
+
 try:
     import pyscreeze
     from pyscreeze import center, grab, pixel, pixelMatchesColor, screenshot
+
+    # Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
+    @raisePyAutoGUIImageNotFoundException
+    def locate(*args, **kwargs):
+        return pyscreeze.locate(*args, **kwargs)
+
+    locate.__doc__ = pyscreeze.locate.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateAll(*args, **kwargs):
+        return pyscreeze.locateAll(*args, **kwargs)
+
+    locateAll.__doc__ = pyscreeze.locateAll.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateAllOnScreen(*args, **kwargs):
+        return pyscreeze.locateAllOnScreen(*args, **kwargs)
+
+    locateAllOnScreen.__doc__ = pyscreeze.locateAllOnScreen.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateCenterOnScreen(*args, **kwargs):
+        return pyscreeze.locateCenterOnScreen(*args, **kwargs)
+
+    locateCenterOnScreen.__doc__ = pyscreeze.locateCenterOnScreen.__doc__
+
+    @raisePyAutoGUIImageNotFoundException
+    def locateOnScreen(*args, **kwargs):
+        return pyscreeze.locateOnScreen(*args, **kwargs)
+
+    locateOnScreen.__doc__ = pyscreeze.locateOnScreen.__doc__
+
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
     def _couldNotImportPyScreeze():
@@ -186,64 +235,6 @@ except ImportError:
     pixel = _couldNotImportPyScreeze
     pixelMatchesColor = _couldNotImportPyScreeze
     screenshot = _couldNotImportPyScreeze
-
-
-def raisePyAutoGUIImageNotFoundException(wrappedFunction):
-    """
-    A decorator that wraps PyScreeze locate*() functions so that the PyAutoGUI user sees them raise PyAutoGUI's
-    ImageNotFoundException rather than PyScreeze's ImageNotFoundException. This is because PyScreeze should be
-    invisible to PyAutoGUI users.
-    """
-
-    @functools.wraps(wrappedFunction)
-    def wrapper(*args, **kwargs):
-        try:
-            return wrappedFunction(*args, **kwargs)
-        except pyscreeze.ImageNotFoundException:
-            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
-
-    return wrapper
-
-
-# Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
-@raisePyAutoGUIImageNotFoundException
-def _locate(*args, **kwargs):
-    return pyscreeze.locate(*args, **kwargs)
-
-
-locate = _locate
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateAll(*args, **kwargs):
-    return pyscreeze.locateAll(*args, **kwargs)
-
-
-locateAll = _locateAll
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateAllOnScreen(*args, **kwargs):
-    return pyscreeze.locateAllOnScreen(*args, **kwargs)
-
-
-locateAllOnScreen = _locateAllOnScreen
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateCenterOnScreen(*args, **kwargs):
-    return pyscreeze.locateCenterOnScreen(*args, **kwargs)
-
-
-locateCenterOnScreen = _locateCenterOnScreen
-
-
-@raisePyAutoGUIImageNotFoundException
-def _locateOnScreen(*args, **kwargs):
-    return pyscreeze.locateOnScreen(*args, **kwargs)
-
-
-locateOnScreen = _locateOnScreen
 
 
 try:
@@ -535,6 +526,7 @@ def isShiftCharacter(character):
     Returns True if the ``character`` is a keyboard key that would require the shift key to be held down, such as
     uppercase letters or the symbols on the keyboard's number row.
     """
+    # NOTE TODO - This will be different for non-qwerty keyboards.
     return character.isupper() or character in set('~!@#$%^&*()_+{}|:"<>?')
 
 
@@ -946,15 +938,7 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScree
 
 @_genericPyAutoGUIChecks
 def click(
-    x=None,
-    y=None,
-    clicks=1,
-    interval=0.0,
-    button=PRIMARY,
-    duration=0.0,
-    tween=linear,
-    logScreenshot=None,
-    _pause=True,
+    x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True
 ):
     """
     Performs pressing a mouse button down and then immediately releasing it. Returns ``None``.
@@ -996,8 +980,8 @@ def click(
 
     _logScreenshot(logScreenshot, "click", "%s,%s,%s,%s" % (button, clicks, x, y), folder=".")
 
-    if sys.platform == "darwin":
-        platformModule._multiClick(x, y, button, 3)
+    if sys.platform == 'darwin':
+        platformModule._multiClick(x, y, button, clicks)
     else:
         for i in range(clicks):
             failSafeCheck()
@@ -1091,9 +1075,7 @@ def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScr
 
 
 @_genericPyAutoGUIChecks
-def doubleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
-):
+def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a double click.
 
     This is a wrapper function for click('left', x, y, 2, interval).
@@ -1136,9 +1118,7 @@ def doubleClick(
 
 
 @_genericPyAutoGUIChecks
-def tripleClick(
-    x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True
-):
+def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a triple click.
 
     This is a wrapper function for click('left', x, y, 3, interval).
@@ -1331,14 +1311,7 @@ move = moveRel  # For PyAutoGUI 1.0, move() replaces moveRel().
 
 @_genericPyAutoGUIChecks
 def dragTo(
-    x=None,
-    y=None,
-    duration=0.0,
-    tween=linear,
-    button=PRIMARY,
-    logScreenshot=None,
-    _pause=True,
-    mouseDownUp=True,
+    x=None, y=None, duration=0.0, tween=linear, button=PRIMARY, logScreenshot=None, _pause=True, mouseDownUp=True
 ):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen.
@@ -1379,14 +1352,7 @@ def dragTo(
 
 @_genericPyAutoGUIChecks
 def dragRel(
-    xOffset=0,
-    yOffset=0,
-    duration=0.0,
-    tween=linear,
-    button=PRIMARY,
-    logScreenshot=None,
-    _pause=True,
-    mouseDownUp=True,
+    xOffset=0, yOffset=0, duration=0.0, tween=linear, button=PRIMARY, logScreenshot=None, _pause=True, mouseDownUp=True
 ):
     """Performs a mouse drag (mouse movement while a button is held down) to a
     point on the screen, relative to its current position.
@@ -1607,8 +1573,8 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
     Args:
       key (str, list): The key to be pressed. The valid names are listed in
       KEYBOARD_KEYS. Can also be a list of such strings.
-      presses (integer, optiional): the number of press repetition
-      1 by default, for just one press
+      presses (integer, optional): The number of press repetitions.
+      1 by default, for just one press.
       interval (float, optional): How many seconds between each press.
       0.0 by default, for no pause between presses.
       pause (float, optional): How many seconds in the end of function process.
@@ -1617,7 +1583,9 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
       None
     """
     if type(keys) == str:
-        keys = [keys]  # If keys is 'enter', convert it to ['enter'].
+        if len(keys) > 1:
+            keys = keys.lower()
+        keys = [keys] # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1625,6 +1593,7 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
                 lowerKeys.append(s.lower())
             else:
                 lowerKeys.append(s)
+        keys = lowerKeys
     interval = float(interval)
     _logScreenshot(logScreenshot, "press", ",".join(keys), folder=".")
     for i in range(presses):
@@ -2119,6 +2088,23 @@ def run(commandStr, _ssCount=None):
     originalPAUSE = PAUSE
     _runCommandList(commandList, _ssCount)
     PAUSE = originalPAUSE
+
+
+def printInfo(dontPrint=False):
+    msg = '''
+         Platform: {}
+   Python Version: {}
+PyAutoGUI Version: {}
+       Executable: {}
+       Resolution: {}
+        Timestamp: {}'''.format(*getInfo())
+    if not dontPrint:
+        print(msg)
+    return msg
+
+
+def getInfo():
+    return (sys.platform, sys.version, __version__, sys.executable, size(), datetime.datetime.now())
 
 
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.

@@ -32,6 +32,7 @@ UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mou
 
 # Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 MOUSEEVENTF_LEFTCLICK = MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP
@@ -42,6 +43,7 @@ MOUSEEVENTF_MIDDLEDOWN = 0x0020
 MOUSEEVENTF_MIDDLEUP = 0x0040
 MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
+MOUSEEVENTF_ABSOLUTE = 0x8000
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
 
@@ -265,6 +267,7 @@ keyboardMapping.update({
 })
 
 # Populate the basic printable ascii characters.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
@@ -403,6 +406,9 @@ def _moveTo(x, y):
       None
     """
     ctypes.windll.user32.SetCursorPos(x, y)
+    # This was a possible solution to issue #314 https://github.com/asweigart/pyautogui/issues/314
+    # but I'd like to hang on to SetCursorPos because mouse_event() has been superceded.
+    #_sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
 
 
 def _mouseDown(x, y, button):

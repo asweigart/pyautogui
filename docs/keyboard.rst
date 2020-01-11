@@ -7,7 +7,7 @@ Keyboard Control Functions
 The write() Function
 ========================
 
-The primary keyboard function is ``write()``. This function will type the characters in the string is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
+The primary keyboard function is ``write()``. This function will type the characters in the string that is passed. To add a delay interval in between pressing each character key, pass an int or float for the ``interval`` keyword argument.
 
 For example:
 
@@ -47,6 +47,13 @@ To press multiple keys similar to what ``write()`` does, pass a list of strings 
 
     >>> pyautogui.press(['left', 'left', 'left'])
 
+Or you can set how many presses `left`:
+
+.. code:: python
+
+    >>> pyautogui.press('left', presses=3)
+
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 The hotkey() Function
 =====================
@@ -68,6 +75,7 @@ To make pressing hotkeys or keyboard shortcuts convenient, the ``hotkey()`` can 
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.keyUp('ctrl')
 
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 KEYBOARD_KEYS
 =============
