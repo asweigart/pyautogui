@@ -7,21 +7,21 @@ Welcome to PyAutoGUI's documentation!
 =====================================
 
 
-PyAutoGUI lets your Python scripts control the mouse and keyboard to automate interactions with other applications. The API is designed to be as simple. PyAutoGUI works on Windows, macOS, and Linux, and runs on Python 2 and 3.
+PyAutoGUI lets your Python scripts control the mouse and keyboard to automate interactions with other applications. The API is designed to be simple. PyAutoGUI works on Windows, macOS, and Linux, and runs on Python 2 and 3.
 
-To install with pip, run: `pip install pyautogui`
+To install with pip, run ``pip install pyautogui``. See the :doc:`install` page for more details.
 
-The source is available on: https://github.com/asweigart/pyautogui
+The source code is available on: https://github.com/asweigart/pyautogui
 
 PyAutoGUI has several features:
 
-* Moving the mouse and clicking or typing in the windows of other applications.
+* Moving the mouse and clicking in the windows of other applications.
 * Sending keystrokes to applications (for example, to fill out forms).
-* Take screenshots, and given an image (for example, of a button or checkbox), find it on the screen.
-* Locate an application's window, and move, resize, maximize, minimize, or close it (Windows-only, currently)
-* Display message boxes for user interaction while your GUI automation script runs.
+* Take screenshots, and given an image (for example, of a button or checkbox), and find it on the screen.
+* Locate an application's window, and move, resize, maximize, minimize, or close it (Windows-only, currently).
+* Display alert and message boxes.
 
-For a quick example of what PyAutoGUI is capable of, here's `a YouTube video of a bot automatically playing the game Sushi Go Round <https://www.youtube.com/watch?v=lfk_T6VKhTE>`_. The bot watches the game's application window, searching for images of sushi orders. When it finds one, it clicks the buttons for the sushi ingredients to complete the order. It also clicks the countertop to collect any finished plates. The bot can finish all seven days of the game, though many human players achieve higher scores than the bot.
+Here's `a YouTube video of a bot automatically playing the game Sushi Go Round <https://www.youtube.com/watch?v=lfk_T6VKhTE>`_. The bot watches the game's application window and searches for images of sushi orders. When it finds one, it clicks the ingredient buttons to make the sushi. It also clicks the phone in the game to order more ingredients as needed. The bot is completely autonomous and can finish all seven days of the game. This is the kind of automation that PyAutoGUI is capable of.
 
 Examples
 ========
@@ -31,8 +31,12 @@ Examples
     >>> import pyautogui
 
     >>> screenWidth, screenHeight = pyautogui.size() # Get the size of the primary monitor.
+    >>> screenWidth, screenHeight
+    (2560, 1440)
 
     >>> currentMouseX, currentMouseY = pyautogui.position() # Get the XY position of the mouse.
+    >>> currentMouseX, currentMouseY
+    (1314, 345)
 
     >>> pyautogui.moveTo(100, 150) # Move the mouse to XY coordinates.
 
@@ -40,7 +44,7 @@ Examples
     >>> pyautogui.click(100, 200)  # Move the mouse to XY coordinates and click it.
     >>> pyautogui.click('button.png') # Find where button.png appears on the screen and click it.
 
-    >>> pyautogui.move(0, 10)      # Move mouse 10 pixels down from its current position.
+    >>> pyautogui.move(400, 0)      # Move the mouse 400 pixels to the right of its current position.
     >>> pyautogui.doubleClick()    # Double click the mouse.
     >>> pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.easeInOutQuad)  # Use tweening/easing function to move mouse over 2 seconds.
 

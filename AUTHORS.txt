@@ -29,6 +29,7 @@ ErtugrulSener https://github.com/ErtugrulSener
 Fornost461 https://github.com/Fornost461
 Harrison https://github.com/Sentdex
 Hugo Salvador https://github.com/hugoesb
+i-need-to-tell-you-something https://github.com/i-need-to-tell-you-something
 jakibaki https://github.com/
 Jeff Triplett https://github.com/jefftriplett
 Jeremy R. Gray https://github.com/jeremygray
