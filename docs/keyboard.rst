@@ -47,6 +47,12 @@ To press multiple keys similar to what ``write()`` does, pass a list of strings 
 
     >>> pyautogui.press(['left', 'left', 'left'])
 
+Or you can set how many presses `left`:
+
+.. code:: python
+
+    >>> pyautogui.press('left', presses=3)
+
 To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
 The hotkey() Function
