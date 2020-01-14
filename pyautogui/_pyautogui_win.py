@@ -145,7 +145,7 @@ keyboardMapping.update({
     'accept': 0x1e, # VK_ACCEPT
     'modechange': 0x1f, # VK_MODECHANGE
     ' ': 0x20, # VK_SPACE
-    'space': 0x20,
+    'space': 0x20, # VK_SPACE
     'pgup': 0x21, # VK_PRIOR
     'pgdn': 0x22, # VK_NEXT
     'pageup': 0x21, # VK_PRIOR
@@ -238,29 +238,14 @@ keyboardMapping.update({
     'launchmediaselect': 0xb5, # VK_LAUNCH_MEDIA_SELECT
     'launchapp1': 0xb6, # VK_LAUNCH_APP1
     'launchapp2': 0xb7, # VK_LAUNCH_APP2
-    #';': 0xba, # VK_OEM_1
-    #'+': 0xbb, # VK_OEM_PLUS
-    #',': 0xbc, # VK_OEM_COMMA
-    #'-': 0xbd, # VK_OEM_MINUS
-    #'.': 0xbe, # VK_OEM_PERIOD
-    #'/': 0xbf, # VK_OEM_2
-    #'~': 0xc0, # VK_OEM_3
-    #'[': 0xdb, # VK_OEM_4
-    #'|': 0xdc, # VK_OEM_5
-    #']': 0xdd, # VK_OEM_6
-    #"'": 0xde, # VK_OEM_7
-    #'': 0xdf, # VK_OEM_8
-    #'': 0xe7, # VK_PACKET
-    #'': 0xf6, # VK_ATTN
-    #'': 0xf7, # VK_CRSEL
-    #'': 0xf8, # VK_EXSEL
-    #'': 0xf9, # VK_EREOF
-    #'': 0xfa, # VK_PLAY
-    #'': 0xfb, # VK_ZOOM
-    #'': 0xfc, # VK_NONAME
-    #'': 0xfd, # VK_PA1
-    #'': 0xfe, # VK_OEM_CLEAR
-})
+    })
+
+    # There are other virtual key constants that are not used here because the printable ascii keys are
+    # handled in the following `for` loop.
+    # The virtual key constants that aren't used are:
+    # VK_OEM_1, VK_OEM_PLUS, VK_OEM_COMMA, VK_OEM_MINUS, VK_OEM_PERIOD, VK_OEM_2, VK_OEM_3, VK_OEM_4,
+    # VK_OEM_5, VK_OEM_6, VK_OEM_7, VK_OEM_8, VK_PACKET, VK_ATTN, VK_CRSEL, VK_EXSEL, VK_EREOF,
+    # VK_PLAY, VK_ZOOM, VK_NONAME, VK_PA1, VK_OEM_CLEAR
 
 # Populate the basic printable ascii characters.
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
