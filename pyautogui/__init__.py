@@ -1495,6 +1495,26 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     if (tweenX, tweenY) not in FAILSAFE_POINTS:
         failSafeCheck()
 
+def Wave(duration=0.1, logLocation=False):
+    '''Waves the Cursor on screen to highlight location. Utilises pre-existing functions
+    to achieve.
+    Args:
+      duration (float, optional): The amount of time it takes to move the mouse
+        cursor to the new xy coordinates. If 0, then the mouse cursor is moved
+        instantaneously. 0.1 by default.
+      logLocation (Bool, optional): sends location to print
+    Returns:
+        None
+    '''
+    failSafeCheck()
+    moveRel(10, 0, duration)
+    moveRel(-20, 0, duration)
+    moveRel(10, 0, duration)
+    moveRel(0, 10, duration)
+    moveRel(0, -20, duration)
+    moveRel(0, 10, duration)
+    if logLocation:
+        print(position())
 
 # Keyboard Functions
 # ==================
