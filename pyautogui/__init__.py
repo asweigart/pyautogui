@@ -1634,6 +1634,80 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
+def typewritelist(messagelist, alternatewith=None, delay=3.0, interval=0.0, _pause=True):
+    """Performs typewrite on each item within the passed messagelist as if typewrite was called successive
+    times. This differs from the behavior of typewrite when it receives a list in that typewritelist
+    presses any strings passed to it where as typewrite only presses valid names of KEYBOARD_KEYS when
+    passed a list.
+
+    The alternatewith option allows one to alternate variable input with fixed input like 'name <tab> 
+    name <tab>' etc.
+
+    Args:
+      messagelist (str, list of strings): A list of strings - not KEYBOARD_KEYS - to be pressed.
+      alternatewith (list of strings, option): An optional list of strings or KEYBOARD_KEYS that are to be pressed in
+        between each item of the messagelist.
+      delay (float, optional): time in seconds to pause before starting the typewrite from file
+
+    Returns:
+      None
+    """
+    time.sleep(delay)
+
+    if alternatewith == None:
+        for i in messagelist:
+            typewrite(i, interval=interval, _pause=_pause)
+    else:
+        for i in messagelist:
+            typewrite(i, interval=interval, _pause=_pause)
+            if type(alternatewith) == str:
+                alternatewith = [alternatewith]
+            for j in alternatewith:
+                typewrite(j, interval=interval, _pause=_pause)
+
+
+writelist = typewritelist
+
+
+def typewritefile(messagefile, alternatelinewith=None, delay=3.0, interval=0.0, _pause=True):
+    """Performs typewrite on each line of a file, stripping white space from the line before typewriting it
+    and optionally alternating with a fixed list of string in alternatelinewith. 
+
+    Using alternatelinewith, one can use a file with a list of values to easily enter a sequence into a gui that
+    expects <tab> or <return> after each value.
+
+    Args:
+      messagefile (str): A string with a valid file path to a text file including only text that should 
+        be pressed line by line.
+      alternatelinewith (list of strings, option): An optional list of strings or KEYBOARD_KEYS that are to be pressed in
+        between each item of the messagelist.
+      delay (float, optional): time in seconds to pause before starting the typewrite from file
+
+    Returns:
+      None
+    """
+    time.sleep(delay)
+
+    import os.path
+    normpath = os.path.abspath(messagefile)
+    if os.path.exists(normpath):
+        with open(normpath,'r') as f:
+            for line in f:
+                typewrite(line.strip(), interval=interval, _pause=_pause)
+                if alternatelinewith != None:
+                    if type(alternatelinewith) == str:
+                        alternatelinewith = [alternatelinewith]
+                    for j in alternatelinewith:
+                        press(j, interval=interval, _pause=_pause)
+    else:
+        # file does not exist
+        # maybe not the right kind of error...
+        raise OSError
+
+    
+writefile = typewritefile
+
+
 @_genericPyAutoGUIChecks
 def hotkey(*args, **kwargs):
     """Performs key down presses on the arguments passed in order, then performs
