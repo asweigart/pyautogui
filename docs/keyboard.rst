@@ -55,6 +55,26 @@ Or you can set how many presses `left`:
 
 To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
 
+The hold() Context Manager
+==========================
+
+To make holding a key convenient, the ``hold()`` function can be used as a context manager and passed a string from the ``pyautogui.KEYBOARD_KEYS`` such as ``shift``, ``ctrl``, ``alt``, and this key will be held for the duration of the ``with`` context block. See `KEYBOARD_KEYS`_.
+
+.. code:: python
+
+    >>> with pyautogui.hold('shift'):
+            pyautogui.press(['left', 'left', 'left'])
+
+. . .is equivalent to this code:
+
+.. code:: python
+
+    >>> pyautogui.keyDown('shift')  # hold down the shift key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.press('left')     # press the left arrow key
+    >>> pyautogui.keyUp('shift')    # release the shift key
+
 The hotkey() Function
 =====================
 
