@@ -750,7 +750,7 @@ def position(x=None, y=None):
     Returns:
       (x, y) tuple of the current xy coordinates of the mouse cursor.
 
-    NOTE: The position() functon doesn't check for failsafe.
+    NOTE: The position() function doesn't check for failsafe.
     """
     posx, posy = platformModule._position()
     posx = int(posx)
