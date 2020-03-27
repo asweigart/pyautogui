@@ -48,6 +48,7 @@ MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
+KEYEVENTF_KEYDOWN = 0x0000 # Technically this constant doesn't exist in the MS documentation. It's the lack of KEYEVENTF_KEYUP that means pressing the key down.
 KEYEVENTF_KEYUP = 0x0002
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
@@ -290,8 +291,8 @@ def _keyDown(key):
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
+            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYDOWN, 0) #
+    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYDOWN, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
         if apply_mod:

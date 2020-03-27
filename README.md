@@ -11,6 +11,8 @@ Simplified Chinese documentation available at https://muxuezi.github.io/posts/do
 
 Source code available at https://github.com/asweigart/pyautogui
 
+If you need help installing Python, visit https://installpython3.com/
+
 Dependencies
 ============
 
