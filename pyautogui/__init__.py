@@ -929,6 +929,55 @@ def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScree
     _logScreenshot(logScreenshot, "mouseUp", "%s,%s" % (x, y), folder=".")
     platformModule._mouseUp(x, y, button)
 
+@_genericPyAutoGUIChecks
+def sendClick(
+    x=None, y=None, clicks=1, interval=0.0, button=PRIMARY, tween=linear, logScreenshot=None, _pause=True, window=None, child_window=None
+):
+    """
+    Performs pressing a mouse button down and then immediately releasing it. Returns ``None``.
+
+    When no arguments are passed, the primary mouse button is clicked at the mouse cursor's current location.
+
+    If integers for ``x`` and ``y`` are passed, the click will happen at that XY coordinate. If ``x`` is a string, the
+    string is an image filename that PyAutoGUI will attempt to locate on the screen and click the center of. If ``x``
+    is a sequence of two coordinates, those coordinates will be used for the XY coordinate to click on.
+
+    The ``clicks`` argument is an int of how many clicks to make, and defaults to ``1``.
+
+    The ``interval`` argument is an int or float of how many seconds to wait in between each click, if ``clicks`` is
+    greater than ``1``. It defaults to ``0.0`` for no pause in between clicks.
+
+    The ``button`` argument is one of the constants ``LEFT``, ``MIDDLE``, ``RIGHT``, ``PRIMARY``, or ``SECONDARY``.
+    It defaults to ``PRIMARY`` (which is the left mouse button, unless the operating system has been set for
+    left-handed users.)
+
+    If ``x`` and ``y`` are specified, and the click is not happening at the mouse cursor's current location, then
+    the ``duration`` argument is an int or float of how many seconds it should take to move the mouse to the XY
+    coordinates. It defaults to ``0`` for an instant move.
+
+
+    The ``pause`` parameter is deprecated. Call the ``pyautogui.sleep()`` function to implement a pause.
+
+    Raises:
+      PyAutoGUIException: If button is not one of 'left', 'middle', 'right', 1, 2, 3
+    """
+    # TODO: I'm leaving buttons 4, 5, 6, and 7 undocumented for now. I need to understand how they work.
+    button = _normalizeButton(button)
+    x, y = _normalizeXYArgs(x, y)
+
+
+    _logScreenshot(logScreenshot, "sendClick", "%s,%s,%s,%s,%s,%s" % (button, clicks, x, y, window, child_window), folder=".")
+
+    if sys.platform == 'darwin':
+        platformModule._multiClick(x, y, button, clicks)
+    else:
+        for i in range(clicks):
+            failSafeCheck()
+            if button in (LEFT, MIDDLE, RIGHT):
+                platformModule._sendClick(x, y, button, window, child_window)
+
+            time.sleep(interval)
+
 
 @_genericPyAutoGUIChecks
 def click(
