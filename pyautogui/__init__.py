@@ -1635,7 +1635,7 @@ write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
 
 
 @_genericPyAutoGUIChecks
-def hotkey(*args, **kwargs):
+def hotkey(*args, **kwargs, presses=1):
     """Performs key down presses on the arguments passed in order, then performs
     key releases in reverse order.
 
@@ -1647,6 +1647,8 @@ def hotkey(*args, **kwargs):
         list of key strings to press.
       interval (float, optional): The number of seconds in between each press.
         0.0 by default, for no pause in between presses.
+      presses (integer, optional): The number of press repetitions.
+          1 by default, for just one press.
 
     Returns:
       None
@@ -1654,16 +1656,17 @@ def hotkey(*args, **kwargs):
     interval = float(kwargs.get("interval", 0.0))  # TODO - this should be taken out.
 
     _logScreenshot(kwargs.get("logScreenshot"), "hotkey", ",".join(args), folder=".")
-    for c in args:
-        if len(c) > 1:
-            c = c.lower()
-        platformModule._keyDown(c)
-        time.sleep(interval)
-    for c in reversed(args):
-        if len(c) > 1:
-            c = c.lower()
-        platformModule._keyUp(c)
-        time.sleep(interval)
+    for i in range(presses):
+        for c in args:
+            if len(c) > 1:
+                c = c.lower()
+            platformModule._keyDown(c)
+            time.sleep(interval)
+        for c in reversed(args):
+            if len(c) > 1:
+                c = c.lower()
+            platformModule._keyUp(c)
+            time.sleep(interval)
 
 
 def failSafeCheck():
