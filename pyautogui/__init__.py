@@ -519,13 +519,16 @@ QWERTY = r"""`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYU
 QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZUIOP*(_ASDFGHJKL<|YXCVBNM<>&"""
 
 
-def isShiftCharacter(character):
+def isShiftCharacter(mapping):
     """
     Returns True if the ``character`` is a keyboard key that would require the shift key to be held down, such as
     uppercase letters or the symbols on the keyboard's number row.
     """
-    # NOTE TODO - This will be different for non-qwerty keyboards.
-    return character.isupper() or character in set('~!@#$%^&*()_+{}|:"<>?')
+    if type(mapping) == int:
+        return False
+    if len(mapping) == 1:
+        return mapping.isupper()
+    return mapping[1] != 0
 
 
 # The platformModule is where we reference the platform-specific functions.
