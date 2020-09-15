@@ -301,7 +301,6 @@ keyboardMapping.update({
     '}': _display.keysym_to_keycodes(Xlib.XK.string_to_keysym('braceright'))[0],
     '~': _display.keysym_to_keycodes(Xlib.XK.string_to_keysym('asciitilde'))[0],
 })
-print(keyboardMapping)
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
