@@ -987,9 +987,9 @@ def click(
 
 @_genericPyAutoGUIChecks
 def leftClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
-    """Performs a right mouse button click.
+    """Performs a left mouse button click.
 
-    This is a wrapper function for click('right', x, y).
+    This is a wrapper function for click('left', x, y).
 
     The x and y parameters detail where the mouse event happens. If None, the
     current mouse position is used. If a float value, it is rounded down. If
@@ -1047,7 +1047,7 @@ def rightClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScre
 def middleClick(x=None, y=None, interval=0.0, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
     """Performs a middle mouse button click.
 
-    This is a wrapper function for click('right', x, y).
+    This is a wrapper function for click('middle', x, y).
 
     The x and y parameters detail where the mouse event happens. If None, the
     current mouse position is used. If a float value, it is rounded down. If
