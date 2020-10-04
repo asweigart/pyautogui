@@ -1,3 +1,4 @@
+v0.9.51, 2020/10/04 -- Added the hold() context manager, several bug fixes for mac mouse functions.
 v0.9.50, 2020/04/01 -- The 0.9.49 changes were incredibly buggy and have been reverted.
 v0.9.49, 2020/03/27 -- Migrated from Quartz to Rubicon
 v0.9.46, 2019/07/09 -- Added mouseinfo module.

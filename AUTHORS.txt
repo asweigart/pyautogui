@@ -36,6 +36,7 @@ Jeremy R. Gray https://github.com/jeremygray
 Jeromie Kirchoff https://github.com/JayRizzo
 Joel Gomes da Silva https://github.com/joelgomes1994
 Jon Winsley https://github.com/glitchassassin
+jorg-j https://github.com/jorg-j
 Jose Riha https://github.com/jose1711
 Julien Schueller https://github.com/jschueller
 Korons https://github.com/Korons
@@ -56,6 +57,8 @@ sneakypete81 https://github.com/sneakypete81
 Stefan Hoelzl https://github.com/stefanhoelzl
 Stephen Ellis https://github.com/saellis
 Steven Shave https://github.com/stevenshave
+Tim Gates https://github.com/timgates42
+Timothy Crory https://github.com/tcrory
 undefx https://github.com/undefx
 Yoshiaki Ono https://github.com/fx-kirin
 Stefan Hoelzl https://github.com/stefanhoelzl
