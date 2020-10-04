@@ -1105,8 +1105,8 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         x, y = _normalizeXYArgs(x, y)
         _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
-        _logScreenshot(logScreenshot, "click", "%s,2,%s,%s" % (button, x, y), folder=".")
         platformModule._multiClick(x, y, button, 2)
+        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
     else:
         # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, logScreenshot, _pause=False)
