@@ -120,6 +120,7 @@ class TestGeneral(unittest.TestCase):
         pyautogui.keyDown
         pyautogui.keyUp
         pyautogui.press
+        pyautogui.hold
 
         # The functions implemented in the platform-specific modules should also show up in the pyautogui namespace:
         pyautogui.position
@@ -636,6 +637,22 @@ class PressThread(threading.Thread):
         pyautogui.press(self.keysArg)
 
 
+class HoldThread(threading.Thread):
+    def __init__(self, holdKeysArg, pressKeysArg=None):
+        super(HoldThread, self).__init__()
+        self.holdKeysArg = holdKeysArg
+        self.pressKeysArg = pressKeysArg
+
+
+    def run(self):
+        time.sleep(0.25)  # NOTE: BE SURE TO ACCOUNT FOR THIS QUARTER SECOND FOR TIMING TESTS!
+        with pyautogui.hold(self.holdKeysArg):
+            if self.pressKeysArg is not None:
+                pyautogui.press(self.pressKeysArg)
+            else:
+                pass
+
+
 class TestKeyboard(unittest.TestCase):
     # NOTE: The terminal window running this script must be in focus during the keyboard tests.
     # You cannot run this as a scheduled task or remotely.
@@ -733,6 +750,44 @@ class TestKeyboard(unittest.TestCase):
         t.start()
         response = INPUT_FUNC()
         self.assertEqual(response, "ba")
+
+    def test_hold(self):
+        # '' test
+        t = HoldThread("enter")
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "")
+
+        # 'a' test, also test sending list of 1- and multi-length strings
+        t = HoldThread(["a", "enter"])
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "a")
+
+        # 'ba' test, also test sending list of 1- and multi-length strings
+        t = HoldThread(["a", "left", "b", "enter"])
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "ba")
+
+    def test_press_during_hold(self):
+        # '' test
+        t = HoldThread("shift", "enter")
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "")
+
+        # 'a' test, also test sending list of 1- and multi-length strings
+        t = HoldThread("shift", ["a", "enter"])
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "A")
+
+        # 'ab' test, also test sending list of 1- and multi-length strings
+        t = HoldThread("shift", ["a", "b", "enter"])
+        t.start()
+        response = INPUT_FUNC()
+        self.assertEqual(response, "AB")
 
     def test_typewrite_space(self):
         # Backspace test

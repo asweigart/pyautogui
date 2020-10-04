@@ -23,6 +23,7 @@ import platform
 import re
 import functools
 import inspect
+from contextlib import contextmanager
 
 
 class PyAutoGUIException(Exception):
@@ -1596,6 +1597,44 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
             platformModule._keyDown(k)
             platformModule._keyUp(k)
         time.sleep(interval)
+
+
+@contextmanager
+@_genericPyAutoGUIChecks
+def hold(keys, logScreenshot=None, _pause=True):
+    """Context manager that performs a keyboard key press down upon entry,
+    followed by a release upon exit.
+
+    Args:
+      key (str, list): The key to be pressed. The valid names are listed in
+      KEYBOARD_KEYS. Can also be a list of such strings.
+      pause (float, optional): How many seconds in the end of function process.
+      None by default, for no pause in the end of function process.
+    Returns:
+      None
+    """
+    if type(keys) == str:
+        if len(keys) > 1:
+            keys = keys.lower()
+        keys = [keys] # If keys is 'enter', convert it to ['enter'].
+    else:
+        lowerKeys = []
+        for s in keys:
+            if len(s) > 1:
+                lowerKeys.append(s.lower())
+            else:
+                lowerKeys.append(s)
+        keys = lowerKeys
+    _logScreenshot(logScreenshot, "press", ",".join(keys), folder=".")
+    for k in keys:
+        failSafeCheck()
+        platformModule._keyDown(k)
+    try:
+        yield
+    finally:
+        for k in keys:
+            failSafeCheck()
+            platformModule._keyUp(k)
 
 
 @_genericPyAutoGUIChecks
