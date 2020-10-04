@@ -1,3 +1,5 @@
+v0.9.50, 2020/04/01 -- The 0.9.49 changes were incredibly buggy and have been reverted.
+v0.9.49, 2020/03/27 -- Migrated from Quartz to Rubicon
 v0.9.46, 2019/07/09 -- Added mouseinfo module.
 v0.9.45, 2019/06/18 -- Added left-click, made mouse buttons more explicit and fixed it so that the right mouse button is 2 and middle mouse button is 3. Added failsafe points in all corners. Added screenshot logging. Fixed _autoPause().
 v0.9.44, 2019/05/30 -- Adding ability to pass 4-integer box tuples to click() and other functions.

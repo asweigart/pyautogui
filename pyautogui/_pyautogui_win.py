@@ -32,6 +32,7 @@ UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mou
 
 # Event codes to be passed to the mouse_event() win32 function.
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
 MOUSEEVENTF_LEFTCLICK = MOUSEEVENTF_LEFTDOWN + MOUSEEVENTF_LEFTUP
@@ -42,10 +43,12 @@ MOUSEEVENTF_MIDDLEDOWN = 0x0020
 MOUSEEVENTF_MIDDLEUP = 0x0040
 MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
+MOUSEEVENTF_ABSOLUTE = 0x8000
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
+KEYEVENTF_KEYDOWN = 0x0000 # Technically this constant doesn't exist in the MS documentation. It's the lack of KEYEVENTF_KEYUP that means pressing the key down.
 KEYEVENTF_KEYUP = 0x0002
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
@@ -143,7 +146,7 @@ keyboardMapping.update({
     'accept': 0x1e, # VK_ACCEPT
     'modechange': 0x1f, # VK_MODECHANGE
     ' ': 0x20, # VK_SPACE
-    'space': 0x20,
+    'space': 0x20, # VK_SPACE
     'pgup': 0x21, # VK_PRIOR
     'pgdn': 0x22, # VK_NEXT
     'pageup': 0x21, # VK_PRIOR
@@ -236,31 +239,17 @@ keyboardMapping.update({
     'launchmediaselect': 0xb5, # VK_LAUNCH_MEDIA_SELECT
     'launchapp1': 0xb6, # VK_LAUNCH_APP1
     'launchapp2': 0xb7, # VK_LAUNCH_APP2
-    #';': 0xba, # VK_OEM_1
-    #'+': 0xbb, # VK_OEM_PLUS
-    #',': 0xbc, # VK_OEM_COMMA
-    #'-': 0xbd, # VK_OEM_MINUS
-    #'.': 0xbe, # VK_OEM_PERIOD
-    #'/': 0xbf, # VK_OEM_2
-    #'~': 0xc0, # VK_OEM_3
-    #'[': 0xdb, # VK_OEM_4
-    #'|': 0xdc, # VK_OEM_5
-    #']': 0xdd, # VK_OEM_6
-    #"'": 0xde, # VK_OEM_7
-    #'': 0xdf, # VK_OEM_8
-    #'': 0xe7, # VK_PACKET
-    #'': 0xf6, # VK_ATTN
-    #'': 0xf7, # VK_CRSEL
-    #'': 0xf8, # VK_EXSEL
-    #'': 0xf9, # VK_EREOF
-    #'': 0xfa, # VK_PLAY
-    #'': 0xfb, # VK_ZOOM
-    #'': 0xfc, # VK_NONAME
-    #'': 0xfd, # VK_PA1
-    #'': 0xfe, # VK_OEM_CLEAR
-})
+    })
+
+    # There are other virtual key constants that are not used here because the printable ascii keys are
+    # handled in the following `for` loop.
+    # The virtual key constants that aren't used are:
+    # VK_OEM_1, VK_OEM_PLUS, VK_OEM_COMMA, VK_OEM_MINUS, VK_OEM_PERIOD, VK_OEM_2, VK_OEM_3, VK_OEM_4,
+    # VK_OEM_5, VK_OEM_6, VK_OEM_7, VK_OEM_8, VK_PACKET, VK_ATTN, VK_CRSEL, VK_EXSEL, VK_EREOF,
+    # VK_PLAY, VK_ZOOM, VK_NONAME, VK_PA1, VK_OEM_CLEAR
 
 # Populate the basic printable ascii characters.
+# https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
 for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
@@ -302,8 +291,8 @@ def _keyDown(key):
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, 0, 0)
+            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYDOWN, 0) #
+    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYDOWN, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
         if apply_mod:
@@ -385,6 +374,9 @@ def _moveTo(x, y):
       None
     """
     ctypes.windll.user32.SetCursorPos(x, y)
+    # This was a possible solution to issue #314 https://github.com/asweigart/pyautogui/issues/314
+    # but I'd like to hang on to SetCursorPos because mouse_event() has been superceded.
+    #_sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
 
 
 def _mouseDown(x, y, button):

@@ -204,7 +204,7 @@ keyboardMapping.update({
     'help':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Help')),
     'winleft':           _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
     'winright':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_R')),
-    'apps':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
+    'apps':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Menu')),
     'num0':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('KP_0')),
     'num1':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('KP_1')),
     'num2':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('KP_2')),

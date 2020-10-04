@@ -11,6 +11,8 @@ Simplified Chinese documentation available at https://muxuezi.github.io/posts/do
 
 Source code available at https://github.com/asweigart/pyautogui
 
+If you need help installing Python, visit https://installpython3.com/
+
 Dependencies
 ============
 
@@ -18,7 +20,7 @@ PyAutoGUI supports Python 2 and 3. If you are installing PyAutoGUI from PyPI usi
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
-OS X needs the pyobjc-core and pyobjc module installed (in that order).
+macOS needs the rubicon-objc module installed (in that order).
 
 Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
 
@@ -49,13 +51,13 @@ All keyboard presses done by PyAutoGUI are sent to the window that currently has
 ```python
     >>> import pyautogui
     >>> screenWidth, screenHeight = pyautogui.size() # Returns two integers, the width and height of the screen. (The primary monitor, in multi-monitor setups.)
-    >>> currentMouseX, currentMouseY = pyautogui.position() # Retursn two integes, the x and y of the mouse cursor's current position.
+    >>> currentMouseX, currentMouseY = pyautogui.position() # Returns two integers, the x and y of the mouse cursor's current position.
     >>> pyautogui.moveTo(100, 150) # Move the mouse to the x, y coordinates 100, 150.
     >>> pyautogui.click() # Click the mouse at its current location.
     >>> pyautogui.click(200, 220) # Click the mouse at the x, y coordinates 200, 220.
     >>> pyautogui.move(None, 10)  # Move mouse 10 pixels down, that is, move the mouse relative to its current position.
     >>> pyautogui.doubleClick() # Double click the mouse at the
-    >>> pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.tweens.easeInOutQuad) # Use tweening/easing function to move mouse over 2 seconds.
+    >>> pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.easeInOutQuad) # Use tweening/easing function to move mouse over 2 seconds.
     >>> pyautogui.write('Hello world!', interval=0.25)  # Type with quarter-second pause in between each key.
     >>> pyautogui.press('esc') # Simulate pressing the Escape key.
     >>> pyautogui.keyDown('shift')
@@ -113,11 +115,11 @@ The locateCenterOnScreen() function returns the center of this match region:
 How Does PyAutoGUI Work?
 ========================
 
-The three major operating systems (Windows, macOS, and Linux) each have different ways to programmatically control the mouse and keyboard. This can often involve confusing, obscure, and deeply techincal details. The job of PyAutoGUI is to hide all of this complexity behind a simple API.
+The three major operating systems (Windows, macOS, and Linux) each have different ways to programmatically control the mouse and keyboard. This can often involve confusing, obscure, and deeply technical details. The job of PyAutoGUI is to hide all of this complexity behind a simple API.
 
 * On Windows, PyAutoGUI accesses the Windows API (also called the WinAPI or win32 API) through the built-in `ctypes` module. The `nicewin` module at https://github.com/asweigart/nicewin provides a demonstration for how Windows API calls can be made through Python.
 
-* On macOS, PyAutoGUI uses the `pyobjc` module to access the Cocoa API.
+* On macOS, PyAutoGUI uses the `rubicon-objc` module to access the Cocoa API.
 
 * On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
 
