@@ -168,20 +168,20 @@ if(sys.platform == 'win32'):
         if(mode in acceptable_modes): ALERT_MB = acceptable_modes[mode];
         else: raise PyAutoGUIException("Unknown mode number");
             
-        if(ALERT_ICON == None): return ctypes.windll.user32.MessageBoxA(0, message, title, ALERT_MB);
-        else: return ctypes.windll.user32.MessageBoxA(0, message, title, ALERT_MB | ALERT_ICON);
+        if(ALERT_ICON == None): return ctypes.windll.user32.MessageBoxW(0, message, title, ALERT_MB);
+        else: return ctypes.windll.user32.MessageBoxW(0, message, title, ALERT_MB | ALERT_ICON);
 
     def alert(message, title=None):
         if(title == None): title="";
         if(title.upper() == "ERROR"): title=None;
-        ctypes.windll.user32.MessageBoxA(0, message, title, 0x0);
+        ctypes.windll.user32.MessageBoxW(0, message, title, 0x0);
         return "OK";
 
     def confirm(message, mode=1):
         if(mode == 1): CONFIRM_MODE = 0x01;
         elif(mode == 2): CONFIRM_MODE = 0x03;
         else: raise PyAutoGUIException("Unknown mode number");
-        x = ctypes.windll.user32.MessageBoxA(0, "Your text?", "", CONFIRM_MODE)
+        x = ctypes.windll.user32.MessageBoxW(0, "Your text?", "", CONFIRM_MODE)
         if(x == 6): return "Yes";
         elif(x == 7): return "No";
         elif(x == 2): return "Cancel";
