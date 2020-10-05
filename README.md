@@ -70,16 +70,30 @@ Display Message Boxes
 ---------------------
 ```python
     >>> import pyautogui
+    >>> #-------[Custom Message Box]-------#
+    # You can select 
+    >>> pyautogui.messagebox("Enter your phone number here", title="Custom message box title", mode=1, icon=3)
+    '1' # Return the numerical result
+    >>> #-------[Alert]-------#
     >>> pyautogui.alert('This is an alert box.')
     'OK'
-    >>> pyautogui.confirm('Shall I proceed?')
-    'Cancel'
-    >>> pyautogui.confirm('Enter option.', buttons=['A', 'B', 'C'])
-    'B'
+    >>> pyautogui.alert('This is an alert box.', title="Alert box title")
+    'OK'
+    >>> #-------[Confirm]-------#
+    >>> pyautogui.confirm('Shall I proceed?', mode=1) # Buttons = Ok / Cancel
+    'OK'
+    >>> pyautogui.confirm('Shall I proceed?', mode=2) # Buttons = Yes / No / Cancel
+    'Yes'
+    >>> #-------[Confirm]-------#
     >>> pyautogui.prompt('What is your name?')
-    'Al'
-    >>> pyautogui.password('Enter password (text will be hidden)')
-    'swordfish'
+    'Matin'
+    >>> pyautogui.prompt('What is your name?', title="Prompt box title")
+    'Matin'
+    >>> #-------[Confirm]-------#
+    >>> pyautogui.password('Please enter your password here')
+    'abcdefgh'
+    >>> pyautogui.password('Please enter your password here', title="Password box title")
+    'abcdefgh'
 ```
 
 Screenshot Functions

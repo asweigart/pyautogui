@@ -22,6 +22,7 @@ import os
 import platform
 import re
 import functools
+import ctypes
 import inspect
 from contextlib import contextmanager
 
@@ -147,20 +148,83 @@ except ImportError:
     easeInOutBounce = _couldNotImportPyTweening
 
 
-try:
-    from pymsgbox import alert, confirm, prompt, password
-except ImportError:
-    # If pymsgbox module is not found, those methods will not be available.
-    def _couldNotImportPyMsgBox():
-        """
-        This function raises ``PyAutoGUIException``. It's used for the PyMsgBox function names if the PyMsgbox module
-        failed to be imported.
-        """
+if(sys.platform == 'win32'):
+    try:
+        import tkinter as tk
+        from tkinter import simpledialog
+    except:
+        raise PyAutoGUIException("There was an error import tkinter.")
+
+    def messagebox(message, title=None, mode=1, icon=None):
+        """"""
+        acceptable_icons = {1:0x30, 2:0x40, 3:0x10}
+        acceptable_modes = {1:0x0, 2:0x01, 3:0x03, 4:0x04, 5:0x4000}
+
+        if(icon in acceptable_icons): ALERT_ICON = acceptable_icons[icon];
+        elif(icon == None): ALERT_ICON = None;
+        else: raise PyAutoGUIException("Unknown icon number");
+
+
+        if(mode in acceptable_modes): ALERT_MB = acceptable_modes[mode];
+        else: raise PyAutoGUIException("Unknown mode number");
+            
+        if(ALERT_ICON == None): return ctypes.windll.user32.MessageBoxA(0, message, title, ALERT_MB);
+        else: return ctypes.windll.user32.MessageBoxA(0, message, title, ALERT_MB | ALERT_ICON);
+
+    def alert(message, title=None):
+        if(title == None): title="";
+        if(title.upper() == "ERROR"): title=None;
+        ctypes.windll.user32.MessageBoxA(0, message, title, 0x0);
+        return "OK";
+
+    def confirm(message, mode=1):
+        if(mode == 1): CONFIRM_MODE = 0x01;
+        elif(mode == 2): CONFIRM_MODE = 0x03;
+        else: raise PyAutoGUIException("Unknown mode number");
+        x = ctypes.windll.user32.MessageBoxA(0, "Your text?", "", CONFIRM_MODE)
+        if(x == 6): return "Yes";
+        elif(x == 7): return "No";
+        elif(x == 2): return "Cancel";
+        else: return "OK";
+
+    def prompt(message, title=None):
+        
+
+        PROMPT_BOX = tk.Tk()
+        PROMPT_BOX.resizable(0, 0)
+        PROMPT_BOX.withdraw()
+
+        if(title == None): title = " ";
+        PROMPT_RESULT = simpledialog.askstring(title=title, prompt=message)
+
+        if(PROMPT_RESULT == None): return "Cancel";
+        elif(PROMPT_RESULT == ""): return None;
+        else: return PROMPT_RESULT
+
+    def password(message, title=None):
+        
+
+        PASSWORD_BOX = tk.Tk()
+        PASSWORD_BOX.resizable(0, 0)
+        PASSWORD_BOX.withdraw()
+
+        if(title == None): title = " ";
+        PROMPT_RESULT = simpledialog.askstring(title=title, prompt=message, show="*")
+
+        if(PROMPT_RESULT == None): return "Cancel";
+        elif(PROMPT_RESULT == ""): return None;
+        else: return PROMPT_RESULT
+    
+else:
+    def errorLoadFunctions():
         raise PyAutoGUIException(
-            "PyAutoGUI was unable to import pymsgbox. Please install this module to enable the function you tried to call."
+            "You can only use (messagebox, alert, confirm, prompt, password) functions in Windows."
         )
 
-    alert = confirm = prompt = password = _couldNotImportPyMsgBox
+    alert = confirm = prompt = password = errorLoadFunctions
+
+
+#------------------------------
 
 
 def raisePyAutoGUIImageNotFoundException(wrappedFunction):
