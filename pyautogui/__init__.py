@@ -13,7 +13,7 @@
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = "0.9.51"
+__version__ = "0.9.52"
 
 import sys
 import time
