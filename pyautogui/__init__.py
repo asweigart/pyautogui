@@ -22,7 +22,6 @@ import os
 import platform
 import re
 import functools
-import inspect
 from contextlib import contextmanager
 
 
@@ -583,11 +582,9 @@ def _genericPyAutoGUIChecks(wrappedFunction):
 
     @functools.wraps(wrappedFunction)
     def wrapper(*args, **kwargs):
-        funcArgs = inspect.getcallargs(wrappedFunction, *args, **kwargs)
-
         failSafeCheck()
         returnVal = wrappedFunction(*args, **kwargs)
-        _handlePause(funcArgs.get("_pause"))
+        _handlePause(kwargs.get("_pause", True))
         return returnVal
 
     return wrapper
