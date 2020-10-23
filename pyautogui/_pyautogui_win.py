@@ -338,6 +338,9 @@ def _keyUp(key):
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
+def copyHotKey():
+    hotKey("ctrl"+"c")
+
 
 def _position():
     """Returns the current xy coordinates of the mouse cursor as a two-integer
