@@ -22,7 +22,7 @@ Windows has no dependencies. The Win32 extensions do not need to be installed.
 
 macOS needs the rubicon-objc module installed (in that order).
 
-Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
+Linux needs the python-xlib module installed.
 
 Pillow needs to be installed, and on Linux you may need to install additional libraries to make sure Pillow's PNG/JPEG works correctly. See:
 
@@ -122,4 +122,3 @@ The three major operating systems (Windows, macOS, and Linux) each have differen
 * On macOS, PyAutoGUI uses the `rubicon-objc` module to access the Cocoa API.
 
 * On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
-
