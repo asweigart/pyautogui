@@ -23,7 +23,7 @@ except AttributeError:
 A lot of this code is probably repeated from win32 extensions module, but I didn't want to have that dependency.
 
 Note: According to http://msdn.microsoft.com/en-us/library/windows/desktop/ms646260(v=vs.85).aspx
-the ctypes.windll.user32.mouse_event() function has been superceded by SendInput.
+the ctypes.windll.user32.mouse_event() function has been superseded by SendInput.
 
 SendInput() is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646310(v=vs.85).aspx
 
@@ -289,12 +289,12 @@ def _keyDown(key):
     mods, vkCode = divmod(keyboardMapping[key], 0x100)
 
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
-        (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
+        (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYDOWN, 0) #
     ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYDOWN, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
-        (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
+        (mods & 4, 0x12)]: #HANKAKU not supported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
@@ -329,12 +329,12 @@ def _keyUp(key):
     mods, vkCode = divmod(keyboardMapping[key], 0x100)
 
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
-        (mods & 1 or needsShift, 0x10)]: #HANKAKU not suported! mods & 8
+        (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
     ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
-        (mods & 4, 0x12)]: #HANKAKU not suported! mods & 8
+        (mods & 4, 0x12)]: #HANKAKU not supported! mods & 8
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
@@ -375,7 +375,7 @@ def _moveTo(x, y):
     """
     ctypes.windll.user32.SetCursorPos(x, y)
     # This was a possible solution to issue #314 https://github.com/asweigart/pyautogui/issues/314
-    # but I'd like to hang on to SetCursorPos because mouse_event() has been superceded.
+    # but I'd like to hang on to SetCursorPos because mouse_event() has been superseded.
     #_sendMouseEvent(MOUSEEVENTF_MOVE + MOUSEEVENTF_ABSOLUTE, x, y)
 
 
