@@ -3,7 +3,7 @@
 Roadmap
 =======
 
-PyAutoGUI is planned as a replacement for other Python GUI automation scripts, such as PyUserInput, PyKeyboard, PyMouse, pykey, etc. Eventually it would be great to offer the same type of features that [Sikuli](http://www.sikuli.org) offers.
+PyAutoGUI is planned as a replacement for other Python GUI automation scripts, such as PyUserInput, PyKeyboard, PyMouse, pykey, etc. Eventually it would be great to offer the same type of features that Sikuli_ offers.
 
 For now, the primary aim for PyAutoGUI is cross-platform mouse and keyboard control and a simple API.
 
@@ -38,3 +38,5 @@ Window handling features:
  - win.moveRel(x=0, y=0)   # moves relative to the x, y of top-left corner of the window
  - win.clickRel(x=0, y=0, clicks=1, interval=0.0, button='left')  # click relative to the x, y of top-left corner of the window
  - Additions to screenshot functionality so that it can capture specific windows instead of full screen.
+
+.. _Sikuli: http://www.sikuli.org
