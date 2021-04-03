@@ -702,7 +702,7 @@ def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
     The ``funcName`` argument is a string of the calling function's name. It's used in the screenshot's filename.
 
     The ``funcArgs`` argument is a string describing the arguments passed to the calling function. It's limited to
-    tweleve characters to keep it short.
+    twelve characters to keep it short.
 
     The ``folder`` argument is the folder to place the screenshot file in, and defaults to the current working directory.
     """
@@ -1332,7 +1332,7 @@ def dragTo(
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default.
       button (str, int, optional): The mouse button released. TODO
-      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not performed.
         Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
@@ -1371,7 +1371,7 @@ def dragRel(
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default.
       button (str, int, optional): The mouse button released. TODO
-      mouseDownUp (True, False): When true, the mouseUp/Down actions are not perfomed.
+      mouseDownUp (True, False): When true, the mouseUp/Down actions are not performed.
         Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
@@ -1484,7 +1484,7 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
         tweenY = int(round(tweenY))
 
         # Do a fail-safe check to see if the user moved the mouse to a fail-safe position, but not if the mouse cursor
-        # moved there as a result of a this function. (Just because tweenX and tweenY aren't in a fail-safe position
+        # moved there as a result of this function. (Just because tweenX and tweenY aren't in a fail-safe position
         # doesn't mean the user couldn't have moved the mouse cursor to a fail-safe position.)
         if (tweenX, tweenY) not in FAILSAFE_POINTS:
             failSafeCheck()
