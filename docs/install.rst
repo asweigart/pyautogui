@@ -8,8 +8,6 @@ To install PyAutoGUI, install the `pyautogui` package from PyPI by running `pip 
 
 OS-specific instructions are below.
 
-**NOTE: As of October 2019, the Pillow module doesn't support Python 3.8. PyAutoGUI currently depends on this module for its screenshot capabilities.**
-
 Windows
 -------
 
@@ -17,7 +15,7 @@ On Windows, you can use the ``py.exe`` program to run the latest version of Pyth
 
     ``py -m pip install pyautogui``
 
-If you have multiply versions of Python installed, you can select which one with a command line argument to ``py``. For example, for Python 3.8, run:
+If you have multiple versions of Python installed, you can select which one with a command line argument to ``py``. For example, for Python 3.8, run:
 
     ``py -3.8 -m pip install pyautogui``
 
