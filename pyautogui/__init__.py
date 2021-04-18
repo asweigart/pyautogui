@@ -213,50 +213,13 @@ try:
         return pyscreeze.locateOnScreen(*args, **kwargs)
 
     locateOnScreen.__doc__ = pyscreeze.locateOnScreen.__doc__
-    
+
     @raisePyAutoGUIImageNotFoundException
-    def locate_in_window(template, window=None, title=None, region=None, relative='screen'):
-    """
-    Locate template in a screenshot of the window optionally within a region of the window
+    def locateOnWindow(*args, **kwargs):
+        return pyscreeze.locateOnWindow(*args, **kwargs)
 
-    :param template: (str) path to the image template
-    :param window: (Win32Window) window to search within.  Use as alternative to 'title'.
-    :param title: (str) title of the window to search. Use as alternative to 'window'.
-    :param region: (iterable (int, int, int, int)) Region relative to window to search (left, top, width, height).
-    :param relative: (str) 'screen' or 'window', sets whether the result is relative to the screen or the window.
-    :return: (pyscreeze.Box) Location of the template on the screen
-    """
-    if title and window is None:
-        window = pyautogui.getWindowsWithTitle(title)[0]
-    elif title and window:
-        raise ValueError('Only specify window or title as an argument.')
+    locateOnWindow.__doc__ = pyscreeze.locateOnWindow.__doc__
 
-    window.activate()
-
-    if region is not None:
-        if len(region) == 4:
-            region_left = window.left + region[0]
-            region_top = window.top + region[1]
-            locate_region = (region_left, region_top, region_left + region[2], region_top + region[3])
-        else:
-            raise ValueError(f'region argument, {region}, must be an iterable of length 4.')
-    else:
-        locate_region = (window.left, window.top, window.left + window.width, window.top + window.height)
-
-    # Result within the window region
-    result = pyscreeze.locate(template, pyautogui.grab(region=locate_region))
-    result_screen = pyscreeze.Box(result.left + locate_region[0],
-                                  result.top + locate_region[1],
-                                  result.width,
-                                  result.height)
-
-    if relative == 'screen':
-        return result_screen
-    elif relative == 'window':
-        return pyscreeze.Box(result_screen.left - window.left,
-                             result_screen.top - window.top,
-                             result_screen.width,
-                             result_screen.height)
 
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
@@ -276,6 +239,7 @@ except ImportError:
     locateAllOnScreen = _couldNotImportPyScreeze
     locateCenterOnScreen = _couldNotImportPyScreeze
     locateOnScreen = _couldNotImportPyScreeze
+    locateOnWindow = _couldNotImportPyScreeze
     pixel = _couldNotImportPyScreeze
     pixelMatchesColor = _couldNotImportPyScreeze
     screenshot = _couldNotImportPyScreeze
