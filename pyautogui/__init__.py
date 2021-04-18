@@ -105,7 +105,7 @@ try:
     # linear has also been redefined in this file.
 except ImportError:
 
-    def _couldNotImportPyTweening():
+    def _couldNotImportPyTweening(*unused_args, **unused_kwargs):
         """
         This function raises ``PyAutoGUIException``. It's used for the PyTweening function names if the PyTweening
         module failed to be imported.
@@ -150,7 +150,7 @@ try:
     from pymsgbox import alert, confirm, prompt, password
 except ImportError:
     # If pymsgbox module is not found, those methods will not be available.
-    def _couldNotImportPyMsgBox():
+    def _couldNotImportPyMsgBox(*unused_args, **unused_kwargs):
         """
         This function raises ``PyAutoGUIException``. It's used for the PyMsgBox function names if the PyMsgbox module
         failed to be imported.
@@ -223,7 +223,7 @@ try:
 
 except ImportError:
     # If pyscreeze module is not found, screenshot-related features will simply not work.
-    def _couldNotImportPyScreeze():
+    def _couldNotImportPyScreeze(*unused_args, **unsed_kwargs):
         """
         This function raises ``PyAutoGUIException``. It's used for the PyScreeze function names if the PyScreeze module
         failed to be imported.
@@ -298,7 +298,7 @@ if sys.platform == "win32":  # PyGetWindow currently only supports Windows.
         )
     except ImportError:
         # If pygetwindow module is not found, those methods will not be available.
-        def _couldNotImportPyGetWindow():
+        def _couldNotImportPyGetWindow(*unused_args, **unused_kwargs):
             """
             This function raises PyAutoGUIException. It's used for the PyGetWindow function names if the PyGetWindow
             module failed to be imported.

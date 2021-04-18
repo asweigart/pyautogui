@@ -202,6 +202,7 @@ keyboardMapping.update({
     'del':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Delete')),
     'delete':            _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Delete')),
     'help':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Help')),
+    'win':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
     'winleft':           _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
     'winright':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_R')),
     'apps':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Menu')),
