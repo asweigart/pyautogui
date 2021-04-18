@@ -109,6 +109,8 @@ As a safety feature, a fail-safe feature is enabled by default. When a PyAutoGUI
 
 You can disable this failsafe by setting ``pyautogui.FAILSAFE = False``. **I HIGHLY RECOMMEND YOU DO NOT DISABLE THE FAILSAFE.**
 
+The tenth-second delay is set by the ``pyautogui.PAUSE`` setting, which is ``0.1`` by default. You can change this value. There is also a ``pyautogui.DARWIN_CATCH_UP_TIME`` setting which adds an additional delay on macOS after keyboard and mouse events, since the operating system appears to need a delay after PyAutoGUI issues these events. It is set to ``0.01`` by default, adding an additional hundredth-second delay.
+
 
 Contents:
 
