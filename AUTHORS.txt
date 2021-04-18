@@ -35,6 +35,7 @@ Jeff Triplett https://github.com/jefftriplett
 Jeremy R. Gray https://github.com/jeremygray
 Jeromie Kirchoff https://github.com/JayRizzo
 Joel Gomes da Silva https://github.com/joelgomes1994
+johnborgmann https://github.com/johnborgmann
 Jon Winsley https://github.com/glitchassassin
 jorg-j https://github.com/jorg-j
 Jose Riha https://github.com/jose1711
@@ -60,5 +61,6 @@ Steven Shave https://github.com/stevenshave
 Tim Gates https://github.com/timgates42
 Timothy Crory https://github.com/tcrory
 undefx https://github.com/undefx
+Vélmer Oliveira https://github.com/velmer
 Yoshiaki Ono https://github.com/fx-kirin
 Stefan Hoelzl https://github.com/stefanhoelzl
