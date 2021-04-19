@@ -28,7 +28,7 @@ setup(
     packages=['pyautogui'],
     test_suite='tests',
     install_requires=['pyobjc-core;platform_system=="Darwin"', 'pyobjc;platform_system=="Darwin"',
-                      'python3-Xlib;platform_system=="Linux" and python_version>="3.0"', 'python-xlib;platform_system=="Linux" and python_version<"3.0"',
+                      'python-xlib;platform_system=="Linux"',
                       'pymsgbox', 'PyTweening>=1.0.1', 'pyscreeze>=0.1.21', 'pygetwindow>=0.0.5', 'mouseinfo'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
@@ -53,4 +53,3 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
 )
-
