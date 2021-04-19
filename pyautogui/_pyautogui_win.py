@@ -56,6 +56,16 @@ INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
 
 
+# Documented here: https://docs.microsoft.com/en-us/windows/win32/inputdev/mouse-input-notifications
+WM_LBUTTONDOWN = 0x0201
+WM_LBUTTONUP = 0x0202
+WM_MBUTTONDOWN = 0x0207
+WM_MBUTTONUP = 0x0208
+
+# Documented here: https://docs.microsoft.com/en-us/windows/win32/learnwin32/mouse-clicks
+MK_LBUTTON = 0x0001
+MK_RBUTTON = 0x0002
+
 # This ctypes structure is for a Win32 POINT structure,
 # which is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/dd162805(v=vs.85).aspx
 # The POINT structure is used by GetCursorPos().
@@ -435,6 +445,44 @@ def _mouseUp(x, y, button):
     except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
         pass
 
+
+def _sendClick(x, y, button, window, child_window=None):
+    """Send the mouse click event to specified Window by calling the SendMessage() win32
+    function.
+
+    Args:
+      window (str): The window name (the window's title)
+      child_window (str): The child's window name
+      button (str): The mouse button, either 'left', 'middle', or 'right'
+      x (int): The x position of the mouse event.
+      y (int): The y position of the mouse event.
+
+    Returns:
+      None
+    """
+    if button not in (LEFT, RIGHT):
+        raise ValueError('button arg to _sendClick() must be "left" or "right", not %s' % button)
+
+    if button == LEFT:
+        WM1 = WM_LBUTTONDOWN
+        MK = MK_LBUTTON
+        WM2 = WM_LBUTTONUP
+    elif button == RIGHT:
+        WM1 = WM_RBUTTONDOWN
+        MK = MK_RBUTTON
+        WM2 = WM_RBUTTONUP
+
+    hwnd = ctypes.windll.user32.FindWindowA(None, window)
+    # Call FindWindowEx() for each child level that you want to go down
+    child_hwnd = ctypes.windll.user32.FindWindowExA(hwnd, None, None, child_window)
+    if hwnd == 0:
+        raise ValueError('window arg must be the exact window title')
+    elif child_hwnd == 0:
+        raise ValueError('child window not found, try changing Window name')
+
+    ctypes.windll.user32.SendMessageA(child_hwnd ,WM1, MK, y<<16|x)
+    ctypes.windll.user32.SendMessageA(child_hwnd ,WM2, 0, y<<16|x)
+        
 
 def _click(x, y, button):
     """Send the mouse click event to Windows by calling the mouse_event() win32
