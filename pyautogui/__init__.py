@@ -23,6 +23,7 @@ import platform
 import re
 import functools
 from contextlib import contextmanager
+from pyperclip import copy
 
 
 class PyAutoGUIException(Exception):
@@ -1674,12 +1675,8 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
-    for c in message:
-        if len(c) > 1:
-            c = c.lower()
-        press(c, _pause=False)
-        time.sleep(interval)
-        failSafeCheck()
+    copy(message)
+    hotkey('ctrl','v')
 
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
