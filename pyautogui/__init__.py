@@ -1677,6 +1677,7 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "write", message, folder=".")
     copy(message)
     hotkey('ctrl','v')
+    copy('') #Clears clipboard
 
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
