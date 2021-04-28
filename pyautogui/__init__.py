@@ -1668,8 +1668,15 @@ def typewrite(message, logScreenshot=None, _pause=True):
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
     
-    for c in message:
-        copy(c)
+    if message is list:
+        for c in message:
+            copy(c)
+            if platform.system=='Darwin':
+                hotkey('command','v') #For MacOS
+            else:
+                hotkey('ctrl','v') #For Windows / Linux
+    else:
+        copy(message)
         if platform.system=='Darwin':
             hotkey('command','v') #For MacOS
         else:
