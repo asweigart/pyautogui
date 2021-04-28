@@ -1668,7 +1668,7 @@ def typewrite(message, logScreenshot=None, _pause=True):
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
     
-    if message is list:
+    if type(message) is list:
         for c in message:
             copy(c)
             if platform.system=='Darwin':
