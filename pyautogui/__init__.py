@@ -1674,12 +1674,20 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
-    for c in message:
-        if len(c) > 1:
-            c = c.lower()
-        press(c, _pause=False)
-        time.sleep(interval)
-        failSafeCheck()
+    if type(message) is list:
+        for c in message:
+            copy(c)
+            if platform.system=='Darwin':
+                hotkey('command','v') #For MacOS
+            else:
+                hotkey('ctrl','v') #For Windows / Linux
+    else:
+        copy(message)
+        if platform.system=='Darwin':
+            hotkey('command','v') #For MacOS
+        else:
+            hotkey('ctrl','v') #For Windows / Linux
+    copy('') #Clears clipboard
 
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
