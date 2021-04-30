@@ -22,8 +22,8 @@ import os
 import platform
 import re
 import functools
+import pyperclip
 from contextlib import contextmanager
-from pyperclip import copy
 
 
 class PyAutoGUIException(Exception):
@@ -1676,18 +1676,18 @@ def typewrite(message, logScreenshot=None, _pause=True):
     _logScreenshot(logScreenshot, "write", message, folder=".")
     if type(message) is list:
         for c in message:
-            copy(c)
+            pyperclip.copy(c)
             if sys.platform=='darwin':
                 hotkey('command','v') #For MacOS
             else:
                 hotkey('ctrl','v') #For Windows / Linux
     else:
-        copy(message)
+        pyperclip.copy(message)
         if sys.platform=='darwin':
             hotkey('command','v') #For MacOS
         else:
             hotkey('ctrl','v') #For Windows / Linux
-    copy('') #Clears clipboard
+    pyperclip.copy('') #Clears clipboard
 
 
 write = typewrite  # In PyAutoGUI 1.0, write() replaces typewrite().
