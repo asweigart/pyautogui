@@ -1677,13 +1677,13 @@ def typewrite(message, logScreenshot=None, _pause=True):
     if type(message) is list:
         for c in message:
             copy(c)
-            if platform.system=='Darwin':
+            if sys.platform=='darwin':
                 hotkey('command','v') #For MacOS
             else:
                 hotkey('ctrl','v') #For Windows / Linux
     else:
         copy(message)
-        if platform.system=='Darwin':
+        if sys.platform=='darwin':
             hotkey('command','v') #For MacOS
         else:
             hotkey('ctrl','v') #For Windows / Linux
