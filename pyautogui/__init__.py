@@ -16,12 +16,12 @@ from __future__ import absolute_import, division, print_function
 __version__ = "0.9.52"
 
 import sys
-import time
 import datetime
 import os
 import platform
 import re
 import functools
+from time import sleep
 from contextlib import contextmanager
 from pyperclip import copy
 
@@ -559,7 +559,7 @@ else:
 # In seconds. Any duration less than this is rounded to 0.0 to instantly move
 # the mouse.
 MINIMUM_DURATION = 0.1
-# If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
+# If sleep_amount is less than MINIMUM_DURATION, sleep() will be a no-op and the mouse cursor moves there instantly.
 # TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
 
@@ -641,7 +641,7 @@ def _handlePause(_pause):
     """
     if _pause:
         assert isinstance(PAUSE, int) or isinstance(PAUSE, float)
-        time.sleep(PAUSE)
+        sleep(PAUSE)
 
 
 def _normalizeXYArgs(firstArg, secondArg):
@@ -996,7 +996,7 @@ def click(
             if button in (LEFT, MIDDLE, RIGHT):
                 platformModule._click(x, y, button)
 
-            time.sleep(interval)
+            sleep(interval)
 
 
 @_genericPyAutoGUIChecks
@@ -1488,7 +1488,7 @@ def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, b
     for tweenX, tweenY in steps:
         if len(steps) > 1:
             # A single step does not require tweening.
-            time.sleep(sleep_amount)
+            sleep(sleep_amount)
 
         tweenX = int(round(tweenX))
         tweenY = int(round(tweenY))
@@ -1609,7 +1609,7 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
             failSafeCheck()
             platformModule._keyDown(k)
             platformModule._keyUp(k)
-        time.sleep(interval)
+        sleep(interval)
 
 
 @contextmanager
@@ -1717,12 +1717,12 @@ def hotkey(*args, **kwargs):
         if len(c) > 1:
             c = c.lower()
         platformModule._keyDown(c)
-        time.sleep(interval)
+        sleep(interval)
     for c in reversed(args):
         if len(c) > 1:
             c = c.lower()
         platformModule._keyUp(c)
-        time.sleep(interval)
+        sleep(interval)
 
 
 def failSafeCheck():
@@ -1765,7 +1765,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
             else:
                 # If this isn't a terminal (i.e. IDLE) then we can only append more text. Print a newline instead and pause a second (so we don't send too much output).
                 sys.stdout.write("\n")
-                time.sleep(1)
+                sleep(1)
             sys.stdout.flush()
     except KeyboardInterrupt:
         sys.stdout.write("\n")
@@ -1799,13 +1799,13 @@ def _snapshot(tag, folder=None, region=None, radius=None):
 
 
 def sleep(seconds):
-    time.sleep(seconds)
+    sleep(seconds)
 
 
 def countdown(seconds):
     for i in range(seconds, 0, -1):
         print(str(i), end=" ", flush=True)
-        time.sleep(1)
+        sleep(1)
     print()
 
 
