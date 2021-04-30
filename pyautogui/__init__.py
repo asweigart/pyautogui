@@ -23,6 +23,7 @@ import platform
 import re
 import functools
 from contextlib import contextmanager
+from pyperclip import copy
 
 
 class PyAutoGUIException(Exception):
