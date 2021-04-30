@@ -1650,7 +1650,7 @@ def hold(keys, logScreenshot=None, _pause=True):
 
 
 @_genericPyAutoGUIChecks
-def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
+def typewrite(message, logScreenshot=None, _pause=True):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
@@ -1671,7 +1671,6 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     Returns:
       None
     """
-    interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
     if type(message) is list:
