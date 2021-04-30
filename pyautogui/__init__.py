@@ -1652,22 +1652,13 @@ def hold(keys, logScreenshot=None, _pause=True):
 
 @_genericPyAutoGUIChecks
 def typewrite(message, logScreenshot=None, _pause=True):
-    """Performs a keyboard key press down, followed by a release, for each of
-    the characters in message.
+    """Performs a copy and paste of the string in message.
 
-    The message argument can also be list of strings, in which case any valid
-    keyboard name can be used.
-
-    Since this performs a sequence of keyboard presses and does not hold down
-    keys, it cannot be used to perform keyboard shortcuts. Use the hotkey()
-    function for that.
+    The message argument can also be list of strings.
 
     Args:
-      message (str, list): If a string, then the characters to be pressed. If a
-        list, then the key names of the keys to press in order. The valid names
-        are listed in KEYBOARD_KEYS.
-      interval (float, optional): The number of seconds in between each press.
-        0.0 by default, for no pause in between presses.
+      message (str, list): If a string, then the message to be copy and pasted. If a
+        list, then the strings to be pasted in order.
 
     Returns:
       None
