@@ -163,7 +163,10 @@ _display = Display(os.environ['DISPLAY'])
 
 
 # Load XF86 keysym defs for media function keys
-Xlib.XK.load_keysym_group("xf86")
+try:
+    Xlib.XK.load_keysym_group("xf86")
+except err:
+    log.warn("Xlib backend needs python-xlib 0.15rc1 or higher\n")
 
 """ Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
 
