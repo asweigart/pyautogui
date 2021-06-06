@@ -295,6 +295,33 @@ keyboardMapping.update({
     '~': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('asciitilde')),
 })
 
+# XF86 keys
+try:
+    Xlib.XK.load_keysym_group("xf86")
+
+    keyboardMapping.update({
+        'browserback':       _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Back')),
+        'browserforward':    _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Forward')),
+        'browserrefresh':    _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Refresh')),
+        'browserstop':       _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Stop')),
+        'browsersearch':     _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Search')),
+        'browserfavorites':  _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Favorites')),
+        'browserhome':       _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_HomePage')),
+        'volumemute':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioMute')),
+        'volumedown':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioLowerVolume')),
+        'volumeup':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioRaiseVolume')),
+        'nexttrack':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioNext')),
+        'prevtrack':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPrev')),
+        'stop':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioStop')),
+        'playpause':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPlay')),
+        'launchmail':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Mail')),
+        'launchmediaselect': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioMedia')),
+        'launchapp1':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Launch0')),
+        'launchapp2':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_Launch1')),
+    })
+except err:
+    log.warn("Xlib backend needs python-xlib 0.15rc1 or higher\n")
+
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
     keyboardMapping[c] = _display.keysym_to_keycode(Xlib.XK.string_to_keysym(c))
