@@ -157,9 +157,13 @@ def _keyUp(key):
     _display.sync()
 
 
+
 # Taken from PyKeyboard's ctor function.
 _display = Display(os.environ['DISPLAY'])
 
+
+# Load XF86 keysym defs for media function keys
+Xlib.XK.load_keysym_group("xf86")
 
 """ Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
 
@@ -167,6 +171,7 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
+
 keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
 keyboardMapping.update({
     'backspace':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
@@ -202,7 +207,6 @@ keyboardMapping.update({
     'del':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Delete')),
     'delete':            _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Delete')),
     'help':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Help')),
-    'win':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
     'winleft':           _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_L')),
     'winright':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Super_R')),
     'apps':              _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Menu')),
@@ -254,6 +258,11 @@ keyboardMapping.update({
     'ctrlright':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Control_R')),
     'altleft':           _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Alt_L')),
     'altright':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Alt_R')),
+    'volumedown':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioLowerVolume')),
+    'volumeup':          _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioRaiseVolume')),
+    'playpause':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPlay')),
+    'nexttrack':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioNext')),
+    'prevtrack':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPrev')),
     # These are added because unlike a-zA-Z0-9, the single characters do not have a
     ' ': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('space')),
     'space': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('space')),
@@ -296,5 +305,5 @@ keyboardMapping.update({
 })
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
-for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
+for c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890":
     keyboardMapping[c] = _display.keysym_to_keycode(Xlib.XK.string_to_keysym(c))
