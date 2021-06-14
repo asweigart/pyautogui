@@ -533,6 +533,10 @@ def isShiftCharacter(character):
     uppercase letters or the symbols on the keyboard's number row.
     """
     # NOTE TODO - This will be different for non-qwerty keyboards.
+
+    if platform.system() == "Linux":
+        return character.isupper() or character in set('~!@#$%^&*()_+{}|:">?')
+
     return character.isupper() or character in set('~!@#$%^&*()_+{}|:"<>?')
 
 
