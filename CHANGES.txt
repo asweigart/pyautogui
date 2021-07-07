@@ -1,3 +1,4 @@
+v0.9.53, 2021/07/07 -- Fixed a compatibility issue with the pystray module.
 v0.9.52, 2020/10/06 -- Fixed hotkey() to work with PAUSE.
 v0.9.51, 2020/10/04 -- Added the hold() context manager, several bug fixes for mac mouse functions.
 v0.9.50, 2020/04/01 -- The 0.9.49 changes were incredibly buggy and have been reverted.

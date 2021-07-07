@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 pytest = "*"
 pyautogui = {editable = true, path = "."}
+pillow = "*"
 
 [requires]
 python_version = "3.9"
