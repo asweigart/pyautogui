@@ -56,13 +56,6 @@ INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
 
 
-# This ctypes structure is for a Win32 POINT structure,
-# which is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/dd162805(v=vs.85).aspx
-# The POINT structure is used by GetCursorPos().
-class POINT(ctypes.Structure):
-    _fields_ = [("x", ctypes.c_long),
-                ("y", ctypes.c_long)]
-
 # These ctypes structures are for Win32 INPUT, MOUSEINPUT, KEYBDINPUT, and HARDWAREINPUT structures,
 # used by SendInput and documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
 # Thanks to BSH for this StackOverflow answer: https://stackoverflow.com/questions/18566289/how-would-you-recreate-this-windows-api-structure-with-ctypes
@@ -347,7 +340,7 @@ def _position():
       (x, y) tuple of the current xy coordinates of the mouse cursor.
     """
 
-    cursor = POINT()
+    cursor = ctypes.wintypes.POINT()
     ctypes.windll.user32.GetCursorPos(ctypes.byref(cursor))
     return (cursor.x, cursor.y)
 
