@@ -654,7 +654,13 @@ def _normalizeXYArgs(firstArg, secondArg):
     """
     if firstArg is None and secondArg is None:
         return position()
-
+    
+    elif firstArg is None and secondArg is not None:
+        return Point(int(position()[0]), int(secondArg))
+    
+    elif secondArg is None and firstArg is not None:
+        return Point(int(firstArg), int(position()[1]))
+    
     elif isinstance(firstArg, str):
         # If x is a string, we assume it's an image filename to locate on the screen:
         try:
