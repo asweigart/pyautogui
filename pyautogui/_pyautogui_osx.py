@@ -119,12 +119,30 @@ keyboardMapping.update({
     'ctrlright': 0x3e, # kVK_RightControl
     'fn': 0x3f, # kVK_Function
     'f17': 0x40, # kVK_F17
-    'volumeup': 0x48, # kVK_VolumeUp
+    'decimal': 0x41,    # kVK_ANSI_KeypadDecimal
+    'multiply': 0x43,   # kVK_ANSI_KeypadMultiply
+    'add': 0x45,        # kVK_ANSI_KeypadPlus
+    'clear': 0x47,      # kVK_ANSI_KeypadClear
+    'volumeup': 0x48,   # kVK_VolumeUp
     'volumedown': 0x49, # kVK_VolumeDown
     'volumemute': 0x4a, # kVK_Mute
-    'f18': 0x4f, # kVK_F18
-    'f19': 0x50, # kVK_F19
-    'f20': 0x5a, # kVK_F20
+    'divide': 0x4b,     # kVK_ANSI_KeypadDivide
+    'numenter': 0x4c,   # kVK_ANSI_KeypadEnter
+    'subtract': 0x4e,   # kVK_ANSI_KeypadMinus
+    'f18': 0x4f,        # kVK_F18
+    'f19': 0x50,        # kVK_F19
+    'numequals': 0x51,  # kVK_ANSI_KeypadEquals
+    'num0': 0x52,       # kVK_ANSI_Keypad0
+    'num1': 0x53,       # kVK_ANSI_Keypad1
+    'num2': 0x54,       # kVK_ANSI_Keypad2
+    'num3': 0x55,       # kVK_ANSI_Keypad3
+    'num4': 0x56,       # kVK_ANSI_Keypad4
+    'num5': 0x57,       # kVK_ANSI_Keypad5
+    'num6': 0x58,       # kVK_ANSI_Keypad6
+    'num7': 0x59,       # kVK_ANSI_Keypad7
+    'f20': 0x5a,        # kVK_F20
+    'num8': 0x5b,       # kVK_ANSI_Keypad8
+    'num9': 0x5c,       # kVK_ANSI_Keypad9
     'f5': 0x60, # kVK_F5
     'f6': 0x61, # kVK_F6
     'f7': 0x62, # kVK_F7
@@ -160,28 +178,6 @@ keyboardMapping.update({
     'eisu': 0x66, # kVK_JIS_Eisu
     'kana': 0x68, # kVK_JIS_Kana
 })
-
-"""
-# TODO - additional key codes to add
-  kVK_ANSI_KeypadDecimal        = 0x41,
-  kVK_ANSI_KeypadMultiply       = 0x43,
-  kVK_ANSI_KeypadPlus           = 0x45,
-  kVK_ANSI_KeypadClear          = 0x47,
-  kVK_ANSI_KeypadDivide         = 0x4B,
-  kVK_ANSI_KeypadEnter          = 0x4C,
-  kVK_ANSI_KeypadMinus          = 0x4E,
-  kVK_ANSI_KeypadEquals         = 0x51,
-  kVK_ANSI_Keypad0              = 0x52,
-  kVK_ANSI_Keypad1              = 0x53,
-  kVK_ANSI_Keypad2              = 0x54,
-  kVK_ANSI_Keypad3              = 0x55,
-  kVK_ANSI_Keypad4              = 0x56,
-  kVK_ANSI_Keypad5              = 0x57,
-  kVK_ANSI_Keypad6              = 0x58,
-  kVK_ANSI_Keypad7              = 0x59,
-  kVK_ANSI_Keypad8              = 0x5B,
-  kVK_ANSI_Keypad9              = 0x5C,
-"""
 
 # add mappings for uppercase letters
 for c in 'abcdefghijklmnopqrstuvwxyz':
