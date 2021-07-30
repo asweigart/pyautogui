@@ -16,7 +16,7 @@ Future features planned (specific versions not planned yet):
 - Find a list of all windows and their captions.
 - Click coordinates relative to a window, instead of the entire screen.
 - Make it easier to work on systems with multiple monitors.
-- GetKeyState() type of function
+- GetKeyState() type of function.
 - Ability to set global hotkey on all platforms so that there can be an easy "kill switch" for GUI automation programs.
 - Optional nonblocking pyautogui calls.
 - "strict" mode for keyboard - passing an invalid keyboard key causes an exception instead of silently skipping it.
