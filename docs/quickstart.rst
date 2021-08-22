@@ -17,6 +17,8 @@ General Functions
 
     >>> pyautogui.position()  # current mouse x and y
     (968, 56)
+    >>> pyautogui.displayMousePosition()  # automatically display the location and RGB of the mouse cursor
+    X:  693 Y: 1003 RGB: ( 40,  44,  52)
     >>> pyautogui.size()  # current screen resolution width and height
     (1920, 1080)
     >>> pyautogui.onScreen(x, y)  # True if x & y are within the screen.
