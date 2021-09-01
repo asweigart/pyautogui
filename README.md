@@ -123,3 +123,8 @@ The three major operating systems (Windows, macOS, and Linux) each have differen
 
 * On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
 
+
+Support
+-------
+
+If you find this project helpful and would like to support its development, [consider donating to its creator on Patreon](https://www.patreon.com/AlSweigart).
