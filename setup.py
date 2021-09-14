@@ -32,7 +32,7 @@ setup(
                       'python3-Xlib;platform_system=="Linux" and python_version>="3.0"',
                       'python-xlib;platform_system=="Linux" and python_version<"3.0"',
                       'pymsgbox',
-                      'PyTweening>=1.0.1',
+                      'pytweening>=1.0.4',
                       'pyscreeze>=0.1.21',
                       'pygetwindow>=0.0.5',
                       'mouseinfo'],
