@@ -20,7 +20,7 @@ PyAutoGUI supports Python 2 and 3. If you are installing PyAutoGUI from PyPI usi
 
 Windows has no dependencies. The Win32 extensions do not need to be installed.
 
-macOS needs the rubicon-objc module installed (in that order).
+macOS needs the pyobjc-core and pyobjc module installed (in that order).
 
 Linux needs the python3-xlib (or python-xlib for Python 2) module installed.
 
