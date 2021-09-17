@@ -35,7 +35,9 @@ setup(
                       'pytweening>=1.0.4',
                       'pyscreeze>=0.1.21',
                       'pygetwindow>=0.0.5',
-                      'mouseinfo'],
+                      'mouseinfo',
+                      'pytesseract',
+                      'fuzzywuzzy'],
     keywords="gui automation test testing keyboard mouse cursor click press keystroke control",
     classifiers=[
         'Development Status :: 4 - Beta',

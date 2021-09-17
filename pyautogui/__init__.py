@@ -15,6 +15,7 @@ from __future__ import absolute_import, division, print_function
 
 __version__ = "0.9.53"
 
+import enum
 import sys
 import time
 import datetime
@@ -1413,6 +1414,154 @@ def dragRel(
 
 
 drag = dragRel  # For PyAutoGUI 1.0, we want drag() to replace dragRel().
+
+
+class _OCRError(Exception):
+    pass
+
+
+_BoxTuple = collections.namedtuple(
+    '_BoxTuple', [
+        'level',
+        'page_num',
+        'block_num',
+        'par_num',
+        'line_num',
+        'word_num',
+        'left',
+        'top',
+        'width',
+        'height',
+        'conf',
+        'text',
+    ])
+
+
+class _BoundingBox(_BoxTuple):
+
+    @classmethod
+    def parseFrom(cls, imageData):
+        data = imageData.rstrip('\n').split('\t')
+        print('data is')
+        print(data)
+        print(len(data))
+        while len(data) < 12:
+            data.append('')
+        data[:-1] = map(int, data[:-1])
+        return _BoundingBox(*data)
+
+
+class _TextBox:
+    
+    def __init__(self, boxes):
+        boxes.sort(key=lambda box: (box.line_num, box.word_num))
+        texts = []
+        left = top = right = bottom = None
+        for box in boxes:
+            boxRight = box.left + box.width
+            boxBottom = box.top + box.height
+            texts.append(box.text)
+            if left is None or box.left < left:
+                left = box.left
+            if right is None or boxRight > right:
+                right = boxRight
+            if top is None or box.top < top:
+                top = box.top
+            if bottom is None or boxBottom > bottom:
+                bottom = boxBottom
+        self._left = left
+        self._right = right
+        self._top = top
+        self._bottom = bottom
+        self._text = ' '.join(texts)
+
+    @property
+    def text(self):
+        return self._text
+
+    @property
+    def center(self):
+        return tuple(map(int, [
+            (self._left + self._right) / 2,
+            (self._top + self._bottom) / 2
+        ]))
+
+
+class TextGranularityEnum(enum.Enum):
+    WORD = 1
+    LINE = 2
+    PARAGRAPH = 3
+
+
+def getTextBoxes(granularity=TextGranularityEnum.PARAGRAPH):
+    """Determines bounding boxes of text on screen.
+
+    Uses pytesseract (and, implicitly, Google's Tesseract OCR engine); will not
+    function if these libraries are not available.
+
+    Returns:
+        a list of `_BoundingBox`es
+    """
+    try:
+        import pytesseract
+        screen = pyscreeze.screenshot()
+    except pytesseract.TesseractNotFoundError:
+        raise _OCRError("NOPE")
+
+    data = pytesseract.image_to_data(screen)
+    boxes = {}
+    rows = data.split('\n')
+    rows.pop(0)  # Skip header row.
+    for line in rows:
+        line = line.strip()
+        if not line:
+            continue
+        box = _BoundingBox.parseFrom(line)
+
+        key = [box.par_num]
+        if granularity in {TextGranularityEnum.LINE, TextGranularityEnum.WORD}:
+            key.append(box.line_num)
+        if granularity === TextGranularityEnum.WORD:
+            key.append(box.word_num)
+
+        boxes.setdefault(tuple(key), []).append(box)
+
+    textBoxes = []
+    for paragraph, boxList in sorted(boxes.items()):
+        textBoxes.append(_TextBox(boxList))
+    return textBoxes
+
+
+def textBoxesSortedByMatch(text, textBoxes):
+    from fuzzywuzzy import fuzz
+    def sortKey(box):
+        return -(fuzz.partial_token_sort_ratio(text, box.text))
+    return sorted(textboxes, key=sortKey)
+
+
+@_genericPyAutoGUIChecks
+def moveToText(text, duration=0.0, tween=linear, logScreenshot=False, _pause=True):
+    """Convenience function; moves mouse to center of paragraph matching text.
+
+    Args:
+      duration (float, optional): The amount of time it takes to move the mouse
+        cursor to the xy coordinates. If 0, then the mouse cursor is moved
+        instantaneously. 0.0 by default.
+      tween (func, optional): The tweening function used if the duration is not
+        0. A linear tween is used by default.
+      logScreenshot: whether to log a screenshot
+      _pause: whether to pause after moving mouse
+
+    Returns:
+      None
+    """
+    boxes = getTextBoxes()
+    if not boxes:
+        return
+    boxes = textBoxesSortedByMatch(text, boxes)
+    box = boxes[0]
+    x, y = box.center
+    moveTo(x, y, duration, tween, logScreenshot, _pause)
 
 
 def _mouseMoveDrag(moveOrDrag, x, y, xOffset, yOffset, duration, tween=linear, button=None):
