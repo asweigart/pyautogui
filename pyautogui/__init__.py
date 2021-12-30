@@ -23,6 +23,11 @@ import platform
 import re
 import functools
 from contextlib import contextmanager
+from win32gui import FindWindow, GetWindowRect
+
+
+class PyScreezeException(Exception):
+    pass # This is a generic exception class raised when a PyScreeze-related error happens.
 
 
 class PyAutoGUIException(Exception):
