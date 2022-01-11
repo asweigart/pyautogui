@@ -499,7 +499,7 @@ def _sendMouseEvent(ev, x, y, dwData=0):
     #    raise ctypes.WinError()
 
 
-def _scroll(clicks, x=None, y=None):
+def _scroll(clicks, x=None, y=None,axis='v'):
     """Send the mouse vertical scroll event to Windows by calling the
     mouse_event() win32 function.
 
@@ -531,11 +531,15 @@ def _scroll(clicks, x=None, y=None):
             y = height - 1
 
     try:
-        _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
+        if axis == 'h':
+            _sendMouseEvent(MOUSEEVENTF_HWHEEL, x, y, dwData=clicks)
+        else:
+            _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
+            
     except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
             pass
-
-
+        
+        
 def _hscroll(clicks, x, y):
     """Send the mouse horizontal scroll event to Windows by calling the
     mouse_event() win32 function.
@@ -549,7 +553,7 @@ def _hscroll(clicks, x, y):
     Returns:
       None
     """
-    return _scroll(clicks, x, y)
+    return _scroll(clicks, x, y, 'h')
 
 
 def _vscroll(clicks, x, y):
@@ -564,5 +568,5 @@ def _vscroll(clicks, x, y):
     Returns:
       None
     """
-    return _scroll(clicks, x, y)
+    return _scroll(clicks, x, y, 'v')
 
