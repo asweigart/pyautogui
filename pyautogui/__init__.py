@@ -1347,7 +1347,7 @@ def dragTo(
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default.
       button (str, int, optional): The mouse button released. TODO
-      mouseDownUp (True, False): When true, the mouseUp/Down actions are not performed.
+      mouseDownUp (True, False): When false, the mouseUp/Down actions are not performed.
         Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
@@ -1386,7 +1386,7 @@ def dragRel(
       tween (func, optional): The tweening function used if the duration is not
         0. A linear tween is used by default.
       button (str, int, optional): The mouse button released. TODO
-      mouseDownUp (True, False): When true, the mouseUp/Down actions are not performed.
+      mouseDownUp (True, False): When false, the mouseUp/Down actions are not performed.
         Which allows dragging over multiple (small) actions. 'True' by default.
 
     Returns:
@@ -1590,8 +1590,6 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
       1 by default, for just one press.
       interval (float, optional): How many seconds between each press.
       0.0 by default, for no pause between presses.
-      pause (float, optional): How many seconds in the end of function process.
-      None by default, for no pause in the end of function process.
     Returns:
       None
     """
@@ -1626,8 +1624,6 @@ def hold(keys, logScreenshot=None, _pause=True):
     Args:
       key (str, list): The key to be pressed. The valid names are listed in
       KEYBOARD_KEYS. Can also be a list of such strings.
-      pause (float, optional): How many seconds in the end of function process.
-      None by default, for no pause in the end of function process.
     Returns:
       None
     """
