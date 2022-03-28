@@ -119,7 +119,7 @@ The three major operating systems (Windows, macOS, and Linux) each have differen
 
 * On Windows, PyAutoGUI accesses the Windows API (also called the WinAPI or win32 API) through the built-in `ctypes` module. The `nicewin` module at https://github.com/asweigart/nicewin provides a demonstration for how Windows API calls can be made through Python.
 
-* On macOS, PyAutoGUI uses the `rubicon-objc` module to access the Cocoa API.
+* On macOS, PyAutoGUI uses the `Pyobjc` module to access the Cocoa API.
 
 * On Linux, PyAutoGUI uses the `Xlib` module to access the X11 or X Window System.
 
