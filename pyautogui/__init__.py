@@ -1313,6 +1313,8 @@ def moveRel(xOffset=None, yOffset=None, duration=0.0, tween=linear, logScreensho
     Returns:
       None
     """
+    xOffset = 0 if xOffset is None else xOffset
+    yOffset = 0 if yOffset is None else yOffset
     xOffset, yOffset = _normalizeXYArgs(xOffset, yOffset)
 
     _logScreenshot(logScreenshot, "moveRel", "%s,%s" % (xOffset, yOffset), folder=".")
