@@ -704,6 +704,8 @@ def _normalizeXYArgs(firstArg, secondArg):
                 )
             )
     else:
+        firstArg = 0 if firstArg is None else firstArg
+        secondArg = 0 if secondArg is None else secondArg
         return Point(int(firstArg), int(secondArg))  # firstArg and secondArg are just x and y number values
 
 
