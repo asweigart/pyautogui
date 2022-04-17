@@ -244,9 +244,12 @@ def _normalKeyEvent(key, upDown):
 
             event = Quartz.CGEventCreateKeyboardEvent(None,
                         keyboardMapping['shift'], upDown == 'down')
-            Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
-            # Tiny sleep to let OS X catch up on us pressing shift
-            time.sleep(pyautogui.DARWIN_CATCH_UP_TIME)
+            # 278Mt's comment: It is better to type with shift key with CGEventSetFlags() function.
+            # reference is:
+            # [here](https://stackoverflow.com/questions/55120977/how-press-shift-command-3-simultaneously-programmatically)
+            # and [here](https://code-examples.net/en/q/1ea43e),
+            # NOT [here](https://developer.apple.com/documentation/coregraphics/1456564-cgeventcreatekeyboardevent)
+            Quartz.CGEventSetFlags(event, Quartz.kCGEventFlagMaskShift)
 
         else:
             key_code = keyboardMapping[key]
