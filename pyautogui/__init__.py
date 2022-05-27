@@ -778,6 +778,34 @@ def position(x=None, y=None):
     return Point(posx, posy)
 
 
+def cposition(x=None, y=None):
+    """
+    Same as position, but returns the color value as well.
+    Returns the current xy coordinates of the mouse cursor as a two-integer tuple.
+    and the current RGB with Opacity coordinates of the mouse cursor as a four-integer tuple.
+
+    Args:
+      x (int, None, optional) - If not None, this argument overrides the x in
+        the return value.
+      y (int, None, optional) - If not None, this argument overrides the y in
+        the return value.
+
+    Returns:
+      (x, y), (r, g, b, alpha) tuple of the current xy coordinates of the mouse cursor.
+
+    NOTE: The position() function doesn't check for failsafe.
+    """
+    posx, posy = platformModule._position()
+    posx = int(posx)
+    posy = int(posy)
+    if x is not None:  # If set, the x parameter overrides the return value.
+        posx = int(x)
+    if y is not None:  # If set, the y parameter overrides the return value.
+        posy = int(y)
+    r, g, b, alpha = pyscreeze.screenshot().getpixel((posx, posy))
+    return Point(posx, posy), (r, g, b, alpha)
+
+
 def size():
     """Returns the width and height of the screen as a two-integer tuple.
 
