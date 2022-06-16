@@ -10,7 +10,7 @@ import AppKit
 import pyautogui
 from pyautogui import LEFT, MIDDLE, RIGHT
 
-if sys.platform !=  'darwin':
+if sys.platform != 'darwin':
     raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
 
 
