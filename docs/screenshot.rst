@@ -92,7 +92,7 @@ There are several "locate" functions. They all start looking at the top-left cor
 The "locate all" functions can be used in for loops or passed to `list()`:
 
     >>> import pyautogui
-    >>> for pos in pyautogui.locateAllOnScreen('someButton.png')
+    >>> for pos in pyautogui.locateAllOnScreen('someButton.png'):
     ...   print(pos)
     ...
     (1101, 252, 50, 50)
