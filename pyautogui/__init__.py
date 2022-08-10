@@ -848,7 +848,10 @@ def _normalizeButton(button):
     # TODO - We should check the OS settings to see if it's a left-hand setup, where button 1 would be "right".
 
     # Check that `button` has a valid value:
-    button = button.lower()
+    # Validate if the entered `button` value is a string. 
+    if type(button) == str:
+        button = button.lower()
+        
     if platform.system() == "Linux":
         # Check for valid button arg on Linux:
         if button not in (LEFT, MIDDLE, RIGHT, PRIMARY, SECONDARY, 1, 2, 3, 4, 5, 6, 7):
