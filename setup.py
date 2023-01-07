@@ -28,7 +28,7 @@ setup(
     packages=['pyautogui'],
     test_suite='tests',
     install_requires=['pyobjc-core;platform_system=="Darwin"',
-                      'pyobjc;platform_system=="Darwin"',
+                      'pyobjc-framework-quartz;platform_system=="Darwin"',
                       'python3-Xlib;platform_system=="Linux" and python_version>="3.0"',
                       'python-xlib;platform_system=="Linux" and python_version<"3.0"',
                       'pymsgbox',
