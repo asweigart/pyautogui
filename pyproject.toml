@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "pyautogui"
+version = "0.1.0"
+description = ""
+authors = ["ericghara <eric.gharakhanian@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+xlib = "^0.21"
+pytest = "^7.2.1"
+pillow = "^9.4.0"
+pytweening = "^1.0.4"
+pyscreeze = "^0.1.28"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
