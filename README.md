@@ -1,3 +1,5 @@
+## This Branch Fixes [Bug #730](https://github.com/asweigart/pyautogui/issues/730)
+
 PyAutoGUI
 =========
 

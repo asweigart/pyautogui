@@ -1,5 +1,6 @@
 venv/
 .tox/
+.idea/
 
 *.pyc
 __pycache__/
