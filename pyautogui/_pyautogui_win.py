@@ -331,6 +331,11 @@ def _keyUp(key):
         if apply_mod:
             ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
 
+def swapped():
+    sm_swapbutton = 23
+    user32 = ctypes.windll.user32
+    _swapped = user32.GetSystemMetrics(sm_swapbutton)
+    return _swapped != 0
 
 def _position():
     """Returns the current xy coordinates of the mouse cursor as a two-integer

@@ -864,7 +864,7 @@ def _normalizeButton(button):
 
     # TODO - Check if the primary/secondary mouse buttons have been swapped:
     if button in (PRIMARY, SECONDARY):
-        swapped = False  # TODO - Add the operating system-specific code to detect mouse swap later.
+        swapped = platformModule.swapped()  # TODO - Add the operating system-specific code to detect mouse swap later.
         if swapped:
             if button == PRIMARY:
                 return RIGHT
