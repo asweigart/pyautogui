@@ -1656,7 +1656,7 @@ def hold(keys, logScreenshot=None, _pause=True):
 
 
 @_genericPyAutoGUIChecks
-def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
+def typewrite(message, interval=0.0, logScreenshot=None, _pause=True, x=None, y=None):
     """Performs a keyboard key press down, followed by a release, for each of
     the characters in message.
 
@@ -1667,17 +1667,30 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     keys, it cannot be used to perform keyboard shortcuts. Use the hotkey()
     function for that.
 
+    The x and y parameters detail where the mouse event happens. If None, the
+    current mouse position is used. If a float value, it is rounded down. If
+    outside the boundaries of the screen, the event happens at edge of the
+    screen.
+
     Args:
       message (str, list): If a string, then the characters to be pressed. If a
         list, then the key names of the keys to press in order. The valid names
         are listed in KEYBOARD_KEYS.
       interval (float, optional): The number of seconds in between each press.
         0.0 by default, for no pause in between presses.
-
+      x (int, float, None, tuple, optional): The x position on the screen where the
+        typing starts. None by default. If tuple, this is used for x and y.
+        If x is a str, it's considered a filename of an image to find on
+        the screen with locateOnScreen() and click the center of.
+      y (int, float, None, optional): The y position on the screen where the
+        typing starts. None by default.
     Returns:
       None
     """
-    click() #Called click() to ensure that text typed where cursor present
+    
+    #Called click() to ensure that text typed starts at position (x, y). By default, the current cursor position is used.
+    click(x, y) 
+    
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
