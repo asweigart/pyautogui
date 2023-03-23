@@ -1677,6 +1677,7 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     Returns:
       None
     """
+    click() #Called click() to ensure that text typed where cursor present
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
