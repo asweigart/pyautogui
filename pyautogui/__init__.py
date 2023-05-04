@@ -13,7 +13,7 @@
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = "0.9.53"
+__version__ = "0.9.54"
 
 import sys
 import time
@@ -864,7 +864,7 @@ def _normalizeButton(button):
 
     # TODO - Check if the primary/secondary mouse buttons have been swapped:
     if button in (PRIMARY, SECONDARY):
-        swapped = False  # TODO - Add the operating system-specific code to detect mouse swap later.
+        swapped = platformModule._mouse_is_swapped()
         if swapped:
             if button == PRIMARY:
                 return RIGHT

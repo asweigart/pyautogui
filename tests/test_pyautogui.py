@@ -453,6 +453,10 @@ class TestMouse(unittest.TestCase):
         pyautogui.vscroll(-1)
 
 
+    def test_mouse_button_swap(self):
+        pass  # TODO - I'm not even sure how I could test this in an automated way. We'd need a separate GUI app.
+
+
 class TestRun(unittest.TestCase):
     def test_getNumberToken(self):
         self.assertEqual(pyautogui._getNumberToken("5hello"), "5")

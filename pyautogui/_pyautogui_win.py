@@ -458,6 +458,11 @@ def _click(x, y, button):
         pass
 
 
+def _mouse_is_swapped():
+    # TODO - measure the performance of checking this setting for each click.
+    # 23 is SM_SWAPBUTTON: "Nonzero if the meanings of the left and right mouse buttons are swapped; otherwise, 0."
+    return ctypes.windll.user32.GetSystemMetrics(23) != 0
+
 def _sendMouseEvent(ev, x, y, dwData=0):
     """The helper function that actually makes the call to the mouse_event()
     win32 function.

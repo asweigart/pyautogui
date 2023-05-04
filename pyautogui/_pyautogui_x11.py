@@ -3,6 +3,7 @@
 import pyautogui
 import sys
 import os
+import subprocess
 from pyautogui import LEFT, MIDDLE, RIGHT
 
 from Xlib.display import Display
@@ -74,6 +75,26 @@ def _click(x, y, button):
 
     _mouseDown(x, y, button)
     _mouseUp(x, y, button)
+
+
+_mouse_is_swapped_setting = None
+
+
+def _mouse_is_swapped():
+    # TODO - for performance reasons, we only check the swapped mouse button
+    # setting from the OS once at start up, rather than every mouse click.
+    # Testing shows this takes about 0.02 seconds on my machine in a vm.
+    # This may change in the future.
+    global _mouse_is_swapped_setting
+    if _mouse_is_swapped_setting is None:
+        try:
+            proc = subprocess.Popen(['dconf', 'read', '/org/gnome/desktop/peripherals/mouse/left-handed'], stdout=subprocess.PIPE)
+            stdout_bytes, stderr_bytes = proc.communicate()
+            _mouse_is_swapped_setting = stdout_bytes.decode('utf-8') == 'true\n'
+        except FileNotFoundError:
+            # The user is not running Gnome (the default window manager on Ubuntu) so just assume it's not swapped.
+            _mouse_is_swapped_setting = False
+    return _mouse_is_swapped_setting
 
 
 def _moveTo(x, y):
