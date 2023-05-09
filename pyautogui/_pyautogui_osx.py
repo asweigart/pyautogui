@@ -395,6 +395,7 @@ def _mouse_is_swapped():
     # TODO - for performance reasons, we only check the swapped mouse button
     # setting from the OS once at start up, rather than every mouse click.
     # This may change in the future.
+    global _mouse_is_swapped_setting
     if _mouse_is_swapped_setting is None:
         _mouse_is_swapped_setting = False # TODO - for now, we can't detect this setting
     return _mouse_is_swapped_setting
