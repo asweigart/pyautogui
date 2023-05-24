@@ -1,14 +1,12 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+name = "pypi"
+
+[packages]
+pyautogui = {editable = true, path = "."}
 
 [dev-packages]
 
-[packages]
-pytest = "*"
-pyautogui = {editable = true, path = "."}
-pillow = "*"
-
 [requires]
-python_version = "3.9"
+python_version = "3.11"

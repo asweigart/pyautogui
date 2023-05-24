@@ -143,7 +143,7 @@ class TestGeneral(unittest.TestCase):
         pyautogui.pixelMatchesColor
         pyautogui.pixel
         pyautogui.screenshot
-        pyautogui.grab
+        #pyautogui.grab # grab() was removed, use screenshot()
 
         # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
         # Tweening-related API
