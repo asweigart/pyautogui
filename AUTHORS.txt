@@ -65,3 +65,4 @@ Vélmer Oliveira https://github.com/velmer
 Valdemar B. Petersen https://github.com/ValdemarBirkegaardPetersen
 Yoshiaki Ono https://github.com/fx-kirin
 Stefan Hoelzl https://github.com/stefanhoelzl
+Zander Møysal https://github.com/Zandertaiko
