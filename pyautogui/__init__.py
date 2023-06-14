@@ -540,7 +540,7 @@ elif sys.platform == "darwin":
     from . import _pyautogui_osx as platformModule
 elif sys.platform == "win32":
     from . import _pyautogui_win as platformModule
-elif platform.system() == "Linux":
+elif platform.system() == "Linux" or sys.platform == 'cygwin':
     from . import _pyautogui_x11 as platformModule
 else:
     raise NotImplementedError("Your platform (%s) is not supported by PyAutoGUI." % (platform.system()))
