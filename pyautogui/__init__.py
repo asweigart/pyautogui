@@ -263,6 +263,17 @@ except ImportError:
             "PyAutoGUI was unable to import mouseinfo. Please install this module to enable the function you tried to call."
         )
 
+except Exception as exception:
+
+    def mouseInfo():
+        """
+        This function raises PyAutoGUIException. It's used for the MouseInfo function names if the MouseInfo module
+        raised an exception.
+        """
+        raise PyAutoGUIException(
+            f"PyAutoGUI was unable to import mouseinfo because of the following exception: {exception}"
+        )
+
 
 def useImageNotFoundException(value=None):
     """
