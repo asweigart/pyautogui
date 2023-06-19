@@ -213,9 +213,9 @@ try:
 
     @raisePyAutoGUIImageNotFoundException
     def locateOnWindow(*args, **kwargs):
-        return pyscreeze.locateOnWindow(*args, **kwargs)
+        return pyscreeze.locateOnScreen(*args, **kwargs)
 
-    locateOnWindow.__doc__ = pyscreeze.locateOnWindow.__doc__
+    locateOnWindow.__doc__ = pyscreeze.locateOnScreen.__doc__
 
 
 except ImportError:
@@ -521,7 +521,7 @@ SECONDARY = "secondary"
 # NOTE: Eventually, I'd like to come up with a better system than this. For now, this seems like it works.
 QWERTY = r"""`1234567890-=qwertyuiop[]\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?"""
 QWERTZ = r"""=1234567890/0qwertzuiop89-asdfghjkl,\yxcvbnm,.7+!@#$%^&*()?)QWERTZUIOP*(_ASDFGHJKL<|YXCVBNM<>&"""
-
+cyrillic = r"""=1234567890/0йцукеягшщз89-фывапролдбёнчсмитьбю7+!"№%:,.;()?)ЙЦУКЕЯГШЩЗ;(_ФЫВАПРОЛДБЁНЧСМИТЬБЮ."""
 
 def isShiftCharacter(character):
     """
@@ -1611,8 +1611,15 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
     for i in range(presses):
         for k in keys:
             failSafeCheck()
-            platformModule._keyDown(k)
-            platformModule._keyUp(k)
+            if k in QWERTY:
+                platformModule._keyDown(k)
+                platformModule._keyUp(k)
+            elif k in cyrillic:
+
+                k = QWERTY[cyrillic.index(k)]
+                platformModule._keyDown(k)
+                platformModule._keyUp(k)
+
         time.sleep(interval)
 
 
@@ -1676,6 +1683,7 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     Returns:
       None
     """
+
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
