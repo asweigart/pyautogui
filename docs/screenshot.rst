@@ -8,6 +8,9 @@ PyAutoGUI can take screenshots, save them to files, and locate images within the
 
 Screenshot functionality requires the Pillow module. OS X uses the `screencapture` command, which comes with the operating system. Linux uses the `scrot` command, which can be installed by running `sudo apt-get install scrot`.
 
+.. note::
+    The screenshot does not include the mouse cursor.
+
 The screenshot() Function
 =========================
 
