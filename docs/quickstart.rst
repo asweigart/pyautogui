@@ -144,7 +144,7 @@ The `locateCenterOnScreen()` function just returns the XY coordinates of the mid
     >>> pyautogui.locateCenterOnScreen('looksLikeThis.png')  # returns center x and y
     (898, 423)
 
-These functions return `None` if the image couldn't be found on the screen.
+These functions raise `ImageNotFoundException` if the image couldn't be found on the screen (versions before 0.9.41 returned `None` instead).
 
 Note: The locate functions are slow and can take a full second or two.
 
