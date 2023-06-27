@@ -24,6 +24,11 @@ import platform
 import re
 import functools
 from contextlib import contextmanager
+from win32gui import FindWindow, GetWindowRect
+
+
+class PyScreezeException(Exception):
+    pass # This is a generic exception class raised when a PyScreeze-related error happens.
 
 
 class PyAutoGUIException(Exception):
@@ -212,9 +217,22 @@ try:
     locateOnScreen.__doc__ = pyscreeze.locateOnScreen.__doc__
 
     @raisePyAutoGUIImageNotFoundException
-    def locateOnWindow(*args, **kwargs):
-        return pyscreeze.locateOnWindow(*args, **kwargs)
+    def locateOnWindow(image, title):
+        matchingWindows = getWindowsWithTitle(title)
+        if len(matchingWindows) == 0:
+            raise PyScreezeException('Could not find a window with %s in the title' % (title))
+        elif len(matchingWindows) > 1:
+            raise PyScreezeException('Found multiple windows with %s in the title: %s' % (title, [str(win) for win in matchingWindows]))
 
+        win = matchingWindows[0]
+        win.activate()   
+
+        window_handle = FindWindow(None, title)
+        region = GetWindowRect(window_handle)
+
+        return pyscreeze.locateOnScreen(image, region)
+    
+    
     locateOnWindow.__doc__ = pyscreeze.locateOnWindow.__doc__
 
 
