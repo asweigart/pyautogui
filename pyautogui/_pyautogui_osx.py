@@ -422,10 +422,20 @@ def _multiClick(x, y, button, num, interval=0.0):
         assert False, "button argument not in ('left', 'middle', 'right')"
         return
 
-    for i in range(num):
-        _click(x, y, button)
-        time.sleep(interval)
+    # create event, initial direction is down
+    multiClickEvent = Quartz.CGEventCreateMouseEvent(None, down, (x,y), btn)
+    # set number of clicks
+    Quartz.CGEventSetIntegerValueField(multiClickEvent, Quartz.kCGMouseEventClickState, num)
 
+    # per click we need to post 2 events (down, up)
+    for i in range(2*num):
+        # post previous event
+        Quartz.CGEventPost(Quartz.kCGHIDEventTap, multiClickEvent)
+        # set type for next event
+        if i % 2 == 0:
+            Quartz.CGEventSetType(multiClickEvent, up)
+        else:
+            Quartz.CGEventSetType(multiClickEvent, down)
 
 def _sendMouseEvent(ev, x, y, button):
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, ev, (x, y), button)
