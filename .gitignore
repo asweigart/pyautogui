@@ -15,3 +15,4 @@ build/
 *.egg-info/
 
 Pipfile.lock
+.DS_Store

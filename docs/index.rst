@@ -38,6 +38,13 @@ Examples
     >>> currentMouseX, currentMouseY
     (1314, 345)
 
+    >>> ((currentMouseX, currentMouseY), (red, green, blue, alpha)) = pyautogui.cposition() # Get the XY position of the mouse with the color RGBA.
+    >>> currentMouseX, currentMouseY
+    (1314, 345)
+    >>> red, green, blue, alpha
+    (45, 163, 52, 255)  # osx
+    (45, 163, 52, None) # win
+
     >>> pyautogui.moveTo(100, 150) # Move the mouse to XY coordinates.
 
     >>> pyautogui.click()          # Click the mouse.
