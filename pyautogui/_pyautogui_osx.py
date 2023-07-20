@@ -217,20 +217,19 @@ special_key_translate_table = {
 }
 
 def _keyDown(key):
-    if key not in keyboardMapping or keyboardMapping[key] is None:
-        return
-
     if key in special_key_translate_table:
         _specialKeyEvent(key, 'down')
+    elif key not in keyboardMapping or keyboardMapping[key] is None:
+        return
     else:
         _normalKeyEvent(key, 'down')
 
-def _keyUp(key):
-    if key not in keyboardMapping or keyboardMapping[key] is None:
-        return
 
+def _keyUp(key):
     if key in special_key_translate_table:
         _specialKeyEvent(key, 'up')
+    elif key not in keyboardMapping or keyboardMapping[key] is None:
+        return
     else:
         _normalKeyEvent(key, 'up')
 
