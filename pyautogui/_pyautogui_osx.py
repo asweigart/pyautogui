@@ -188,7 +188,7 @@ for c in 'abcdefghijklmnopqrstuvwxyz':
     keyboardMapping[c.upper()] = keyboardMapping[c]
 
 # Taken from ev_keymap.h
-# http://www.opensource.apple.com/source/IOHIDFamily/IOHIDFamily-86.1/IOHIDSystem/IOKit/hidsystem/ev_keymap.h
+# https://www.opensource.apple.com/source/IOHIDFamily/IOHIDFamily-86.1/IOHIDSystem/IOKit/hidsystem/ev_keymap.h
 special_key_translate_table = {
     'KEYTYPE_SOUND_UP': 0,
     'KEYTYPE_SOUND_DOWN': 1,
@@ -264,7 +264,7 @@ def _normalKeyEvent(key, upDown):
 def _specialKeyEvent(key, upDown):
     """ Helper method for special keys.
 
-    Source: http://stackoverflow.com/questions/11045814/emulate-media-key-press-on-mac
+    Source: https://stackoverflow.com/questions/11045814/emulate-media-key-press-on-mac
     """
     assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
 

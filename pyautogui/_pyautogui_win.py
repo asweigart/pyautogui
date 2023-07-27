@@ -22,16 +22,16 @@ except AttributeError:
 """
 A lot of this code is probably repeated from win32 extensions module, but I didn't want to have that dependency.
 
-Note: According to http://msdn.microsoft.com/en-us/library/windows/desktop/ms646260(v=vs.85).aspx
+Note: According to https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
 the ctypes.windll.user32.mouse_event() function has been superseded by SendInput.
 
-SendInput() is documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646310(v=vs.85).aspx
+SendInput() is documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput?redirectedfrom=MSDN
 
 UPDATE: SendInput() doesn't seem to be working for me. I've switched back to mouse_event()."""
 
 
 # Event codes to be passed to the mouse_event() win32 function.
-# Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646273(v=vs.85).aspx
+# Documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-mouseinput?redirectedfrom=MSDN
 MOUSEEVENTF_MOVE = 0x0001
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
@@ -47,17 +47,17 @@ MOUSEEVENTF_ABSOLUTE = 0x8000
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
 
-# Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
+# Documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-keybd_event?redirectedfrom=MSDN
 KEYEVENTF_KEYDOWN = 0x0000 # Technically this constant doesn't exist in the MS documentation. It's the lack of KEYEVENTF_KEYUP that means pressing the key down.
 KEYEVENTF_KEYUP = 0x0002
 
-# Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
+# Documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input?redirectedfrom=MSDN
 INPUT_MOUSE = 0
 INPUT_KEYBOARD = 1
 
 
 # These ctypes structures are for Win32 INPUT, MOUSEINPUT, KEYBDINPUT, and HARDWAREINPUT structures,
-# used by SendInput and documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
+# used by SendInput and documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input?redirectedfrom=MSDN
 # Thanks to BSH for this StackOverflow answer: https://stackoverflow.com/questions/18566289/how-would-you-recreate-this-windows-api-structure-with-ctypes
 class MOUSEINPUT(ctypes.Structure):
     _fields_ = [
@@ -103,7 +103,7 @@ class INPUT(ctypes.Structure):
 
 
 """ Keyboard key mapping for pyautogui:
-Documented at http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+Documented at https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes?redirectedfrom=MSDN
 
 The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
