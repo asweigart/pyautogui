@@ -20,7 +20,7 @@ if sys.platform in ('java', 'darwin', 'win32'):
 #from pyautogui import *
 
 """
-Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ), itself derived from her "Crikey" lib.
+Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 (https://shallowsky.com/software/crikey/pykey-0.1), itself derived from her "Crikey" lib.
 """
 
 def _position():

@@ -555,7 +555,7 @@ else:
 # the mouse.
 MINIMUM_DURATION = 0.1
 # If sleep_amount is less than MINIMUM_DURATION, time.sleep() will be a no-op and the mouse cursor moves there instantly.
-# TODO: This value should vary with the platform. http://stackoverflow.com/q/1133857
+# TODO: This value should vary with the platform. https://stackoverflow.com/q/1133857
 MINIMUM_SLEEP = 0.05
 
 # The number of seconds to pause after EVERY public function call. Useful for debugging:

@@ -28,7 +28,7 @@ Pillow needs to be installed, and on Linux you may need to install additional li
 
     https://stackoverflow.com/questions/7648200/pip-install-pil-e-tickets-1-no-jpeg-png-support
 
-    http://ubuntuforums.org/showthread.php?t=1751455
+    https://ubuntuforums.org/showthread.php?t=1751455
 
 If you want to do development and contribute to PyAutoGUI, you will need to install these modules from PyPI:
 
