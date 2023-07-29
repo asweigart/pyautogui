@@ -1,0 +1,57 @@
+import cv2
+import numpy
+import win32gui
+import win32ui
+import win32con
+
+
+class ModelException(Exception):
+    """
+    PyAutoGUI code will raise this exception class for any invalid actions. If PyAutoGUI raises some other exception,
+    you should assume that this is caused by a bug in PyAutoGUI itself. (Including a failure to catch potential
+    exceptions raised by PyAutoGUI.)
+    """
+    pass
+
+# winAPI screenshot
+def screenshot(region):
+    hdesktop = win32gui.GetDesktopWindow()
+    width = region[2]
+    height = region[3]
+    lefttop_x = -region[0]
+    lefttop_y = -region[1]
+    rightbottom_x = width + region[0]
+    rightbottom_y = height + region[1]
+    desktop_dc = win32gui.GetWindowDC(hdesktop)
+    img_dc = win32ui.CreateDCFromHandle(desktop_dc)
+    mem_dc = img_dc.CreateCompatibleDC()
+    screenshot = win32ui.CreateBitmap()
+    screenshot.CreateCompatibleBitmap(img_dc, width, height)
+    mem_dc.SelectObject(screenshot)
+    mem_dc.BitBlt((lefttop_x, lefttop_y), (rightbottom_x, rightbottom_y), img_dc, (0, 0), win32con.SRCCOPY)
+    signedIntsArray = screenshot.GetBitmapBits(True)
+    # img = numpy.fromstring(signedIntsArray, dtype='uint8')
+    img = numpy.frombuffer(signedIntsArray, dtype='uint8')
+    # img = numpy.array(signedIntsArray).astype(dtype="uint8") # This is REALLY slow!
+    img.shape = (height, width, 4)    # RGB+Alpha
+    img = numpy.delete(img, 3, axis=2)
+    return img
+
+def regionMatchesColor(region, expectedRGBColor, tolerance=0, model=0):
+    im = screenshot(region)
+    low = numpy.array([item - tolerance for item in list(expectedRGBColor)])
+    high = numpy.array([item + tolerance for item in list(expectedRGBColor)])
+    dst = cv2.inRange(src=im, lowerb=low, upperb=high)
+    position = numpy.column_stack(numpy.where(dst == 255))
+    if len(position) > 0:
+        if model == 0:
+            return int(position[0][1]) + region[0], int(position[0][0]) + region[1]
+        elif model == 1:
+            return int(position[int(len(position) / 2)][1]) + region[0], int(position[int(len(position) / 2)][0]) + \
+                   region[1]
+        elif model == 2:
+            return int(position[-1][1]) + region[0], int(position[-1][0]) + region[1]
+        else:
+            raise ModelException("Value of model should be one of 0,1,2")
+    else:
+        return None

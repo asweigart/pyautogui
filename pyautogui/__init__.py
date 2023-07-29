@@ -2169,3 +2169,38 @@ def getInfo():
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.
 _right, _bottom = size()
 FAILSAFE_POINTS.extend([(0, _bottom - 1), (_right - 1, 0), (_right - 1, _bottom - 1)])
+
+
+class ModelException(Exception):
+    """
+    PyAutoGUI code will raise this exception class for any invalid actions. If PyAutoGUI raises some other exception,
+    you should assume that this is caused by a bug in PyAutoGUI itself. (Including a failure to catch potential
+    exceptions raised by PyAutoGUI.)
+    """
+
+    pass
+"""
+Function:Obtainthe RGB color of a region and return it's coordinate.
+Regardless of the area size, the time is usually between 30 and 50 milliseconds.
+model=0: find the color from the top left to the bottom right.
+model=1: find the color from the mid.
+model=2: find the color form the bottom right to the top left.
+"""
+def regionMatchesColor(region, expectedRGBColor, tolerance=0, model=0):
+    im = numpy.array(pyscreeze.screenshot(region=region))
+    low = numpy.array([item - tolerance for item in list(expectedRGBColor)])
+    high = numpy.array([item + tolerance for item in list(expectedRGBColor)])
+    dst = cv2.inRange(src=im, lowerb=low, upperb=high)
+    position = numpy.column_stack(numpy.where(dst == 255))
+    if len(position) > 0:
+        if model == 0:
+            return int(position[0][1]) + region[0], int(position[0][0]) + region[1]
+        elif model == 1:
+            return int(position[int(len(position) / 2)][1]) + region[0], int(position[int(len(position) / 2)][0]) + \
+                   region[1]
+        elif model == 2:
+            return int(position[-1][1]) + region[0], int(position[-1][0]) + region[1]
+        else:
+            raise ModelException("Value of model should be one of 0,1,2")
+    else:
+        return None
