@@ -98,6 +98,8 @@ def _mouse_is_swapped():
 
 
 def _moveTo(x, y):
+    if (type(x) != int or type(y) != int):
+        raise Exception('The coordinates variable type must be int ')
     fake_input(_display, X.MotionNotify, x=x, y=y)
     _display.sync()
 

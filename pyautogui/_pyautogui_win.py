@@ -366,6 +366,8 @@ def _moveTo(x, y):
     Returns:
       None
     """
+    if(type(x) != int or type(y) != int):
+        raise Exception('The coordinates variable type must be int ')
     ctypes.windll.user32.SetCursorPos(x, y)
     # This was a possible solution to issue #314 https://github.com/asweigart/pyautogui/issues/314
     # but I'd like to hang on to SetCursorPos because mouse_event() has been superseded.
@@ -570,4 +572,5 @@ def _vscroll(clicks, x, y):
       None
     """
     return _scroll(clicks, x, y)
+
 
