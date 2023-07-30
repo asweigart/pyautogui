@@ -444,5 +444,8 @@ def _dragTo(x, y, button):
     time.sleep(pyautogui.DARWIN_CATCH_UP_TIME) # needed to allow OS time to catch up.
 
 def _moveTo(x, y):
+    if (type(x) != int or type(y) != int):
+        raise Exception('The coordinates variable type must be int ')
     _sendMouseEvent(Quartz.kCGEventMouseMoved, x, y, 0)
     time.sleep(pyautogui.DARWIN_CATCH_UP_TIME) # needed to allow OS time to catch up.
+
