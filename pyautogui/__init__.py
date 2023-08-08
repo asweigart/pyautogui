@@ -911,6 +911,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScr
     _logScreenshot(logScreenshot, "mouseDown", "%s,%s" % (x, y), folder=".")
     platformModule._mouseDown(x, y, button)
 
+
 @_genericPyAutoGUIChecks
 def KeyRepeat(key, hold_time, pause=0.1):
     """Performs continuous Key Repeatition.
@@ -930,6 +931,7 @@ def KeyRepeat(key, hold_time, pause=0.1):
     while time.time() - start < hold_time:
         press(key)
     PAUSE = 0.1
+
 
 @_genericPyAutoGUIChecks
 def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
