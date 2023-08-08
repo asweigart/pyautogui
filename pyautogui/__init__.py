@@ -911,6 +911,25 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScr
     _logScreenshot(logScreenshot, "mouseDown", "%s,%s" % (x, y), folder=".")
     platformModule._mouseDown(x, y, button)
 
+@_genericPyAutoGUIChecks
+def KeyRepeat(key, hold_time, pause=0.1):
+    """Performs continuous Key Repeatition.
+    For eg: Like in a text editor when you keep a key pressed, it repeats.
+    
+    Args:
+        key (string): The key to be pressed. Check the valid key names in KEYBOARD.KEYS
+        hold_time (float): The duration of key repeatition
+        interval (float): Interval between each repition
+    
+    Returns:
+        None
+    """
+    # *Important Note: The reason I'm implementing is because KeyDown function does NOT perform this as you might expect.
+    PAUSE = pause
+    start = time.time()
+    while time.time() - start < hold_time:
+        press(key)
+    PAUSE = 0.1
 
 @_genericPyAutoGUIChecks
 def mouseUp(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScreenshot=None, _pause=True):
