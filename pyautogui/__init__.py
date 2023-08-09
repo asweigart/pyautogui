@@ -913,7 +913,7 @@ def mouseDown(x=None, y=None, button=PRIMARY, duration=0.0, tween=linear, logScr
 
 
 @_genericPyAutoGUIChecks
-def KeyRepeat(key, hold_time, pause=0.1):
+def KeyRepeat(key, hold_time, interval=0.1):
     """Performs continuous Key Repeatition.
     For eg: Like in a text editor when you keep a key pressed, it repeats.
     
