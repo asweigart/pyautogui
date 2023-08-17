@@ -22,8 +22,8 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
-keyboardMapping.update({
+KEYBOARD_MAPPING = dict([(key, None) for key in pyautogui.KEY_NAMES])
+KEYBOARD_MAPPING.update({
     'a': 0x00, # kVK_ANSI_A
     's': 0x01, # kVK_ANSI_S
     'd': 0x02, # kVK_ANSI_D
@@ -185,7 +185,7 @@ keyboardMapping.update({
 
 # add mappings for uppercase letters
 for c in 'abcdefghijklmnopqrstuvwxyz':
-    keyboardMapping[c.upper()] = keyboardMapping[c]
+    KEYBOARD_MAPPING[c.upper()] = KEYBOARD_MAPPING[c]
 
 # Taken from ev_keymap.h
 # http://www.opensource.apple.com/source/IOHIDFamily/IOHIDFamily-86.1/IOHIDSystem/IOKit/hidsystem/ev_keymap.h
@@ -217,7 +217,7 @@ special_key_translate_table = {
 }
 
 def _keyDown(key):
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     if key in special_key_translate_table:
@@ -226,7 +226,7 @@ def _keyDown(key):
         _normalKeyEvent(key, 'down')
 
 def _keyUp(key):
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     if key in special_key_translate_table:
@@ -240,16 +240,16 @@ def _normalKeyEvent(key, upDown):
 
     try:
         if pyautogui.isShiftCharacter(key):
-            key_code = keyboardMapping[key.lower()]
+            key_code = KEYBOARD_MAPPING[key.lower()]
 
             event = Quartz.CGEventCreateKeyboardEvent(None,
-                        keyboardMapping['shift'], upDown == 'down')
+                        KEYBOARD_MAPPING['shift'], upDown == 'down')
             Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)
             # Tiny sleep to let OS X catch up on us pressing shift
             time.sleep(pyautogui.DARWIN_CATCH_UP_TIME)
 
         else:
-            key_code = keyboardMapping[key]
+            key_code = KEYBOARD_MAPPING[key]
 
         event = Quartz.CGEventCreateKeyboardEvent(None, key_code, upDown == 'down')
         Quartz.CGEventPost(Quartz.kCGHIDEventTap, event)

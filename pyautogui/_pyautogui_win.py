@@ -109,8 +109,8 @@ The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
-keyboardMapping.update({
+KEYBOARD_MAPPING = dict([(key, None) for key in pyautogui.KEY_NAMES])
+KEYBOARD_MAPPING.update({
     'backspace': 0x08, # VK_BACK
     '\b': 0x08, # VK_BACK
     'super': 0x5B, #VK_LWIN
@@ -244,7 +244,7 @@ keyboardMapping.update({
 # Populate the basic printable ascii characters.
 # https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-vkkeyscana
 for c in range(32, 128):
-    keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
+    KEYBOARD_MAPPING[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
 
 def _keyDown(key):
@@ -261,17 +261,17 @@ def _keyDown(key):
     Returns:
       None
     """
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     needsShift = pyautogui.isShiftCharacter(key)
 
     """
-    # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
-    if key in keyboardMapping.keys():
-        vkCode = keyboardMapping[key]
+    # OLD CODE: The new code relies on having all keys be loaded in KEYBOARD_MAPPING from the start.
+    if key in KEYBOARD_MAPPING.keys():
+        vkCode = KEYBOARD_MAPPING[key]
     elif len(key) == 1:
-        # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
+        # note: I could use this case to update KEYBOARD_MAPPING to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
         vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(key))
         if vkCode == -1:
             raise ValueError('There is no VK code for key "%s"' % (key))
@@ -279,7 +279,7 @@ def _keyDown(key):
             vkCode -= 0x100
             needsShift = True
     """
-    mods, vkCode = divmod(keyboardMapping[key], 0x100)
+    mods, vkCode = divmod(KEYBOARD_MAPPING[key], 0x100)
 
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
@@ -302,16 +302,16 @@ def _keyUp(key):
     Returns:
       None
     """
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     needsShift = pyautogui.isShiftCharacter(key)
     """
-    # OLD CODE: The new code relies on having all keys be loaded in keyboardMapping from the start.
-    if key in keyboardMapping.keys():
-        vkCode = keyboardMapping[key]
+    # OLD CODE: The new code relies on having all keys be loaded in KEYBOARD_MAPPING from the start.
+    if key in KEYBOARD_MAPPING.keys():
+        vkCode = KEYBOARD_MAPPING[key]
     elif len(key) == 1:
-        # note: I could use this case to update keyboardMapping to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
+        # note: I could use this case to update KEYBOARD_MAPPING to cache the VkKeyScan results, but I've decided not to just to make any possible bugs easier to reproduce.
         vkCode = ctypes.windll.user32.VkKeyScanW(ctypes.wintypes.WCHAR(key))
         if vkCode == -1:
             raise ValueError('There is no VK code for key "%s"' % (key))
@@ -319,7 +319,7 @@ def _keyUp(key):
             vkCode -= 0x100
             needsShift = True
     """
-    mods, vkCode = divmod(keyboardMapping[key], 0x100)
+    mods, vkCode = divmod(KEYBOARD_MAPPING[key], 0x100)
 
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
