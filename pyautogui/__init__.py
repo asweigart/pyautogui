@@ -1535,7 +1535,7 @@ def isValidKey(key):
     Returns:
       bool: True if key is a valid value, False if not.
     """
-    return platformModule.keyboardMapping.get(key, None) is not None
+    return platformModule.KEYBOARD_MAPPING.get(key, None) is not None
 
 
 @_genericPyAutoGUIChecks

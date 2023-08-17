@@ -132,7 +132,7 @@ def _keyDown(key):
     Returns:
       None
     """
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     if type(key) == int:
@@ -142,12 +142,12 @@ def _keyDown(key):
 
     needsShift = pyautogui.isShiftCharacter(key)
     if needsShift:
-        fake_input(_display, X.KeyPress, keyboardMapping['shift'])
+        fake_input(_display, X.KeyPress, KEYBOARD_MAPPING['shift'])
 
-    fake_input(_display, X.KeyPress, keyboardMapping[key])
+    fake_input(_display, X.KeyPress, KEYBOARD_MAPPING[key])
 
     if needsShift:
-        fake_input(_display, X.KeyRelease, keyboardMapping['shift'])
+        fake_input(_display, X.KeyRelease, KEYBOARD_MAPPING['shift'])
     _display.sync()
 
 
@@ -166,13 +166,13 @@ def _keyUp(key):
     Release a given character key. Also works with character keycodes as
     integers, but not keysyms.
     """
-    if key not in keyboardMapping or keyboardMapping[key] is None:
+    if key not in KEYBOARD_MAPPING or KEYBOARD_MAPPING[key] is None:
         return
 
     if type(key) == int:
         keycode = key
     else:
-        keycode = keyboardMapping[key]
+        keycode = KEYBOARD_MAPPING[key]
 
     fake_input(_display, X.KeyRelease, keycode)
     _display.sync()
@@ -182,14 +182,14 @@ def _keyUp(key):
 _display = Display(os.environ['DISPLAY'])
 
 
-""" Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
+""" Information for KEYBOARD_MAPPING derived from PyKeyboard's special_key_assignment() function.
 
 The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
 keyUp(), or press() into the code used for the OS-specific keyboard function.
 
 They should always be lowercase, and the same keys should be used across all OSes."""
-keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
-keyboardMapping.update({
+KEYBOARD_MAPPING = dict([(key, None) for key in pyautogui.KEY_NAMES])
+KEYBOARD_MAPPING.update({
     'backspace':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
     '\b':                _display.keysym_to_keycode(Xlib.XK.string_to_keysym('BackSpace')),
     'tab':               _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
@@ -318,4 +318,4 @@ keyboardMapping.update({
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
-    keyboardMapping[c] = _display.keysym_to_keycode(Xlib.XK.string_to_keysym(c))
+    KEYBOARD_MAPPING[c] = _display.keysym_to_keycode(Xlib.XK.string_to_keysym(c))
