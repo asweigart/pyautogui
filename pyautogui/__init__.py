@@ -779,6 +779,12 @@ def size():
 
     Returns:
       (width, height) tuple of the screen size, in pixels.
+      
+    Note that in the case of Macs with retina displays, due to greater pixel density of 2x2 per logical pixel, x and y values are multiplied by 2. As a result, locating the desired position of the screen will most likely require a line of code that looks like
+        
+        pyag.click(loc.x/2,loc.y/2)
+        
+        to account for the 2:1 correspondence of pixels
     """
     return Size(*platformModule._size())
 
