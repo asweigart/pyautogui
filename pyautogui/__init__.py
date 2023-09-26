@@ -1732,8 +1732,20 @@ def hotkey(*args, **kwargs):
         time.sleep(interval)
 
 
-shortcut = hotkey  # shortcut() is an alias for htotkey()
+shortcut = hotkey  # shortcut() is an alias for hotkey()
 
+def clickButtonImage(buttonScreenshot, conf=0.6):
+
+    #Takes a screenshot of an image as input, attempts to find the button on screen and click on it
+    #Example: clickButtonImage('login_button.png', 0.6)
+    
+    loc = pyag.locateCenterOnScreen(buttonScreenshot, confidence=conf)
+    
+    try:
+        pyag.click((loc.x)/2, (loc.y)/2)
+    else:
+        pass # don't terminate program if we can't find the button
+    
 
 def failSafeCheck():
     if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
