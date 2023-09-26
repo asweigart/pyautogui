@@ -779,6 +779,12 @@ def size():
 
     Returns:
       (width, height) tuple of the screen size, in pixels.
+      
+    Note that in the case of Macs with retina displays, due to greater pixel density of 2x2 per logical pixel, x and y values are multiplied by 2. As a result, locating the desired position of the screen will most likely require a line of code that looks like
+        
+        pyag.click(loc.x/2,loc.y/2)
+        
+        to account for the 2:1 correspondence of pixels
     """
     return Size(*platformModule._size())
 
@@ -1726,8 +1732,20 @@ def hotkey(*args, **kwargs):
         time.sleep(interval)
 
 
-shortcut = hotkey  # shortcut() is an alias for htotkey()
+shortcut = hotkey  # shortcut() is an alias for hotkey()
 
+def clickButtonImage(buttonScreenshot, conf=0.6):
+
+    #Takes a screenshot of an image as input, attempts to find the button on screen and click on it
+    #Example: clickButtonImage('login_button.png', 0.6)
+    
+    loc = pyag.locateCenterOnScreen(buttonScreenshot, confidence=conf)
+    
+    try:
+        pyag.click((loc.x)/2, (loc.y)/2)
+    else:
+        pass # don't terminate program if we can't find the button
+    
 
 def failSafeCheck():
     if FAILSAFE and tuple(position()) in FAILSAFE_POINTS:
