@@ -387,6 +387,20 @@ def _click(x, y, button):
     else:
         assert False, "button argument not in ('left', 'middle', 'right')"
 
+
+_mouse_is_swapped_setting = None
+
+
+def _mouse_is_swapped():
+    # TODO - for performance reasons, we only check the swapped mouse button
+    # setting from the OS once at start up, rather than every mouse click.
+    # This may change in the future.
+    global _mouse_is_swapped_setting
+    if _mouse_is_swapped_setting is None:
+        _mouse_is_swapped_setting = False # TODO - for now, we can't detect this setting
+    return _mouse_is_swapped_setting
+
+
 def _multiClick(x, y, button, num, interval=0.0):
     btn    = None
     down   = None

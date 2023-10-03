@@ -13,8 +13,9 @@
 from __future__ import absolute_import, division, print_function
 
 
-__version__ = "0.9.53"
+__version__ = "0.9.54"
 
+import collections
 import sys
 import time
 import datetime
@@ -56,14 +57,10 @@ class ImageNotFoundException(PyAutoGUIException):
 
 if sys.version_info[0] == 2 or sys.version_info[0:2] in ((3, 1), (3, 2)):
     # Python 2 and 3.1 and 3.2 uses collections.Sequence
-    import collections
-
-    collectionsSequence = collections.Sequence
+    from collections import Sequence
 else:
     # Python 3.3+ uses collections.abc.Sequence
-    import collections.abc
-
-    collectionsSequence = collections.abc.Sequence  # type: ignore
+    from collections.abc import Sequence
 
 
 try:
@@ -181,7 +178,7 @@ def raisePyAutoGUIImageNotFoundException(wrappedFunction):
 
 try:
     import pyscreeze
-    from pyscreeze import center, grab, pixel, pixelMatchesColor, screenshot
+    from pyscreeze import center, pixel, pixelMatchesColor, screenshot
 
     # Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
     @raisePyAutoGUIImageNotFoundException
@@ -233,7 +230,7 @@ except ImportError:
         )
 
     center = _couldNotImportPyScreeze
-    grab = _couldNotImportPyScreeze
+    #grab = _couldNotImportPyScreeze  # grab() was removed, use screenshot() instead
     locate = _couldNotImportPyScreeze
     locateAll = _couldNotImportPyScreeze
     locateAllOnScreen = _couldNotImportPyScreeze
@@ -254,7 +251,6 @@ try:
         planning GUI automation tasks. This function blocks until the application is closed.
         """
         mouseinfo.MouseInfoWindow()
-
 
 except ImportError:
 
@@ -654,13 +650,13 @@ def _normalizeXYArgs(firstArg, secondArg):
     """
     if firstArg is None and secondArg is None:
         return position()
-    
+
     elif firstArg is None and secondArg is not None:
         return Point(int(position()[0]), int(secondArg))
-    
-    elif secondArg is None and firstArg is not None:
+
+    elif secondArg is None and firstArg is not None and not isinstance(firstArg, Sequence):
         return Point(int(firstArg), int(position()[1]))
-    
+
     elif isinstance(firstArg, str):
         # If x is a string, we assume it's an image filename to locate on the screen:
         try:
@@ -676,7 +672,7 @@ def _normalizeXYArgs(firstArg, secondArg):
 
         return center(locateOnScreen(firstArg))
 
-    elif isinstance(firstArg, collectionsSequence):
+    elif isinstance(firstArg, Sequence):
         if len(firstArg) == 2:
             # firstArg is a two-integer tuple: (x, y)
             if secondArg is None:
@@ -721,9 +717,9 @@ def _logScreenshot(logScreenshot, funcName, funcArgs, folder="."):
 
     The ``folder`` argument is the folder to place the screenshot file in, and defaults to the current working directory.
     """
-    if logScreenshot == False:
+    if not logScreenshot:
         return  # Don't take a screenshot.
-    if logScreenshot is None and LOG_SCREENSHOTS == False:
+    if logScreenshot is None and LOG_SCREENSHOTS is False:
         return  # Don't take a screenshot.
 
     # Ensure that the "specifics" string isn't too long for the filename:
@@ -785,6 +781,9 @@ def size():
       (width, height) tuple of the screen size, in pixels.
     """
     return Size(*platformModule._size())
+
+
+resolution = size  # resolution() is an alias for size()
 
 
 def onScreen(x, y=None):
@@ -864,7 +863,7 @@ def _normalizeButton(button):
 
     # TODO - Check if the primary/secondary mouse buttons have been swapped:
     if button in (PRIMARY, SECONDARY):
-        swapped = False  # TODO - Add the operating system-specific code to detect mouse swap later.
+        swapped = platformModule._mouse_is_swapped()
         if swapped:
             if button == PRIMARY:
                 return RIGHT
@@ -1124,7 +1123,7 @@ def doubleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
         platformModule._multiClick(x, y, button, 2)
-        _logScreenshot(logScreenshot, 'click', '%s,2,%s,%s' % (button, x, y), folder='.')
+        _logScreenshot(logScreenshot, 'click', '%s,%s,%s,2' % (x, y, button), folder='.')
     else:
         # Click for Windows or Linux:
         click(x, y, 2, interval, button, duration, tween, logScreenshot, _pause=False)
@@ -1165,7 +1164,7 @@ def tripleClick(x=None, y=None, interval=0.0, button=LEFT, duration=0.0, tween=l
         x, y = _normalizeXYArgs(x, y)
         _mouseMoveDrag("move", x, y, 0, 0, duration=0, tween=None)
         x, y = platformModule._position()
-        _logScreenshot(logScreenshot, "click", "%s,3,%s,%s" % (x, y), folder=".")
+        _logScreenshot(logScreenshot, "click", "%s,%s,%s,3" % (x, y, button), folder=".")
         platformModule._multiClick(x, y, button, 3)
     else:
         # Click for Windows or Linux:
@@ -1536,7 +1535,7 @@ def isValidKey(key):
     Returns:
       bool: True if key is a valid value, False if not.
     """
-    return platformModule.keyboardMapping.get(key, None) != None
+    return platformModule.keyboardMapping.get(key, None) is not None
 
 
 @_genericPyAutoGUIChecks
@@ -1598,7 +1597,7 @@ def press(keys, presses=1, interval=0.0, logScreenshot=None, _pause=True):
     if type(keys) == str:
         if len(keys) > 1:
             keys = keys.lower()
-        keys = [keys] # If keys is 'enter', convert it to ['enter'].
+        keys = [keys]  # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1634,7 +1633,7 @@ def hold(keys, logScreenshot=None, _pause=True):
     if type(keys) == str:
         if len(keys) > 1:
             keys = keys.lower()
-        keys = [keys] # If keys is 'enter', convert it to ['enter'].
+        keys = [keys]  # If keys is 'enter', convert it to ['enter'].
     else:
         lowerKeys = []
         for s in keys:
@@ -1710,6 +1709,10 @@ def hotkey(*args, **kwargs):
     """
     interval = float(kwargs.get("interval", 0.0))  # TODO - this should be taken out.
 
+    if len(args) and isinstance(args[0], Sequence) and not isinstance(args[0], str):
+        # Let the user pass a list of strings
+        args = tuple(args[0])
+
     _logScreenshot(kwargs.get("logScreenshot"), "hotkey", ",".join(args), folder=".")
     for c in args:
         if len(c) > 1:
@@ -1721,6 +1724,9 @@ def hotkey(*args, **kwargs):
             c = c.lower()
         platformModule._keyUp(c)
         time.sleep(interval)
+
+
+shortcut = hotkey  # shortcut() is an alias for htotkey()
 
 
 def failSafeCheck():
@@ -1735,7 +1741,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
     automatically display the location and RGB of the mouse cursor."""
     try:
         runningIDLE = sys.stdin.__module__.startswith("idlelib")
-    except:
+    except AttributeError:
         runningIDLE = False
 
     print("Press Ctrl-C to quit.")
@@ -2148,7 +2154,9 @@ def printInfo(dontPrint=False):
 PyAutoGUI Version: {}
        Executable: {}
        Resolution: {}
-        Timestamp: {}'''.format(*getInfo())
+        Timestamp: {}'''.format(
+        *getInfo()
+    )
     if not dontPrint:
         print(msg)
     return msg

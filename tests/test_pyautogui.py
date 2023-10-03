@@ -143,7 +143,7 @@ class TestGeneral(unittest.TestCase):
         pyautogui.pixelMatchesColor
         pyautogui.pixel
         pyautogui.screenshot
-        pyautogui.grab
+        #pyautogui.grab # grab() was removed, use screenshot()
 
         # TODO(denilsonsa): I believe we should get rid of these symbols. If someone wants tweening, import pytweening module instead!
         # Tweening-related API
@@ -451,6 +451,10 @@ class TestMouse(unittest.TestCase):
         pyautogui.hscroll(-1)
         pyautogui.vscroll(1)
         pyautogui.vscroll(-1)
+
+
+    def test_mouse_button_swap(self):
+        pass  # TODO - I'm not even sure how I could test this in an automated way. We'd need a separate GUI app.
 
 
 class TestRun(unittest.TestCase):
