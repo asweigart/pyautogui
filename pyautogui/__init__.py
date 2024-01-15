@@ -581,6 +581,7 @@ G_LOG_SCREENSHOTS_FILENAMES = []  # TODO - make this a deque
 Point = collections.namedtuple("Point", "x y")
 Size = collections.namedtuple("Size", "width height")
 
+PYAUTOGUI_DEBUG_MODE = False
 
 def _genericPyAutoGUIChecks(wrappedFunction):
     """
@@ -593,6 +594,8 @@ def _genericPyAutoGUIChecks(wrappedFunction):
         failSafeCheck()
         returnVal = wrappedFunction(*args, **kwargs)
         _handlePause(kwargs.get("_pause", True))
+        if PYAUTOGUI_DEBUG_MODE:
+            pass
         return returnVal
 
     return wrapper
