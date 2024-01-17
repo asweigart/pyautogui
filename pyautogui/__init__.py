@@ -581,6 +581,23 @@ G_LOG_SCREENSHOTS_FILENAMES = []  # TODO - make this a deque
 Point = collections.namedtuple("Point", "x y")
 Size = collections.namedtuple("Size", "width height")
 
+PYAUTOGUI_DEBUG_MODE = False
+PYAUTOGUI_DEBUG_CHAR = 'p'
+
+import tkinter as tk
+
+def popup_window():
+    assert len(PYAUTOGUI_DEBUG_CHAR) == 1, "PYAUTOGUI_DEBUG_CHAR has to be a char"
+    def on_key_press(event):
+        if event.char.lower() == PYAUTOGUI_DEBUG_CHAR:
+            root.destroy()
+
+    root = tk.Tk()
+    root.title("WAIT")
+    label = tk.Label(root, text=f"Press '{PYAUTOGUI_DEBUG_CHAR}' to proceed")
+    label.pack(padx=20, pady=20)
+    root.bind('<Key>', on_key_press)
+    root.mainloop()
 
 def _genericPyAutoGUIChecks(wrappedFunction):
     """
@@ -593,6 +610,9 @@ def _genericPyAutoGUIChecks(wrappedFunction):
         failSafeCheck()
         returnVal = wrappedFunction(*args, **kwargs)
         _handlePause(kwargs.get("_pause", True))
+        if PYAUTOGUI_DEBUG_MODE:
+            #print(wrappedFunction)
+            popup_window()
         return returnVal
 
     return wrapper
