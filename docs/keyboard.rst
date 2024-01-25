@@ -95,7 +95,11 @@ To make pressing hotkeys or keyboard shortcuts convenient, the ``hotkey()`` can 
     >>> pyautogui.keyUp('shift')
     >>> pyautogui.keyUp('ctrl')
 
-To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument.
+To add a delay interval in between each press, pass an int or float for the ``interval`` keyword argument. On macOS, 'command' has to be pressed before other keys in the sequence, adding in an interval will fix bugs where the keyboard shortcut wasn't succesfully run. This code to open spotlight is an example:
+
+.. code:: python
+
+    >>> pyautogui.hotkey('command', 'space', interval=0.125)
 
 KEYBOARD_KEYS
 =============
