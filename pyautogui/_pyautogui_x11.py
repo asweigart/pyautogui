@@ -19,6 +19,104 @@ if sys.platform in ('java', 'darwin', 'win32'):
 
 #from pyautogui import *
 
+# code to add some window controls to pyautogui for Linux systems. It does require the wmctrl command.
+def _wmctrlInstalled() -> bool:
+    """
+    Checks if the wmctrl command is installed.
+
+    Returns:
+        bool: True if the wmctrl command is installed, False if not.
+    """
+    try:
+        subprocess.Popen(['wmctrl', '-l'], stdout=subprocess.PIPE)
+        return True
+    except FileNotFoundError:
+        print('Some commands require the wmctrl which is not installed.')
+        return False
+    
+wmctrl = _wmctrlInstalled()
+
+def _getListOfWindows() -> list:
+    """
+    Retrieves a list of open windows using the wmctrl command and returns the list of window titles.
+    """
+    if not wmctrl:
+        raise Exception('The wmctrl command is not installed.')
+    wmctrl = subprocess.Popen(['wmctrl', '-l'], stdout=subprocess.PIPE)
+    wmctrl_output = wmctrl.communicate()[0].decode('utf-8').split('\n')
+    return wmctrl_output
+
+
+def _getWindowId(search_term:str = None) -> str:
+    """
+    Get the window ID based on the search term.
+
+    Args:
+        search_term (str, optional): The search term to look for in the window titles. Defaults to None.
+
+    Returns:
+        str: The window ID corresponding to the search term, or None if not found.
+    Raises:
+        ValueError: If search_term is None or an empty string.
+    """
+    if not wmctrl:
+        raise Exception('The wmctrl command is not installed.')
+    if search_term is None:
+        raise ValueError('search_term cannot be None')
+    if search_term == '':
+        raise ValueError('search_term cannot be an empty string')
+    # use wmctrl to get the window id
+    wmctrl = subprocess.Popen(['wmctrl', '-l'], stdout=subprocess.PIPE)
+    wmctrl_output = wmctrl.communicate()[0].decode('utf-8').split('\n')
+    search_term = search_term.lower()
+    wmctrl_output = [line.lower() for line in wmctrl_output]
+
+    for line in wmctrl_output:
+        if search_term in line:
+            return line.split()[0]
+    return None
+
+def _setWindowFocus(window_id:str = None) -> None:
+    """
+    Set the focus to the specified window using its window ID.
+
+    Args:
+        window_id (str, optional): The ID of the window to set focus to. Defaults to None.
+
+    Returns:
+        None
+    """
+    if not wmctrl:
+        raise Exception('The wmctrl command is not installed.')
+    if window_id is None:
+        raise ValueError('window_id cannot be None')
+    subprocess.call(['wmctrl', '-ia', window_id])
+
+def _getWindowPrams(window_id:str = None) -> dict:
+    """
+    Get the perameters of the specified window using its window ID.
+
+    Args:
+        window_id (str, optional): The ID of the window to get perameters for. Defaults to None.
+
+    Returns:
+        dict: A dictionary of the perameters of the specified window.
+        Format as follows: {'x': int, 'y': int, 'width': int, 'height': int}
+        The x,y values are the coordinates of the top left corner of the window,
+        the width and height are the width and height of the window
+    Raises:
+        ValueError: If window_id is None
+    """
+    if not wmctrl:
+        raise Exception('The wmctrl command is not installed.')
+    if window_id is None:
+        raise ValueError('window_id cannot be None')
+    wmctrl = subprocess.Popen(['wmctrl', '-lG', window_id], stdout=subprocess.PIPE)
+    wmctrl_output = wmctrl.communicate()[0].decode('utf-8').split('\n')[0]
+    wmctrl_output = wmctrl_output.split()
+    return {'x': wmctrl_output[2], 'y': wmctrl_output[3], 'width': wmctrl_output[4], 'height': wmctrl_output[5]}
+
+
 """
 Much of this code is based on information gleaned from Paul Barton's PyKeyboard in PyUserInput from 2013, itself derived from Akkana Peck's pykey in 2008 ( http://www.shallowsky.com/software/crikey/pykey-0.1 ), itself derived from her "Crikey" lib.
 """
