@@ -118,6 +118,11 @@ On Linux, you must run `sudo apt-get install scrot` to use the screenshot featur
     <PIL.Image.Image image mode=RGB size=1920x1080 at 0x24C3EF0>
     >>> pyautogui.screenshot('foo.png')  # returns a Pillow/PIL Image object, and saves it to a file
     <PIL.Image.Image image mode=RGB size=1920x1080 at 0x31AA198>
+    >>> pag.screenshot(region=(0, 100, 300, 200)) # returns a Pillow/PIL Image object of the screen region (x, y, w, h)
+    <PIL.Image.Image image mode=RGB size=300x200>
+
+Locate Image on Screen Functions
+--------------------------------
 
 If you have an image file of something you want to click on, you can find it on the screen with `locateOnScreen()`.
 
@@ -144,7 +149,7 @@ The `locateCenterOnScreen()` function just returns the XY coordinates of the mid
     >>> pyautogui.locateCenterOnScreen('looksLikeThis.png')  # returns center x and y
     (898, 423)
 
-These functions return `None` if the image couldn't be found on the screen.
+These functions raise `ImageNotFoundException` if the image couldn't be found on the screen.
 
 Note: The locate functions are slow and can take a full second or two.
 
