@@ -24,6 +24,80 @@ keyUp(), or press() into the code used for the OS-specific keyboard function.
 They should always be lowercase, and the same keys should be used across all OSes."""
 keyboardMapping = dict([(key, None) for key in pyautogui.KEY_NAMES])
 keyboardMapping.update({
+    
+    
+    'ش': 0x00, # kVK_ANSI_ش
+    'س': 0x01, # kVK_ANSI_س
+    'ي': 0x02, # kVK_ANSI_ي
+    'ى': 0x02, # kVK_ANSI_ى
+    'ب': 0x03, # kVK_ANSI_ب
+    'ا': 0x04, # kVK_ANSI_ا
+    'ل': 0x05, # kVK_ANSI_ل
+    'ظ': 0x06, # kVK_ANSI_ظ
+    'ط': 0x07, # kVK_ANSI_ط
+    'ذ': 0x08, # kVK_ANSI_ذ
+    'د': 0x09, # kVK_ANSI_د
+    'ز': 0x0b, # kVK_ANSI_ز
+    'ض': 0x0c, # kVK_ANSI_ض
+    'ص': 0x0d, # kVK_ANSI_ص
+    'ث': 0x0e, # kVK_ANSI_ث
+    'ق': 0x0f, # kVK_ANSI_ق
+    'غ': 0x10, # kVK_ANSI_غ
+    'ف': 0x11, # kVK_ANSI_ف
+    '١': 0x12, # kVK_ANSI_١
+    '!': 0x12, # kVK_ANSI_١
+    '٢': 0x13, # kVK_ANSI_٢
+    '@': 0x13, # kVK_ANSI_٢
+    '٣': 0x14, # kVK_ANSI_٣
+    '#': 0x14, # kVK_ANSI_٣
+    '٤': 0x15, # kVK_ANSI_٤
+    '$': 0x15, # kVK_ANSI_٤
+    '٦': 0x16, # kVK_ANSI_٦
+    '^': 0x16, # kVK_ANSI_٦
+    '٥': 0x17, # kVK_ANSI_٥
+    '%': 0x17, # kVK_ANSI_٥
+    '=': 0x18, # kVK_ANSI_Equal
+    '+': 0x18, # kVK_ANSI_Equal
+    '٩': 0x19, # kVK_ANSI_٩
+    '(': 0x19, # kVK_ANSI_٩
+    '٧': 0x1a, # kVK_ANSI_٧
+    '&': 0x1a, # kVK_ANSI_٧
+    '-': 0x1b, # kVK_ANSI_Minus
+    '_': 0x1b, # kVK_ANSI_Minus
+    '٨': 0x1c, # kVK_ANSI_٨
+    '*': 0x1c, # kVK_ANSI_٨
+    '٠': 0x1d, # kVK_ANSI_٠
+    ')': 0x1d, # kVK_ANSI_٠
+    'ة': 0x1e, # kVK_ANSI_RightBracket
+    '}': 0x1e, # kVK_ANSI_RightBracket
+    'خ': 0x1f, # kVK_ANSI_خ
+    'ع': 0x20, # kVK_ANSI_خ
+    'ج': 0x21, # kVK_ANSI_LeftBracket
+    '{': 0x21, # kVK_ANSI_LeftBracket
+    'ه': 0x22, # kVK_ANSI_ه
+    'ح': 0x23, # kVK_ANSI_ح
+    'م': 0x25, # kVK_ANSI_م
+    'ت': 0x26, # kVK_ANSI_ت
+    "'": 0x27, # kVK_ANSI_Quote
+    '"': 0x27, # kVK_ANSI_Quote
+    'ن': 0x28, # kVK_ANSI_ن
+    'ك': 0x29, # kVK_ANSI_ك
+    ':': 0x29, # kVK_ANSI_Semicolon
+    '\\': 0x2a, # kVK_ANSI_Backslash
+    '|': 0x2a, # kVK_ANSI_Backslash
+    ',': 0x2b, # kVK_ANSI_Comma
+    '<': 0x2b, # kVK_ANSI_Comma
+    '/': 0x2c, # kVK_ANSI_Slash
+    '?': 0x2c, # kVK_ANSI_Slash
+    'ر': 0x2d, # kVK_ANSI_ر
+    'و': 0x2e, # kVK_ANSI_و
+    '.': 0x2f, # kVK_ANSI_Period
+    '>': 0x2f, # kVK_ANSI_Period
+    '`': 0x32, # kVK_ANSI_Grave
+    '~': 0x32, # kVK_ANSI_Grave
+    ' ': 0x31, # kVK_Space
+
+
     'a': 0x00, # kVK_ANSI_A
     's': 0x01, # kVK_ANSI_S
     'd': 0x02, # kVK_ANSI_D
