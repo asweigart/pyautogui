@@ -181,7 +181,6 @@ def _keyUp(key):
 # Taken from PyKeyboard's ctor function.
 _display = Display(os.environ['DISPLAY'])
 
-
 """ Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
 
 The *KB dictionaries in pyautogui map a string that can be passed to keyDown(),
@@ -315,6 +314,23 @@ keyboardMapping.update({
     '}': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('braceright')),
     '~': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('asciitilde')),
 })
+
+try:
+    # Load XF86 Keysym definitions for special function keys
+    Xlib.XK.load_keysym_group('xf86')
+
+    keyboardMapping.update({    
+        'volumeup':         _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioRaiseVolume')),
+        'volumedown':       _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioLowerVolume')),
+        'volumemute':       _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioMute')),
+        'playpause':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPlay')),
+        'nexttrack':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioNext')),
+        'prevtrack':        _display.keysym_to_keycode(Xlib.XK.string_to_keysym('XF86_AudioPrev')),
+    })
+except Exception:
+    # Need minimum python-xlib v0.15rc1
+    # Don't don't raise exception and let x11 module work without XF86 keys
+    pass
 
 # Trading memory for time" populate winKB so we don't have to call VkKeyScanA each time.
 for c in """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890""":
