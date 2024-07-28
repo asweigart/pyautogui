@@ -126,23 +126,23 @@ If you have an image file of something you want to click on, you can find it on 
 
 The `locateAllOnScreen()` function will return a generator for all the locations it is found on the screen:
 
-    >>> for i in pyautogui.locateAllOnScreen('looksLikeThis.png')
+    >>> for i in pyautogui.locateAllOnScreen('looksLikeThis.png'):
+    ...     print(i)
     ...
-    ...
-    (863, 117, 70, 13)
-    (623, 137, 70, 13)
-    (853, 577, 70, 13)
-    (883, 617, 70, 13)
-    (973, 657, 70, 13)
-    (933, 877, 70, 13)
+    Box(left=863, top=117, width=70, height=13)
+    Box(left=623, top=137, width=70, height=13)
+    Box(left=853, top=577, width=70, height=13)
+    Box(left=883, top=617, width=70, height=13)
+    Box(left=973, top=657, width=70, height=13)
+    Box(left=933, top=877, width=70, height=13)
 
     >>> list(pyautogui.locateAllOnScreen('looksLikeThis.png'))
-    [(863, 117, 70, 13), (623, 137, 70, 13), (853, 577, 70, 13), (883, 617, 70, 13), (973, 657, 70, 13), (933, 877, 70, 13)]
+    [Box(left=863, top=117, width=70, height=13),Box(left=623, top=137, width=70, height=13),Box(left=853, top=577, width=70, height=13),Box(left=883, top=617, width=70, height=13),Box(left=973, top=657, width=70, height=13),Box(left=933, top=877, width=70, height=13)]
 
 The `locateCenterOnScreen()` function just returns the XY coordinates of the middle of where the image is found on the screen:
 
     >>> pyautogui.locateCenterOnScreen('looksLikeThis.png')  # returns center x and y
-    (898, 423)
+    Point(x=898, y=423)
 
 These functions return `None` if the image couldn't be found on the screen.
 
