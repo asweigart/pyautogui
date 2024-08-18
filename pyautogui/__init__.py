@@ -252,16 +252,20 @@ try:
         """
         mouseinfo.MouseInfoWindow()
 
-except ImportError:
 
+except Exception as exception:
+    _mouseInfoExceptionMessage = "PyAutoGUI was unable to import mouseinfo"
+    if isinstance(exception, ImportError):
+        _mouseInfoExceptionMessage += ". Please install this module to enable the function you tried to call."
+    else:
+        _mouseInfoExceptionMessage += f" because of the following exception: {exception}"
+    
     def mouseInfo():
         """
         This function raises PyAutoGUIException. It's used for the MouseInfo function names if the MouseInfo module
         failed to be imported.
         """
-        raise PyAutoGUIException(
-            "PyAutoGUI was unable to import mouseinfo. Please install this module to enable the function you tried to call."
-        )
+        raise PyAutoGUIException(_mouseInfoExceptionMessage)
 
 
 def useImageNotFoundException(value=None):
