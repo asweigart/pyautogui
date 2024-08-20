@@ -247,7 +247,7 @@ for c in range(32, 128):
     keyboardMapping[chr(c)] = ctypes.windll.user32.VkKeyScanA(ctypes.wintypes.WCHAR(chr(c)))
 
 
-def _keyDown(key):
+def _keyDown(key, strict=False):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -256,12 +256,16 @@ def _keyDown(key):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      pyautogui.KEY_NAMES.
+        pyautogui.KEY_NAMES.
+      strict (bool): If strict is True and the key is not a valid key, 
+        raise a ValueError.
 
     Returns:
       None
     """
     if key not in keyboardMapping or keyboardMapping[key] is None:
+        if strict:
+            raise ValueError('The key "%s" is not a valid key.' % (key))
         return
 
     needsShift = pyautogui.isShiftCharacter(key)

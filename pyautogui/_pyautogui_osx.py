@@ -216,8 +216,10 @@ special_key_translate_table = {
     'KEYTYPE_ILLUMINATION_TOGGLE': 23
 }
 
-def _keyDown(key):
+def _keyDown(key, strict=False):
     if key not in keyboardMapping or keyboardMapping[key] is None:
+        if strict:
+            raise ValueError("Key '%s' is not a valid key." % (key))
         return
 
     if key in special_key_translate_table:

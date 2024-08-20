@@ -1539,7 +1539,7 @@ def isValidKey(key):
 
 
 @_genericPyAutoGUIChecks
-def keyDown(key, logScreenshot=None, _pause=True):
+def keyDown(key, logScreenshot=None, _pause=True, strict=False):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
 
@@ -1548,8 +1548,9 @@ def keyDown(key, logScreenshot=None, _pause=True):
 
     Args:
       key (str): The key to be pressed down. The valid names are listed in
-      KEYBOARD_KEYS.
-
+        KEYBOARD_KEYS.
+      strict (bool, optional): If True and the key is not a valid value,
+        raise a ValueError.
     Returns:
       None
     """
@@ -1557,7 +1558,7 @@ def keyDown(key, logScreenshot=None, _pause=True):
         key = key.lower()
 
     _logScreenshot(logScreenshot, "keyDown", key, folder=".")
-    platformModule._keyDown(key)
+    platformModule._keyDown(key, strict)
 
 
 @_genericPyAutoGUIChecks
