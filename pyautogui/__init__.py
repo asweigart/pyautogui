@@ -170,8 +170,8 @@ def raisePyAutoGUIImageNotFoundException(wrappedFunction):
     def wrapper(*args, **kwargs):
         try:
             return wrappedFunction(*args, **kwargs)
-        except pyscreeze.ImageNotFoundException:
-            raise ImageNotFoundException  # Raise PyAutoGUI's ImageNotFoundException.
+        except pyscreeze.ImageNotFoundException as ex:
+            raise ImageNotFoundException(ex)  # Raise PyAutoGUI's ImageNotFoundException.
 
     return wrapper
 
