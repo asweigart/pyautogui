@@ -5,6 +5,7 @@
 import ctypes
 import ctypes.wintypes
 import pyautogui
+import win32api
 from pyautogui import LEFT, MIDDLE, RIGHT
 
 import sys
@@ -49,6 +50,8 @@ MOUSEEVENTF_HWHEEL = 0x01000
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
 KEYEVENTF_KEYDOWN = 0x0000 # Technically this constant doesn't exist in the MS documentation. It's the lack of KEYEVENTF_KEYUP that means pressing the key down.
+# Documented here: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput, table: https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#extended-key-flag
+KEYEVENTF_EXTENDEDKEY = 0x0001
 KEYEVENTF_KEYUP = 0x0002
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646270(v=vs.85).aspx
@@ -233,6 +236,8 @@ keyboardMapping.update({
     'launchapp1': 0xb6, # VK_LAUNCH_APP1
     'launchapp2': 0xb7, # VK_LAUNCH_APP2
     })
+    
+extendedKeys = {0xa5, 0x2e, 0x2d, 0x22, 0x21, 0x24, 0x23, 0x25, 0x27, 0x26, 0x28}
 
     # There are other virtual key constants that are not used here because the printable ascii keys are
     # handled in the following `for` loop.
@@ -280,16 +285,18 @@ def _keyDown(key):
             needsShift = True
     """
     mods, vkCode = divmod(keyboardMapping[key], 0x100)
+    dwFlags = KEYEVENTF_EXTENDEDKEY if vkCode in extendedKeys else 0
+    bScan = win32api.MapVirtualKey(vkCode, 0)
 
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYDOWN, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYDOWN, 0)
+            ctypes.windll.user32.keybd_event(vk_mod, bScan, dwFlags | KEYEVENTF_KEYDOWN, 0) #
+    ctypes.windll.user32.keybd_event(vkCode, bScan, dwFlags | KEYEVENTF_KEYDOWN, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not supported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
+            ctypes.windll.user32.keybd_event(vk_mod, bScan, dwFlags | KEYEVENTF_KEYUP, 0) #
 
 
 def _keyUp(key):
@@ -320,16 +327,19 @@ def _keyUp(key):
             needsShift = True
     """
     mods, vkCode = divmod(keyboardMapping[key], 0x100)
-
+    dwFlags = KEYEVENTF_EXTENDEDKEY if vkCode in extendedKeys else 0
+    bScan = win32api.MapVirtualKey(vkCode, 0)
+    
     for apply_mod, vk_mod in [(mods & 4, 0x12), (mods & 2, 0x11),
         (mods & 1 or needsShift, 0x10)]: #HANKAKU not supported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, 0, 0) #
-    ctypes.windll.user32.keybd_event(vkCode, 0, KEYEVENTF_KEYUP, 0)
+            ctypes.windll.user32.keybd_event(vk_mod, bScan, dwFlags, 0) #
+    dwFlags |= KEYEVENTF_KEYUP
+    ctypes.windll.user32.keybd_event(vkCode, bScan, dwFlags, 0)
     for apply_mod, vk_mod in [(mods & 1 or needsShift, 0x10), (mods & 2, 0x11),
         (mods & 4, 0x12)]: #HANKAKU not supported! mods & 8
         if apply_mod:
-            ctypes.windll.user32.keybd_event(vk_mod, 0, KEYEVENTF_KEYUP, 0) #
+            ctypes.windll.user32.keybd_event(vk_mod, bScan, dwFlags, 0) #
 
 
 def _position():
