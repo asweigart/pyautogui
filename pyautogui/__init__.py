@@ -541,7 +541,11 @@ elif sys.platform == "darwin":
 elif sys.platform == "win32":
     from . import _pyautogui_win as platformModule
 elif platform.system() == "Linux":
-    from . import _pyautogui_x11 as platformModule
+    # detect X11
+    if "x11" in os.environ['XDG_SESSION_TYPE']:
+        from . import _pyautogui_x11 as platformModule
+    else:
+        raise NotImplementedError("Your display server (%s) is not supported by PyAutoGUI." % (os.environ.get('XDG_SESSION_TYPE', 'Unknown')))
 else:
     raise NotImplementedError("Your platform (%s) is not supported by PyAutoGUI." % (platform.system()))
 
