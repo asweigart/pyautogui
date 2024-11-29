@@ -44,8 +44,19 @@ MOUSEEVENTF_MIDDLEUP = 0x0040
 MOUSEEVENTF_MIDDLECLICK = MOUSEEVENTF_MIDDLEDOWN + MOUSEEVENTF_MIDDLEUP
 
 MOUSEEVENTF_ABSOLUTE = 0x8000
+MOUSEEVENTF_XDOWN =  0x0080
+MOUSEEVENTF_XUP = 0x0100
 MOUSEEVENTF_WHEEL = 0x0800
 MOUSEEVENTF_HWHEEL = 0x01000
+
+# https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mouse_event
+# If dwFlags contains MOUSEEVENTF_WHEEL, One wheel click is defined as WHEEL_DELTA, which is 120
+WHEEL_DELTA = 120
+
+# https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mouse_event
+# If dwFlags contains MOUSEEVENTF_XDOWN or MOUSEEVENTF_XUP, then dwData specifies which X buttons were pressed or released
+XBUTTON1 = 0x0001
+XBUTTON2 = 0x0002
 
 # Documented here: http://msdn.microsoft.com/en-us/library/windows/desktop/ms646304(v=vs.85).aspx
 KEYEVENTF_KEYDOWN = 0x0000 # Technically this constant doesn't exist in the MS documentation. It's the lack of KEYEVENTF_KEYUP that means pressing the key down.
@@ -497,6 +508,14 @@ def _sendMouseEvent(ev, x, y, dwData=0):
     width, height = _size()
     convertedX = 65536 * x // width + 1
     convertedY = 65536 * y // height + 1
+    
+    if ev == MOUSEEVENTF_WHEEL:
+        dwData = dwData * WHEEL_DELTA   # number of clicks * WHEEL_DELTA
+
+    elif ev in (MOUSEEVENTF_XDOWN, MOUSEEVENTF_XUP):
+        if dwData not in (XBUTTON1, XBUTTON2):
+            raise ValueError(f"dwData must be XBUTTON1 {XBUTTON1:#06x} or XBUTTON2 {XBUTTON2:#06x}")
+    
     ctypes.windll.user32.mouse_event(ev, ctypes.c_long(convertedX), ctypes.c_long(convertedY), dwData, 0)
 
     # TODO: Too many false positives with this code: See: https://github.com/asweigart/pyautogui/issues/108
