@@ -536,7 +536,7 @@ def _scroll(clicks, x=None, y=None):
             y = height - 1
 
     try:
-        _sendMouseEvent(MOUSEEVENTF_WHEEL, x, y, dwData=clicks)
+        _sendMouseEvent(MOUSEEVENTF_WHEEL, MOUSEEVENTF_ABSOLUTE, x, y, dwData=clicks)
     except (PermissionError, OSError): # TODO: We need to figure out how to prevent these errors, see https://github.com/asweigart/pyautogui/issues/60
             pass
 
