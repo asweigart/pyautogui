@@ -181,6 +181,9 @@ def _keyUp(key):
 # Taken from PyKeyboard's ctor function.
 _display = Display(os.environ['DISPLAY'])
 
+def reinit_display():
+    _display = Display(os.environ['DISPLAY'])
+
 
 """ Information for keyboardMapping derived from PyKeyboard's special_key_assignment() function.
 

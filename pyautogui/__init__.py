@@ -545,6 +545,10 @@ elif platform.system() == "Linux":
 else:
     raise NotImplementedError("Your platform (%s) is not supported by PyAutoGUI." % (platform.system()))
 
+def reinit():
+    if platform.system() == "Linux":
+        platformModule.reinit_display()
+
 # TODO: Having module-wide user-writable global variables is bad. It makes
 # restructuring the code very difficult. For instance, what if we decide to
 # move the mouse-related functions to a separate file (a submodule)? How that
