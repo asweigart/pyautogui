@@ -1748,6 +1748,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
     if xOffset != 0 or yOffset != 0:
         print("xOffset: %s yOffset: %s" % (xOffset, yOffset))
     try:
+        import pyscreeze
         while True:
             # Get and print the mouse coordinates.
             x, y = position()
