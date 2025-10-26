@@ -1,0 +1,37 @@
+name: ci
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+env:
+  DISPLAY: ":99"
+jobs:
+  pytest:
+    strategy:
+      fail-fast: false
+      matrix:  # https://github.com/actions/python-versions/releases
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", "pypy-3.11"]
+        python-version: ["3.10"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install pytest tox
+      - run: pip install --editable .
+      - if: runner.os != 'Linux'
+        run: pytest  # Fails on Ubuntu
+      # ===
+      # Running tox seems painful
+      #- if: runner.os == 'Linux'
+      #  env:
+      #    DISPLAY: ":99"
+      #  run: xvfb-run tox --pass-env -e py
+      #- if: runner.os != 'Linux'
+      #  env:
+      #    DISPLAY: ""
+      #  run: tox pass_env --pass-env=CI,DISPLAY -e py

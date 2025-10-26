@@ -281,7 +281,7 @@ keyboardMapping.update({
     '\t': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Tab')),
     '\n': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Return')),  # for some reason this needs to be cr, not lf
     '\r': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Return')),
-    '\e': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Escape')),
+    r'\e': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('Escape')),
     '!': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('exclam')),
     '#': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('numbersign')),
     '%': _display.keysym_to_keycode(Xlib.XK.string_to_keysym('percent')),

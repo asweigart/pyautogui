@@ -241,6 +241,7 @@ class TestGeneral(unittest.TestCase):
         with self.assertRaises(pyautogui.PyAutoGUIException):
             pyautogui.onScreen((0, 0), 0)
 
+    @unittest.skipIf(os.getenv("CI"), reason="Pause may be longer in continuous integration.")
     def test_pause(self):
         oldValue = pyautogui.PAUSE
 
@@ -670,6 +671,7 @@ class TestKeyboard(unittest.TestCase):
     def tearDown(self):
         pyautogui.FAILSAFE = self.oldFailsafeSetting
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_typewrite(self):
         # 'Hello world!\n' test
         t = TypewriteThread("Hello world!\n")
@@ -698,6 +700,7 @@ class TestKeyboard(unittest.TestCase):
         for c in msg:
             self.assertTrue(pyautogui.isValidKey(c), '"%c" is not a valid key on platform %s' % (c, sys.platform))
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_typewrite_slow(self):
 
         # Test out the interval parameter to make sure it adds pauses.
@@ -709,6 +712,7 @@ class TestKeyboard(unittest.TestCase):
         elapsed = time.time() - startTime
         self.assertTrue(1.0 < elapsed < 2.0, "Took %s seconds, expected 1.0 < x 2.0 seconds." % (elapsed))
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_typewrite_editable(self):
         # Backspace test
         t = TypewriteThread(["a", "b", "c", "\b", "backspace", "x", "y", "z", "\n"])
@@ -736,6 +740,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, "xabcz")
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_press(self):
         # '' test
         t = PressThread("enter")
@@ -755,6 +760,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, "ba")
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_hold(self):
         # '' test
         t = HoldThread("enter")
@@ -774,6 +780,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, "ba")
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_press_during_hold(self):
         # '' test
         t = HoldThread("shift", "enter")
@@ -793,6 +800,7 @@ class TestKeyboard(unittest.TestCase):
         response = INPUT_FUNC()
         self.assertEqual(response, "AB")
 
+    @unittest.skipIf(os.getenv("CI"), reason="No user at the keyboard.")
     def test_typewrite_space(self):
         # Backspace test
         t = TypewriteThread(["space", " ", "\n"])  # test both 'space' and ' '
