@@ -56,6 +56,7 @@ Scott Noyes https://github.com/snoyes
 Sergio Encarnación https://github.com/Sergioenc28
 sneakypete81 https://github.com/sneakypete81
 Stefan Hoelzl https://github.com/stefanhoelzl
+Stefan Seering https://github.com/sseering
 Stephen Ellis https://github.com/saellis
 Steven Shave https://github.com/stevenshave
 Tim Gates https://github.com/timgates42
