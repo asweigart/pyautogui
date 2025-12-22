@@ -235,8 +235,63 @@ def _keyUp(key):
         _normalKeyEvent(key, 'up')
 
 
+def _isPrintableChar(key):
+    """Check if a key is a printable character (not a special key)."""
+    # Special keys that should use key codes
+    special_keys = [
+        'enter', 'return', 'tab', 'backspace', 'esc', 'escape',
+        'command', 'shift', 'shiftleft', 'shiftright', 'capslock',
+        'option', 'optionleft', 'optionright', 'alt', 'altleft', 'altright',
+        'ctrl', 'ctrlleft', 'ctrlright', 'fn',
+        'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12',
+        'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f20',
+        'help', 'home', 'end', 'pageup', 'pagedown', 'pgup', 'pgdn',
+        'left', 'right', 'up', 'down',
+        'del', 'delete', 'volumeup', 'volumedown', 'volumemute',
+        'yen', 'eisu', 'kana', 'space'
+    ]
+
+    # Check if it's a special key
+    if key.lower() in special_keys:
+        return False
+
+    # Check if it's a control character (except printable ones)
+    if key in ['\r', '\n', '\t', '\b']:
+        return False
+
+    # Everything else is considered printable
+    return True
+
+
+def _typeUnicodeChar(char):
+    """Type a single Unicode character using CGEvent Unicode string method."""
+    # Create a keyboard event for pressing a dummy key (we'll override with Unicode)
+    # Using kVK_ANSI_A (0x00) as base, but the actual key code doesn't matter for Unicode
+    event_down = Quartz.CGEventCreateKeyboardEvent(None, 0, True)
+    event_up = Quartz.CGEventCreateKeyboardEvent(None, 0, False)
+
+    # Set the Unicode string for the event
+    # CGEventKeyboardSetUnicodeString takes: event, length, unicode_string
+    Quartz.CGEventKeyboardSetUnicodeString(event_down, len(char), char)
+    Quartz.CGEventKeyboardSetUnicodeString(event_up, len(char), char)
+
+    # Post the events
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, event_down)
+    Quartz.CGEventPost(Quartz.kCGHIDEventTap, event_up)
+    time.sleep(pyautogui.DARWIN_CATCH_UP_TIME)
+
+
 def _normalKeyEvent(key, upDown):
     assert upDown in ('up', 'down'), "upDown argument must be 'up' or 'down'"
+
+    # For printable characters on 'down' event, use Unicode typing to avoid layout issues
+    if _isPrintableChar(key) and upDown == 'down':
+        _typeUnicodeChar(key)
+        return
+
+    # For 'up' events of printable chars, we can skip (Unicode typing handles both down/up)
+    if _isPrintableChar(key) and upDown == 'up':
+        return
 
     try:
         if pyautogui.isShiftCharacter(key):
