@@ -554,7 +554,28 @@ def _hscroll(clicks, x, y):
     Returns:
       None
     """
-    return _scroll(clicks, x, y)
+    startx, starty = _position()
+    width, height = _size()
+
+    if x is None:
+        x = startx
+    else:
+        if x < 0:
+            x = 0
+        elif x >= width:
+            x = width - 1
+    if y is None:
+        y = starty
+    else:
+        if y < 0:
+            y = 0
+        elif y >= height:
+            y = height - 1
+
+    try:
+        _sendMouseEvent(MOUSEEVENTF_HWHEEL, x, y, dwData=clicks)
+    except (PermissionError, OSError):
+        pass
 
 
 def _vscroll(clicks, x, y):
