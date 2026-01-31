@@ -423,12 +423,17 @@ def _multiClick(x, y, button, num, interval=0.0):
         return
 
     for i in range(num):
-        _click(x, y, button)
+        pyautogui.failSafeCheck()
+        clickState = i + 1
+        _sendMouseEvent(down, x, y, btn, clickState)
+        _sendMouseEvent(up, x, y, btn, clickState)
         time.sleep(interval)
 
 
-def _sendMouseEvent(ev, x, y, button):
+def _sendMouseEvent(ev, x, y, button, clickState=None):
     mouseEvent = Quartz.CGEventCreateMouseEvent(None, ev, (x, y), button)
+    if clickState is not None:
+        Quartz.CGEventSetIntegerValueField(mouseEvent, Quartz.kCGMouseEventClickState, clickState)
     Quartz.CGEventPost(Quartz.kCGHIDEventTap, mouseEvent)
 
 
