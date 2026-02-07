@@ -666,11 +666,9 @@ def _normalizeXYArgs(firstArg, secondArg):
             if location is not None:
                 return center(location)
             else:
-                return None
+                raise ImageNotFoundException("Could not locate the image on the screen.")
         except pyscreeze.ImageNotFoundException:
             raise ImageNotFoundException
-
-        return center(locateOnScreen(firstArg))
 
     elif isinstance(firstArg, Sequence):
         if len(firstArg) == 2:
