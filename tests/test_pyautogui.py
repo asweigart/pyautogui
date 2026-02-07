@@ -8,6 +8,7 @@ import time
 import unittest
 import doctest
 from collections import namedtuple  # Added in Python 2.6.
+from unittest.mock import patch
 
 import pyautogui
 
@@ -262,11 +263,15 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertEqual(pyautogui._normalizeXYArgs((1, 2), None), pyautogui.Point(x=1, y=2))
         self.assertEqual(pyautogui._normalizeXYArgs([1, 2], None), pyautogui.Point(x=1, y=2))
 
-        pyautogui.useImageNotFoundException()
-        with self.assertRaises(pyautogui.ImageNotFoundException):
-            pyautogui._normalizeXYArgs("100x100blueimage.png", None)
-        pyautogui.useImageNotFoundException(False)
-        self.assertEqual(pyautogui._normalizeXYArgs("100x100blueimage.png", None), None)
+        # When an image path is passed and the image is not found on screen, ImageNotFoundException is always raised
+        # (so that callers like click() never receive None and crash with TypeError).
+        with patch.object(pyautogui, "locateOnScreen", return_value=None):
+            pyautogui.useImageNotFoundException()
+            with self.assertRaises(pyautogui.ImageNotFoundException):
+                pyautogui._normalizeXYArgs("button.png", None)
+            pyautogui.useImageNotFoundException(False)
+            with self.assertRaises(pyautogui.ImageNotFoundException):
+                pyautogui._normalizeXYArgs("button.png", None)
 
 
 class TestDoctests(unittest.TestCase):
