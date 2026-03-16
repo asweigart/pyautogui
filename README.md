@@ -1,5 +1,6 @@
-PyAutoGUI
-=========
+<h1 style="text-align: center;">PyAutoGUI</h1>
+
+[Documentation](https://pyautogui.readthedocs.io/en/latest/)  
 
 PyAutoGUI is a  cross-platform GUI automation Python module for human beings. Used to programmatically control the mouse & keyboard.
 
