@@ -143,12 +143,14 @@ def _keyDown(key):
     needsShift = pyautogui.isShiftCharacter(key)
     if needsShift:
         fake_input(_display, X.KeyPress, keyboardMapping['shift'])
+        _display.sync()
 
     fake_input(_display, X.KeyPress, keyboardMapping[key])
+    _display.sync()
 
     if needsShift:
         fake_input(_display, X.KeyRelease, keyboardMapping['shift'])
-    _display.sync()
+        _display.sync()
 
 
 def _keyUp(key):
