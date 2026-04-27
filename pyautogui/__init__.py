@@ -2166,6 +2166,47 @@ def getInfo():
     return (sys.platform, sys.version, __version__, sys.executable, size(), datetime.datetime.now())
 
 
+@_genericPyAutoGUIChecks
+def sequence(keymap: list = [], interval: float = 0.0) -> None:
+    """
+    Presses a series of keys in sequence, one after another.
+    Supports keyboard shortcuts. To execute the same key or shortcut 
+    consecutively, it must be explicitly repeated.
+    Example: actions = ["f2", "ctrl+c", "enter", "enter"]
+
+    Uses press() and hotkey() to execute actions.
+
+    Args:
+      keymap (list): list of keys or shortcuts to be pressed.
+                     empty strings are not allowed.
+      interval (float): delay between key presses.
+                        default is 0 as press() and hotkey() have their own interval.
+
+    Returns:
+      None
+    """
+    if not keymap:
+        return
+
+    for item in keymap:
+        if not isinstance(item, str):
+            raise ValueError(f"Invalid item in keymap: {item}")
+
+    # Remove empty or whitespace-only strings
+    keymap = [key.strip() for key in keymap if key.strip()]
+
+    for item in keymap:
+        try:
+            if '+' in item:
+                keys = [key.strip() for key in item.split('+')]
+                pyautogui.hotkey(*keys)
+            else:
+                pyautogui.press(item)
+        except Exception as e:
+            print(f"Error pressing '{item}': {e}")
+        time.sleep(interval)
+
+
 # Add the bottom left, top right, and bottom right corners to FAILSAFE_POINTS.
 _right, _bottom = size()
 FAILSAFE_POINTS.extend([(0, _bottom - 1), (_right - 1, 0), (_right - 1, _bottom - 1)])
