@@ -9,7 +9,7 @@ from pyautogui import LEFT, MIDDLE, RIGHT
 
 import sys
 if sys.platform !=  'win32':
-    raise Exception('The pyautogui_win module should only be loaded on a Windows system.')
+    raise RuntimeError('The pyautogui_win module should only be loaded on a Windows system.')
 
 
 # Fixes the scaling issues where PyAutoGUI was reporting the wrong resolution:

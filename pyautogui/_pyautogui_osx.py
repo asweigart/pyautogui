@@ -11,7 +11,7 @@ import pyautogui
 from pyautogui import LEFT, MIDDLE, RIGHT
 
 if sys.platform !=  'darwin':
-    raise Exception('The pyautogui_osx module should only be loaded on an OS X system.')
+    raise RuntimeError('The pyautogui_osx module should only be loaded on an OS X system.')
 
 
 

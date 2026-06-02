@@ -1779,7 +1779,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
 def _snapshot(tag, folder=None, region=None, radius=None):
     # TODO feature not finished
     if region is not None and radius is not None:
-        raise Exception("Either region or radius arguments (or neither) can be passed to snapshot, but not both")
+        raise RuntimeError("Either region or radius arguments (or neither) can be passed to snapshot, but not both")
 
     if radius is not None:
         x, y = platformModule._position()

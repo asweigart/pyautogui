@@ -15,7 +15,7 @@ BUTTON_NAME_MAPPING = {LEFT: 1, MIDDLE: 2, RIGHT: 3, 1: 1, 2: 2, 3: 3, 4: 4, 5: 
 
 
 if sys.platform in ('java', 'darwin', 'win32'):
-    raise Exception('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
+    raise RuntimeError('The pyautogui_x11 module should only be loaded on a Unix system that supports X11.')
 
 #from pyautogui import *
 
