@@ -195,7 +195,7 @@ class TestGeneral(unittest.TestCase):
         self.assertTrue(isinstance(mousey, int), "Type of mousey is %s" % (type(mousey)))
 
         # Test passing x and y arguments to position().
-        pyautogui.moveTo(mousex + 1, mousey + 1)
+        pyautogui.moveTo(mousex + 10, mousey + 10)
         x, y = pyautogui.position(mousex, None)
         self.assertEqual(x, mousex)
         self.assertNotEqual(y, mousey)

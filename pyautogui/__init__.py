@@ -14,7 +14,6 @@ from __future__ import absolute_import, division, print_function
 
 
 __version__ = "0.9.54"
-
 import collections
 import sys
 import time
@@ -24,7 +23,7 @@ import platform
 import re
 import functools
 from contextlib import contextmanager
-
+import PIL
 
 class PyAutoGUIException(Exception):
     """
@@ -178,7 +177,20 @@ def raisePyAutoGUIImageNotFoundException(wrappedFunction):
 
 try:
     import pyscreeze
-    from pyscreeze import center, pixel, pixelMatchesColor, screenshot
+    from pyscreeze import center, pixel, pixelMatchesColor
+    
+    import pyscreenshot
+    def screenshot(imageFilename: str | bytes | os.PathLike | None = None, region: tuple[int, int, int, int] | None = None) -> PIL.Image.Image:
+        if region is None:
+            bbox = None
+        else:
+            x, y, w, h = region
+            bbox = (x, y, x+w, y+h)
+        im = pyscreenshot.grab(bbox=bbox)
+        if imageFilename:
+            im.save(imageFilename)
+        return im
+    pyscreeze.screenshot = screenshot
 
     # Change the locate*() functions so that they raise PyAutoGUI's ImageNotFoundException instead.
     @raisePyAutoGUIImageNotFoundException
@@ -229,6 +241,7 @@ except ImportError:
             "PyAutoGUI was unable to import pyscreeze. (This is likely because you're running a version of Python that Pillow (which pyscreeze depends on) doesn't support currently.) Please install this module to enable the function you tried to call."
         )
 
+
     center = _couldNotImportPyScreeze
     #grab = _couldNotImportPyScreeze  # grab() was removed, use screenshot() instead
     locate = _couldNotImportPyScreeze
@@ -261,6 +274,16 @@ except ImportError:
         """
         raise PyAutoGUIException(
             "PyAutoGUI was unable to import mouseinfo. Please install this module to enable the function you tried to call."
+        )
+
+except Exception:
+    def mouseInfo():
+        """
+        This function raises PyAutoGUIException. It's used for the MouseInfo function names if the MouseInfo module
+        failed.
+        """
+        raise PyAutoGUIException(
+            "PyAutoGUI was unable to use mouseinfo. This usually means that you are using a platform that does not support mouseinfo (eg. Wayland)."
         )
 
 
@@ -533,15 +556,29 @@ def isShiftCharacter(character):
 
 
 # The platformModule is where we reference the platform-specific functions.
+system_platform = None
 if sys.platform.startswith("java"):
     # from . import _pyautogui_java as platformModule
     raise NotImplementedError("Jython is not yet supported by PyAutoGUI.")
 elif sys.platform == "darwin":
+    system_platform = 'darwin'
     from . import _pyautogui_osx as platformModule
 elif sys.platform == "win32":
+    system_platform = 'win32'
     from . import _pyautogui_win as platformModule
 elif platform.system() == "Linux":
-    from . import _pyautogui_x11 as platformModule
+    session_type = os.getenv('XDG_SESSION_TYPE')
+    if session_type == 'wayland':
+        system_platform = 'wayland'
+        # Assuming session is in Wayland.
+        from . import _pyautogui_wayland as platformModule
+    elif session_type == 'x11':
+        system_platform = 'x11'
+        # Assuming session is in X11.
+        from . import _pyautogui_x11 as platformModule
+    else:
+        raise NotImplementedError("Detected platform: Linux\nYour session type (%s) is unknown." % session_type)
+        
 else:
     raise NotImplementedError("Your platform (%s) is not supported by PyAutoGUI." % (platform.system()))
 
@@ -561,10 +598,12 @@ MINIMUM_SLEEP = 0.05
 # The number of seconds to pause after EVERY public function call. Useful for debugging:
 PAUSE = 0.1  # Tenth-second pause by default.
 
-# Interface need some catch up time on darwin (macOS) systems. Possible values probably differ based on your system performance.
+# Interface need some catch up time on a few systems. Possible values probably differ based on your system performance.
 # This value affects mouse moveTo, dragTo and key event duration.
 # TODO: Find a dynamic way to let the system catch up instead of blocking with a magic number.
 DARWIN_CATCH_UP_TIME = 0.01
+WAYLAND_MOVE_TIME = 0.025
+WAYLAND_CLICK_TIME = 0.25
 
 # If the mouse is over a coordinate in FAILSAFE_POINTS and FAILSAFE is True, the FailSafeException is raised.
 # The rest of the points are added to the FAILSAFE_POINTS list at the bottom of this file, after size() has been defined.
@@ -1679,11 +1718,21 @@ def typewrite(message, interval=0.0, logScreenshot=None, _pause=True):
     interval = float(interval)  # TODO - this should be taken out.
 
     _logScreenshot(logScreenshot, "write", message, folder=".")
+    adjusted_interval = interval
     for c in message:
         if len(c) > 1:
             c = c.lower()
+        if interval != 0.0:
+            s = time.perf_counter()
+        
         press(c, _pause=False)
-        time.sleep(interval)
+        
+        if interval != 0.0:
+            e = time.perf_counter()
+            adjust = e - s
+            adjusted_interval = interval - adjust
+        
+        time.sleep(max(adjusted_interval, 0))
         failSafeCheck()
 
 
@@ -1756,7 +1805,7 @@ def displayMousePosition(xOffset=0, yOffset=0):
                 # Pixel color can only be found for the primary monitor, and also not on mac due to the screenshot having the mouse cursor in the way.
                 pixelColor = ("NaN", "NaN", "NaN")
             else:
-                pixelColor = pyscreeze.screenshot().getpixel(
+                pixelColor = screenshot().getpixel(
                     (x, y)
                 )  # NOTE: On Windows & Linux, getpixel() returns a 3-integer tuple, but on macOS it returns a 4-integer tuple.
             positionStr += " RGB: (" + str(pixelColor[0]).rjust(3)
