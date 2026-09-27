@@ -118,6 +118,39 @@ def _mouseUp(x, y, button):
     _display.sync()
 
 
+def _needsShiftForKey(key):
+    """Returns True if pressing `key` requires holding Shift on the CURRENT
+    keyboard layout, as reported by the X server.
+
+    pyautogui's legacy isShiftCharacter() uses a hardcoded US-qwerty table
+    ('~!@#$%^&*()_+{}|:"<>?'). On other layouts (Spanish, German, French...)
+    symbols sit on different physical columns: e.g. on the Spanish layout
+    '<' and '>' share ONE key (column 0 = '<', shift = '>'). The US table
+    says '<' needs shift, so pyautogui presses shift+keycode, the X server
+    reports the column-1 keysym, and '>' gets typed instead of '<'.
+
+    Asking the server which column the keysym actually occupies fixes every
+    layout at once: even columns are the unshifted variants in a 2-column
+    group. Falls back to the US table only when the server reports no
+    keycode for the keysym.
+    """
+    # Printable ASCII/latin-1 characters ARE their own keysym in X11
+    # (0x20-0xff); string_to_keysym() only resolves names like 'less'.
+    if len(key) == 1 and 0x20 <= ord(key) <= 0xFF:
+        keysym = ord(key)
+    else:
+        keysym = Xlib.XK.string_to_keysym(key)
+    codes = _display.keysym_to_keycodes(keysym)
+    if not codes:
+        return pyautogui.isShiftCharacter(key)  # legacy fallback
+    # If ANY keycode exposes this keysym in an unshifted (even) column,
+    # the character can be typed without shift — prefer that binding.
+    if any(column % 2 == 0 for _, column in codes):
+        return False
+    # Only shifted columns carry the keysym: shift is required.
+    return True
+
+
 def _keyDown(key):
     """Performs a keyboard key press without the release. This will put that
     key in a held down state.
@@ -140,7 +173,7 @@ def _keyDown(key):
         _display.sync()
         return
 
-    needsShift = pyautogui.isShiftCharacter(key)
+    needsShift = _needsShiftForKey(key)
     if needsShift:
         fake_input(_display, X.KeyPress, keyboardMapping['shift'])
 
